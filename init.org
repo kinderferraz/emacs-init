@@ -7,42 +7,42 @@
 * Repos
 #+BEGIN_SRC emacs-lisp
 
-	(defun tangle-init ()
-	"If the current buffer is 'init.org' the code-blocks are
-	tangled, and the tangled file is compiled."
-	(when (equal (buffer-file-name)
-		(expand-file-name (concat user-emacs-directory "init.org")))
-		;; Avoid running hooks when tangling.
-		(let ((prog-mode-hook nil))
-		(org-babel-tangle))))
+  (defun tangle-init ()
+  "If the current buffer is 'init.org' the code-blocks are
+  tangled, and the tangled file is compiled."
+  (when (equal (buffer-file-name)
+    (expand-file-name (concat user-emacs-directory "init.org")))
+    ;; Avoid running hooks when tangling.
+    (let ((prog-mode-hook nil))
+    (org-babel-tangle))))
 
-	(add-hook 'after-save-hook 'tangle-init)
+  (add-hook 'after-save-hook 'tangle-init)
 
-	(setq package-enable-at-startup nil)
-	(setq package-archives
-		'(("melpa"        . "https://melpa.org/packages/")		
-		  ("melpa-stable" . "http://stable.melpa.org/packages/")
-			("gnu"          . "https://elpa.gnu.org/packages/")			
-			("org"          . "http://orgmode.org/elpa/")))
+  (setq package-enable-at-startup nil)
+  (setq package-archives
+    '(("melpa"        . "https://melpa.org/packages/")    
+      ("melpa-stable" . "http://stable.melpa.org/packages/")
+      ("gnu"          . "https://elpa.gnu.org/packages/")     
+      ("org"          . "http://orgmode.org/elpa/")))
 
-	(add-to-list 'load-path "~/.emacs.d/mypackages")
+  (add-to-list 'load-path "~/.emacs.d/mypackages")
 
-	(package-initialize)
+  (package-initialize)
 
-	(unless (package-installed-p 'use-package)
-					(package-refresh-contents)
-					(package-install 'use-package))
+  (unless (package-installed-p 'use-package)
+          (package-refresh-contents)
+          (package-install 'use-package))
 
   (eval-when-compile (require 'use-package))
 
   (setq use-package-always-ensure t)
 
-	;; auto-package-update
-	(use-package auto-package-update
-		:config
-			(auto-package-update-maybe)
-		:custom
-			(auto-package-update-delete-old-versions t))
+  ;; auto-package-update
+  (use-package auto-package-update
+    :config
+      (auto-package-update-maybe)
+    :custom
+      (auto-package-update-delete-old-versions t))
 
 #+END_SRC
 
@@ -50,80 +50,80 @@
 * Org
 ** Plain org
 #+BEGIN_SRC emacs-lisp
-	
-	(use-package org
-		:ensure t
-		:pin org
+  
+  (use-package org
+    :ensure t
+    :pin org
 
-		:custom
-			;; dirs
-			(org-directory   "~/org/")
-			(org-journal-dir "~/org/journal/" )
+    :custom
+      ;; dirs
+      (org-directory   "~/org/")
+      (org-journal-dir "~/org/journal/" )
 
-			;; files
-			(org-default-notes-file (concat org-directory "notes.org"))
-			(org-agenda-files			 '(list "~/org/notes.org"
-																		"~/org/journal/"))
-			;; formats
-			(org-journal-file-format "%d.%m.%y.org")		
-			(org-journal-date-format "%A :: %d/%m/%Y")
-			(org-journal-time-format "%H:M")
+      ;; files
+      (org-default-notes-file (concat org-directory "notes.org"))
+      (org-agenda-files      '(list "~/org/notes.org"
+                                    "~/org/journal/"))
+      ;; formats
+      (org-journal-file-format "%d.%m.%y.org")    
+      (org-journal-date-format "%A :: %d/%m/%Y")
+      (org-journal-time-format "%H:M")
 
-			;; prefixes
-			(org-journal-date-prefix "* ")
-			(org-journal-time-prefix "** ")
+      ;; prefixes
+      (org-journal-date-prefix "* ")
+      (org-journal-time-prefix "** ")
 
-			;; misc
-			(org-deadline-warning-days 7)
-			(org-display-inline-images t)
-			(org-journal-enable-agenda-integration t)
-			(org-extend-today-until 6)
+      ;; misc
+      (org-deadline-warning-days 7)
+      (org-display-inline-images t)
+      (org-journal-enable-agenda-integration t)
+      (org-extend-today-until 6)
 
-			(org-cycle-emulate-tab 'exc-hl-bol)
-			(org-support-shift-select 'always))
+      (org-cycle-emulate-tab 'exc-hl-bol)
+      (org-support-shift-select 'always))
 
 #+END_SRC
 
 ** Org-journal
 #+BEGIN_SRC emacs-lisp
-	(use-package org-journal
-		:ensure t
-		:bind ("C-c n" . org-journal-new-entry))
-	;;	:hook (bind-key (kbd "C-c C-s") 'org-journal-schedule))
+  (use-package org-journal
+    :ensure t
+    :bind ("C-c n" . org-journal-new-entry))
+  ;;  :hook (bind-key (kbd "C-c C-s") 'org-journal-schedule))
 
-	(defun org-journal-find-location ()
-	;; Open today's journal, but specify a non-nil prefix argument in order to
-	;; inhibit inserting the heading; org-capture will insert the heading.
-	(org-journal-new-entry t)
-	;; Position point on the journal's top-level heading so that org-capture
-	;; will add the new entry as a child entry.
-	(goto-char (point-min)))
+  (defun org-journal-find-location ()
+  ;; Open today's journal, but specify a non-nil prefix argument in order to
+  ;; inhibit inserting the heading; org-capture will insert the heading.
+  (org-journal-new-entry t)
+  ;; Position point on the journal's top-level heading so that org-capture
+  ;; will add the new entry as a child entry.
+  (goto-char (point-min)))
 
-	(setq org-capture-templates 
-		'(("j" "Journal entry" entry (function org-journal-find-location)
-			 "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?")))
+  (setq org-capture-templates 
+    '(("j" "Journal entry" entry (function org-journal-find-location)
+       "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?")))
 #+END_SRC
 
 ** Org-reveal
 #+BEGIN_SRC emacs-lisp
-	(use-package ox-reveal
-		:ensure t
-		:init
-			(setq org-reveal-root "file:///Users/alkindarferraz/reveal.js"))
+  (use-package ox-reveal
+    :ensure t
+    :init
+      (setq org-reveal-root "file:///Users/alkindarferraz/reveal.js"))
 
 #+END_SRC
 
 
 * TERM
 #+BEGIN_SRC emacs-lisp
-	(use-package exec-path-from-shell
-		:ensure t
-		:config
-			(when (memq window-system '(mac ns x))
-				(exec-path-from-shell-initialize)))
+  (use-package exec-path-from-shell
+    :ensure t
+    :config
+      (when (memq window-system '(mac ns x))
+        (exec-path-from-shell-initialize)))
 
-	(use-package term
-		:ensure nil)
+  (use-package term
+    :ensure nil)
 
 #+END_SRC
 
@@ -133,34 +133,34 @@
 ** AC
 #+BEGIN_SRC emacs-lisp
 
-	(use-package auto-complete
-		:ensure t
-		:config (ac-config-default)
-		:custom (ac-fuzzy-enable t)
-		:hook   (org-mode . auto-complete-mode))
+  (use-package auto-complete
+    :ensure t
+    :config (ac-config-default)
+    :custom (ac-fuzzy-enable t)
+    :hook   (org-mode . auto-complete-mode))
 
 #+END_SRC
 
 ** Yasnippets
 #+BEGIN_SRC emacs-lisp
 
-	(use-package yasnippet
-		:ensure t
-		:hook (c-mode      . yas-minor-mode)
-					(python-mode . yas-minor-mode)
-					(lisp-mode   . yas-minor-mode))
+  (use-package yasnippet
+    :ensure t
+    :hook (c-mode      . yas-minor-mode)
+          (python-mode . yas-minor-mode)
+          (lisp-mode   . yas-minor-mode))
 
-	(use-package yasnippet-snippets
-		:ensure t)
+  (use-package yasnippet-snippets
+    :ensure t)
 
-	(use-package haskell-snippets
-		:ensure t)
+  (use-package haskell-snippets
+    :ensure t)
 
 #+END_SRC
 
 ** Compilação
 #+BEGIN_SRC emacs-lisp
-	(use-package flycheck
+  (use-package flycheck
   :ensure t
   :init (global-flycheck-mode))
 
@@ -171,142 +171,142 @@
 ** Python
 
 #+BEGIN_SRC emacs-lisp
-	(use-package elpy
-		:ensure t
-		:hook
-			(python-mode . elpy-mode)
-			(python-mode . elpy-enable)
-		:config
-			(elpy-enable)
-		:custom
-			(python-shell-intrepreter "/usr/local/bin/python3")
-			(python-shell-completion-native-enable         nil)
-			(python-shell-intrepreter-args    "--colors=Linux")
-			(compilation-ask-about-save                    nil))
+  (use-package elpy
+    :ensure t
+    :hook
+      (python-mode . elpy-mode)
+      (python-mode . elpy-enable)
+    :config
+      (elpy-enable)
+    :custom
+      (python-shell-intrepreter "/usr/local/bin/python3")
+      (python-shell-completion-native-enable         nil)
+      (python-shell-intrepreter-args    "--colors=Linux")
+      (compilation-ask-about-save                    nil))
 
-	(use-package py-autopep8
-		:ensure t
-		:hook (python-mode . py-autopep8-enable-on-save))
+  (use-package py-autopep8
+    :ensure t
+    :hook (python-mode . py-autopep8-enable-on-save))
 
 #+END_SRC
 *** TODO configurar python
 
 ** JAVA
 #+BEGIN_SRC emacs-lisp
-	(use-package jdee
-		:ensure t
-		:custom
-			(jdee-server-dir "~/myJars")
-			(jde-jdk         "1.8.0_162")
-			(jdee-flycheck-enable-p nil)
-			(jdee-resolve-relative-paths-p t)
-			(jdee-enable-abbrev-mode t)
-			(tempo-interactive t)
-			(jdee-global-classpath nil)
-			(jdee-built-class-path '("../classes")) ;teste -- tira um ponto de todos
-			(jdee-sourcepath '("../src")) ;teste
-			(jdee-run-option-classpath '("../classes")) ;NAO MUDA
-			(jdee-compile-option-directory "../classes") ;teste
-;			(jdee-build-function (quote jdee-ant-build))
-;			(jdee-ant-home (quote ("/usr/local/Cellar/ant/1.10.7")))
-			(jdee-ant-enable-find t)
-			(jdee-complete-function 'jdee-complete-minibuf)
+  (use-package jdee
+    :ensure t
+    :custom
+      (jdee-server-dir "~/myJars")
+      (jde-jdk         "1.8.0_162")
+      (jdee-flycheck-enable-p nil)
+      (jdee-resolve-relative-paths-p t)
+      (jdee-enable-abbrev-mode t)
+      (tempo-interactive t)
+      (jdee-global-classpath nil)
+      (jdee-built-class-path '("../classes")) ;teste -- tira um ponto de todos
+      (jdee-sourcepath '("../src")) ;teste
+      (jdee-run-option-classpath '("../classes")) ;NAO MUDA
+      (jdee-compile-option-directory "../classes") ;teste
+;     (jdee-build-function (quote jdee-ant-build))
+;     (jdee-ant-home (quote ("/usr/local/Cellar/ant/1.10.7")))
+      (jdee-ant-enable-find t)
+      (jdee-complete-function 'jdee-complete-minibuf)
 
 
-		:bind (:map jdee-mode-map
-			("C-j c" . jdee-compile)
-			("C-j b" . jdee-build)
-			("C-j r" . jdee-run)
-			("C-j ;" . jdee-complete)
-			("C-j g" . jdee-wiz-get-set-methods)
-			("C-j o" . jdee-wiz-overrided-method)
-			("C-j i" . jdee-wiz-implement-interface)
-			("C-j p" . jdee-create-new-project)
-			("C-j f" . jdee-gen-buffer)
-			))
+    :bind (:map jdee-mode-map
+      ("C-j c" . jdee-compile)
+      ("C-j b" . jdee-build)
+      ("C-j r" . jdee-run)
+      ("C-j ;" . jdee-complete)
+      ("C-j g" . jdee-wiz-get-set-methods)
+      ("C-j o" . jdee-wiz-overrided-method)
+      ("C-j i" . jdee-wiz-implement-interface)
+      ("C-j p" . jdee-create-new-project)
+      ("C-j f" . jdee-gen-buffer)
+      ))
 
-		
-			
+    
+      
 #+END_SRC
 
 ** Haskell
 #+BEGIN_SRC emacs-lisp
-	(use-package intero
-		:ensure t
-		:hook (haskell-mode . intero-mode))	
+  (use-package intero
+    :ensure t
+    :hook (haskell-mode . intero-mode)) 
 
-	(use-package haskell-mode
-		:ensure t
-		:mode (("\\.hs\\'"    . haskell-mode)
-		       ("\\.cabal\\'" . haskell-cabal-mode)
-		       ("\\.hcr\\'"   . haskell-core-mode))
-		:interpreter ("haskell" . haskell-mode)
-	  
-		:config
-			(require 'haskell)
-			(require 'haskell-mode)
-			(require 'haskell-interactive-mode)
-			(require 'autoinsert)
+  (use-package haskell-mode
+    :ensure t
+    :mode (("\\.hs\\'"    . haskell-mode)
+           ("\\.cabal\\'" . haskell-cabal-mode)
+           ("\\.hcr\\'"   . haskell-core-mode))
+    :interpreter ("haskell" . haskell-mode)
+    
+    :config
+      (require 'haskell)
+      (require 'haskell-mode)
+      (require 'haskell-interactive-mode)
+      (require 'autoinsert)
 
 
-			(define-skeleton haskell-skeleton
-				"Default Haskell file initial contents."
-				nil
-				"-- | " _ "\n\n"
-				"module "
-				(haskell-guess-module-name)
-				" where\n\n")
+      (define-skeleton haskell-skeleton
+        "Default Haskell file initial contents."
+        nil
+        "-- | " _ "\n\n"
+        "module "
+        (haskell-guess-module-name)
+        " where\n\n")
 
-			(define-auto-insert "\\.hs" 'haskell-skeleton)
+      (define-auto-insert "\\.hs" 'haskell-skeleton)
 )
 #+END_SRC
 
 ** WEB
 #+BEGIN_SRC emacs-lisp
-	(use-package mhtml-mode
-		:ensure nil
-		:mode ("\\.html\\'" . mhtml-mode)
-		:bind (:map mhtml-mode-map
-			("C-<return>" . 'html-paragraph)
-			("C-c r"      . 'html-horizontal-rule)
-			("C-c t"      . 'sgml-tag)
-			("M-<return>" . 'html-list-item)
-			("C-c \\"     . 'sgml-close-tag)))
+  (use-package mhtml-mode
+    :ensure nil
+    :mode ("\\.html\\'" . mhtml-mode)
+    :bind (:map mhtml-mode-map
+      ("C-<return>" . 'html-paragraph)
+      ("C-c r"      . 'html-horizontal-rule)
+      ("C-c t"      . 'sgml-tag)
+      ("M-<return>" . 'html-list-item)
+      ("C-c \\"     . 'sgml-close-tag)))
 
-	(use-package css
-		:ensure nil
-		:mode ("\\.css\\'" . css-mode)
-		:custom
-			(css-indent-offset 2))
+  (use-package css
+    :ensure nil
+    :mode ("\\.css\\'" . css-mode)
+    :custom
+      (css-indent-offset 2))
 
-	(use-package rjsx-mode
-		:ensure t
-		:pin melpa
-		:mode
-			("\\.js\\'" . rjsx-mode)
-			("\\.jsx\\'" . rjsx-mode)
+  (use-package rjsx-mode
+    :ensure t
+    :pin melpa
+    :mode
+      ("\\.js\\'" . rjsx-mode)
+      ("\\.jsx\\'" . rjsx-mode)
 
-		:custom
-			(js-indent-level 2)
-			(sgml-basic-offset 2))
+    :custom
+      (js-indent-level 2)
+      (sgml-basic-offset 2))
 
 #+END_SRC
 
 ** NODE
 #+BEGIN_SRC emacs-lisp
-	(use-package npm-mode
-		:pin melpa
-		:ensure t)
+  (use-package npm-mode
+    :pin melpa
+    :ensure t)
 
 #+END_SRC
 
 
 * Uml
 #+BEGIN_SRC emacs-lisp
-	(use-package plantuml-mode
-		:ensure t
-		:custom
-			(plantuml-jat-path "~/.plantuml"))
+  (use-package plantuml-mode
+    :ensure t
+    :custom
+      (plantuml-jat-path "~/.plantuml"))
 
 #+END_SRC
 
@@ -315,55 +315,55 @@
 ** AUCTeX
 #+BEGIN_SRC emacs-lisp
 
-	(defun TeX-highlight-region (beg end)
-	"Insert highlight macro at BEG of region and closing bracket at END."
-		(interactive
-			(if mark-active
-				(list (region-beginning) (region-end))))
-		(when (and beg end)
-			(save-excursion
-				(let ((hl-beg "\\hl{")
-							(hl-end "}"))
-					(goto-char end)
-					(insert hl-end)
-					(goto-char beg)
-					(insert hl-beg)))
-			(goto-char (+ 6 end))))
+  (defun TeX-highlight-region (beg end)
+  "Insert highlight macro at BEG of region and closing bracket at END."
+    (interactive
+      (if mark-active
+        (list (region-beginning) (region-end))))
+    (when (and beg end)
+      (save-excursion
+        (let ((hl-beg "\\hl{")
+              (hl-end "}"))
+          (goto-char end)
+          (insert hl-end)
+          (goto-char beg)
+          (insert hl-beg)))
+      (goto-char (+ 6 end))))
 
-	(use-package auctex
-		:ensure t
-		:mode ("\\.tex\\'" . LaTeX-mode)
+  (use-package auctex
+    :ensure t
+    :mode ("\\.tex\\'" . LaTeX-mode)
 
-		:hook
-			(TeX-mode  . TeX-fold-mode) 
-			(TeX-mode  . prettify-symbols-mode)
-			(TeX-mode  . auto-fill-mode)
+    :hook
+      (TeX-mode  . TeX-fold-mode) 
+      (TeX-mode  . prettify-symbols-mode)
+      (TeX-mode  . auto-fill-mode)
 
-		:init 
-			(add-hook 'TeX-after-compilation-finished-functions
-							 #'TeX-revert-document-buffer)
+    :init 
+      (add-hook 'TeX-after-compilation-finished-functions
+               #'TeX-revert-document-buffer)
 
-		:custom
-			(TeX-save-query          nil)
-			(TeX-auto-save             t)
-			(TeX-parse-self            t)
-			(TeX-master              nil)
-			(TeX-PDF-mode              t)
-			(TeX-engine          'luatex)
+    :custom
+      (TeX-save-query          nil)
+      (TeX-auto-save             t)
+      (TeX-parse-self            t)
+      (TeX-master              nil)
+      (TeX-PDF-mode              t)
+      (TeX-engine          'luatex)
 
-			(prettify-symbols-unprettify-at-point t)
-			(LaTeX-default-style 'abntex2)
+      (prettify-symbols-unprettify-at-point t)
+      (LaTeX-default-style 'abntex2)
 
-			(TeX-view-program-selection '((output-pdf "PDF Tools")))
-			(TeX-view-program-list      '(("PDF Tools" TeX-pdf-tools-sync-view)))
-			(TeX-source-correlate-start-server t)
+      (TeX-view-program-selection '((output-pdf "PDF Tools")))
+      (TeX-view-program-list      '(("PDF Tools" TeX-pdf-tools-sync-view)))
+      (TeX-source-correlate-start-server t)
 
-		:bind
-			(:map TeX-mode-map
-				("s-a"   . TeX-command-run-all)
-				("s-e"   . LaTeX-environment)
-				("s-p"   . LaTeX-section)
-				("s-h"   . TeX-highlight-region)))
+    :bind
+      (:map TeX-mode-map
+        ("s-a"   . TeX-command-run-all)
+        ("s-e"   . LaTeX-environment)
+        ("s-p"   . LaTeX-section)
+        ("s-h"   . TeX-highlight-region)))
 
 
 #+END_SRC
@@ -371,22 +371,22 @@
 ** DOC-VIEW
 #+BEGIN_SRC emacs-lisp
 
-	(setq doc-view-ghostscript-program "/usr/local/Cellar/ghostscript/9.52/bin/gs")
+  (setq doc-view-ghostscript-program "/usr/local/Cellar/ghostscript/9.52/bin/gs")
 
 #+END_SRC
 
 
 * GIT
 #+BEGIN_SRC emacs-lisp
-	(use-package magit
-		:ensure t
-		:bind (:map global-map ("C-x g" . 'magit-status))
-		:custom
-			(split-width-threshold  30)
-			(split-height-threshold 40)
-			(magit-git-executable "/usr/local/Cellar/git/2.26.2/bin/git")
-		:config
-			(remove-hook 'server-switch-hook 'magit-commit-diff))
+  (use-package magit
+    :ensure t
+    :bind (:map global-map ("C-x g" . 'magit-status))
+    :custom
+      (split-width-threshold  30)
+      (split-height-threshold 40)
+      (magit-git-executable "/usr/local/Cellar/git/2.26.2/bin/git")
+    :config
+      (remove-hook 'server-switch-hook 'magit-commit-diff))
 
 #+END_SRC
 
@@ -396,51 +396,51 @@
 ** Misc
 #+BEGIN_SRC emacs-lisp
 
-	(when (display-graphic-p)
-		(setq default-frame-alist
-			'((tool-bar-lines .  0)
-				(cursor-color   . "#d75f00")
-				(fullscreen     . maximized)
-				(font           . "Fira Code Retina-11")
-				(vertical-scroll-bars    . nil)
-				(ns-transparent-titlebar .   t))))
+  (when (display-graphic-p)
+    (setq default-frame-alist
+      '((tool-bar-lines .  0)
+        (cursor-color   . "#d75f00")
+        (fullscreen     . maximized)
+        (font           . "Fira Code Retina-11")
+        (vertical-scroll-bars    . nil)
+        (ns-transparent-titlebar .   t))))
 
-	(unless (display-graphic-p)
-		(menu-bar-mode -1))
+  (unless (display-graphic-p)
+    (menu-bar-mode -1))
 
-	(setq-default frame-title-format
-								(concat  "%b -- emacs@" (system-name)))
-	(setq inhibit-startup-screen t)
+  (setq-default frame-title-format
+                (concat  "%b -- emacs@" (system-name)))
+  (setq inhibit-startup-screen t)
 
-	(global-set-key (kbd "TAB") 'tab-to-tab-stop)
-	(setq-default tab-width 2)
-	(setq-default default-input-method 'portuguese-prefix)
+  (global-set-key (kbd "TAB") 'tab-to-tab-stop)
+  (setq-default tab-width 2)
+  (setq-default default-input-method 'portuguese-prefix)
  
-	(add-hook 'text-mode-hook 'visual-line-mode)
+  (add-hook 'text-mode-hook 'visual-line-mode)
 
-	(global-unset-key (kbd "C-z"))
-	(global-set-key (kbd "s-\\") 'suspend-frame)
-	(global-set-key (kbd "C-<right>")'forward-word)
-	(global-set-key (kbd "C-<left>") 'backward-word)
-	(put 'narrow-to-region 'disabled nil)
+  (global-unset-key (kbd "C-z"))
+  (global-set-key (kbd "s-\\") 'suspend-frame)
+  (global-set-key (kbd "C-<right>")'forward-word)
+  (global-set-key (kbd "C-<left>") 'backward-word)
+  (put 'narrow-to-region 'disabled nil)
 
 
 #+END_SRC
 
 ** Windows
 #+BEGIN_SRC emacs-lisp
-	;; janelas -- buffer
-	(use-package buffer-move
-		:ensure t
-		:bind (:map global-map
-			("C-x <up>"    . 'buf-move-up)
-			("C-x <left>"  . 'buf-move-left)
-			("C-x <down>"  . 'buf-move-down)
-			("C-x <right>" . 'buf-move-right)))
+  ;; janelas -- buffer
+  (use-package buffer-move
+    :ensure t
+    :bind (:map global-map
+      ("C-x <up>"    . 'buf-move-up)
+      ("C-x <left>"  . 'buf-move-left)
+      ("C-x <down>"  . 'buf-move-down)
+      ("C-x <right>" . 'buf-move-right)))
 
-	(use-package ace-window
-		:ensure t
-		:bind ("M-o" . 'ace-window))
+  (use-package ace-window
+    :ensure t
+    :bind ("M-o" . 'ace-window))
 
 
 #+END_SRC
@@ -450,95 +450,95 @@
 #+BEGIN_SRC emacs-lisp
 
 (let 
-	((alist
-		'((33 . ".\\(?:\\(?:==\\|!!\\)\\|[!=]\\)")
-			(35 . ".\\(?:###\\|##\\|_(\\|[#(?[_{]\\)")
-			(36 . ".\\(?:>\\)")
-			(37 . ".\\(?:\\(?:%%\\)\\|%\\)")
-			(38 . ".\\(?:\\(?:&&\\)\\|&\\)")
-			(42 . ".\\(?:\\(?:\\*\\*/\\)\\|\\(?:\\*[*/]\\)\\|[*/>]\\)")
-			(43 . ".\\(?:\\(?:\\+\\+\\)\\|[+>]\\)")
-			(45 . ".\\(?:\\(?:-[>-]\\|<<\\|>>\\)\\|[<>}~-]\\)")
-			(46 . ".\\(?:\\(?:\\.[.<]\\)\\|[.=-]\\)")
-			(47 . ".\\(?:\\(?:\\*\\*\\|//\\|==\\)\\|[*/=>]\\)")
-			(48 . ".\\(?:x[a-zA-Z]\\)")
-			(58 . ".\\(?:::\\|[:=]\\)")
-			(59 . ".\\(?:;;\\|;\\)")
-			(60 . ".\\(?:\\(?:!--\\)\\|\\(?:~~\\|->\\|\\$>\\|\\*>\\|\\+>\\|--\\|<[<=-]\\|=[<=>]\\||>\\)\\|[*$+~/<=>|-]\\)")
-			(61 . ".\\(?:\\(?:/=\\|:=\\|<<\\|=[=>]\\|>>\\)\\|[<=>~]\\)")
-			(62 . ".\\(?:\\(?:=>\\|>[=>-]\\)\\|[=>-]\\)")
-			(63 . ".\\(?:\\(\\?\\?\\)\\|[:=?]\\)")
-			(91 . ".\\(?:]\\)")
-			(92 . ".\\(?:\\(?:\\\\\\\\\\)\\|\\\\\\)")
-			(94 . ".\\(?:=\\)")
-			(119 . ".\\(?:ww\\)")
-			(123 . ".\\(?:-\\)")
-			(124 . ".\\(?:\\(?:|[=|]\\)\\|[=>|]\\)")
-			(126 . ".\\(?:~>\\|~~\\|[>=@~-]\\)"))))
-	(dolist
-		(char-regexp alist)
-		(set-char-table-range composition-function-table
-													(car char-regexp)
-												 `([,(cdr char-regexp) 0 font-shape-gstring]))))
+  ((alist
+    '((33 . ".\\(?:\\(?:==\\|!!\\)\\|[!=]\\)")
+      (35 . ".\\(?:###\\|##\\|_(\\|[#(?[_{]\\)")
+      (36 . ".\\(?:>\\)")
+      (37 . ".\\(?:\\(?:%%\\)\\|%\\)")
+      (38 . ".\\(?:\\(?:&&\\)\\|&\\)")
+      (42 . ".\\(?:\\(?:\\*\\*/\\)\\|\\(?:\\*[*/]\\)\\|[*/>]\\)")
+      (43 . ".\\(?:\\(?:\\+\\+\\)\\|[+>]\\)")
+      (45 . ".\\(?:\\(?:-[>-]\\|<<\\|>>\\)\\|[<>}~-]\\)")
+      (46 . ".\\(?:\\(?:\\.[.<]\\)\\|[.=-]\\)")
+      (47 . ".\\(?:\\(?:\\*\\*\\|//\\|==\\)\\|[*/=>]\\)")
+      (48 . ".\\(?:x[a-zA-Z]\\)")
+      (58 . ".\\(?:::\\|[:=]\\)")
+      (59 . ".\\(?:;;\\|;\\)")
+      (60 . ".\\(?:\\(?:!--\\)\\|\\(?:~~\\|->\\|\\$>\\|\\*>\\|\\+>\\|--\\|<[<=-]\\|=[<=>]\\||>\\)\\|[*$+~/<=>|-]\\)")
+      (61 . ".\\(?:\\(?:/=\\|:=\\|<<\\|=[=>]\\|>>\\)\\|[<=>~]\\)")
+      (62 . ".\\(?:\\(?:=>\\|>[=>-]\\)\\|[=>-]\\)")
+      (63 . ".\\(?:\\(\\?\\?\\)\\|[:=?]\\)")
+      (91 . ".\\(?:]\\)")
+      (92 . ".\\(?:\\(?:\\\\\\\\\\)\\|\\\\\\)")
+      (94 . ".\\(?:=\\)")
+      (119 . ".\\(?:ww\\)")
+      (123 . ".\\(?:-\\)")
+      (124 . ".\\(?:\\(?:|[=|]\\)\\|[=>|]\\)")
+      (126 . ".\\(?:~>\\|~~\\|[>=@~-]\\)"))))
+  (dolist
+    (char-regexp alist)
+    (set-char-table-range composition-function-table
+                          (car char-regexp)
+                         `([,(cdr char-regexp) 0 font-shape-gstring]))))
 #+END_SRC
 
 ** Cursors
 #+BEGIN_SRC emacs-lisp
-	(setq-default cursor-type '(bar . 1))
-	
-	(global-hl-line-mode)
+  (setq-default cursor-type '(bar . 1))
+  
+  (global-hl-line-mode)
 
-	(use-package multiple-cursors
-		:ensure t
-		:bind
-			((:map global-map)
-				("C-x C-e"  . 'mc/edit-lines)
-				("C->"      . 'mc/mark-next-like-this)
-				("C-<"      . 'mc/mark-previous-like-this)
-				("C-c C-<"  . 'mc/mark-all-like-this))
-		:config
-			(define-key mc/keymap (kbd "<return>") nil))
+  (use-package multiple-cursors
+    :ensure t
+    :bind
+      ((:map global-map)
+        ("C-x C-e"  . 'mc/edit-lines)
+        ("C->"      . 'mc/mark-next-like-this)
+        ("C-<"      . 'mc/mark-previous-like-this)
+        ("C-c C-<"  . 'mc/mark-all-like-this))
+    :config
+      (define-key mc/keymap (kbd "<return>") nil))
 
 #+END_SRC
 
 ** Delimiters
 #+BEGIN_SRC emacs-lisp
-		(use-package origami
-		:ensure t
-		:hook (prog-mode  . origami-mode)
-					(latex-mode . origami-mode)
-		:bind
-			("M-f" . origami-recursively-toggle-node)
-			("M-t" . origami-toggle-all-nodes))
+    (use-package origami
+    :ensure t
+    :hook (prog-mode  . origami-mode)
+          (latex-mode . origami-mode)
+    :bind
+      ("M-f" . origami-recursively-toggle-node)
+      ("M-t" . origami-toggle-all-nodes))
 
-	(use-package rainbow-delimiters	
-		:ensure t
-		:hook ((prog-mode LaTeX-mode). rainbow-delimiters-mode)
-		:custom-face
-			(rainbow-delimiters-depth-1-face ((t (:foreground "#A901DB"))))
-			(rainbow-delimiters-depth-2-face ((t (:foreground "#FE2E2E"))))
-			(rainbow-delimiters-depth-3-face ((t (:foreground "#d75f00"))))
-			(rainbow-delimiters-depth-4-face ((t (:foreground "#aeb404"))))
-			(rainbow-delimiters-depth-5-face ((t (:foreground "#088A08"))))
-			(rainbow-delimiters-depth-6-face ((t (:foreground "#008787"))))
-			(rainbow-delimiters-depth-8-face ((t (:foreground "#2ECCFA"))))
-			(rainbow-delimiters-depth-9-face ((t (:foreground "#CC2EFA")))))
+  (use-package rainbow-delimiters 
+    :ensure t
+    :hook ((prog-mode LaTeX-mode). rainbow-delimiters-mode)
+    :custom-face
+      (rainbow-delimiters-depth-1-face ((t (:foreground "#A901DB"))))
+      (rainbow-delimiters-depth-2-face ((t (:foreground "#FE2E2E"))))
+      (rainbow-delimiters-depth-3-face ((t (:foreground "#d75f00"))))
+      (rainbow-delimiters-depth-4-face ((t (:foreground "#aeb404"))))
+      (rainbow-delimiters-depth-5-face ((t (:foreground "#088A08"))))
+      (rainbow-delimiters-depth-6-face ((t (:foreground "#008787"))))
+      (rainbow-delimiters-depth-8-face ((t (:foreground "#2ECCFA"))))
+      (rainbow-delimiters-depth-9-face ((t (:foreground "#CC2EFA")))))
 
-	;; TODO: fix this
-	(use-package smartparens
-		:ensure t
-		:hook ((prog-mode text-mode org-mode). smartparens-mode)
-					((emacs-lisp-mode) . smartparens-strict-mode)
-		:bind ("C-c s u" . sp-unwrap-sexp)
-					("C-c s n" . sp-up-sexp)
+  ;; TODO: fix this
+  (use-package smartparens
+    :ensure t
+    :hook ((prog-mode text-mode org-mode). smartparens-mode)
+          ((emacs-lisp-mode) . smartparens-strict-mode)
+    :bind ("C-c s u" . sp-unwrap-sexp)
+          ("C-c s n" . sp-up-sexp)
 
-		:config
-			(sp-local-pair '(emacs-lisp-mode) "`" nil :actions nil)
-			(sp-local-pair '(emacs-lisp-mode) "'" nil :actions nil)
-			(sp-local-pair '(scheme-mode)     "'" nil :actions nil)
-			(sp-local-pair '(latex-mode)      "`" nil :actions nil)
-			(sp-local-pair '(lisp-mode)       "'" nil :actions nil)
-			(sp-local-pair '(org-mode)        "'" nil :actions nil))
+    :config
+      (sp-local-pair '(emacs-lisp-mode) "`" nil :actions nil)
+      (sp-local-pair '(emacs-lisp-mode) "'" nil :actions nil)
+      (sp-local-pair '(scheme-mode)     "'" nil :actions nil)
+      (sp-local-pair '(latex-mode)      "`" nil :actions nil)
+      (sp-local-pair '(lisp-mode)       "'" nil :actions nil)
+      (sp-local-pair '(org-mode)        "'" nil :actions nil))
 
 
 #+END_SRC
@@ -546,50 +546,50 @@
 ** Treemacs
 #+BEGIN_SRC emacs-lisp
 
-	(use-package treemacs
-		:ensure t
-		:custom
-			(treemacs-python-executable "/usr/local/bin/python3")
-			(treemacs-collapse-dirs 
-				(if (executable-find "python") 3 0))
-			(treemacs-display-in-side-window   t)
-			(treemacs-indentation              2)
-			(treemacs-indentation-string		 " ")
-			(treemacs-width                   25)
-			(treemacs-filewatch-mode           t)
-			(treemacs-fringe-indicator-mode    t)
-			(treemacs-follow-mode              t)
+  (use-package treemacs
+    :ensure t
+    :custom
+      (treemacs-python-executable "/usr/local/bin/python3")
+      (treemacs-collapse-dirs 
+        (if (executable-find "python") 3 0))
+      (treemacs-display-in-side-window   t)
+      (treemacs-indentation              2)
+      (treemacs-indentation-string     " ")
+      (treemacs-width                   25)
+      (treemacs-filewatch-mode           t)
+      (treemacs-fringe-indicator-mode    t)
+      (treemacs-follow-mode              t)
 
-		:bind (:map global-map
-						("C-t" . treemacs)))
+    :bind (:map global-map
+            ("C-t" . treemacs)))
 
-	(use-package treemacs-magit
-		:ensure t
-		:after magit treemacs)
+  (use-package treemacs-magit
+    :ensure t
+    :after magit treemacs)
 
 
 #+END_SRC
 
 ** Faces
 #+BEGIN_SRC emacs-lisp
-	(use-package linum-relative
-		:ensure t
-		:hook
-			((prog-mode . linum-relative-mode)
-			 (org-mode  . linum-relative-mode)
-			 (TeX-mode  . linum-mode)))
+  (use-package linum-relative
+    :ensure t
+    :hook
+      ((prog-mode . linum-relative-mode)
+       (org-mode  . linum-relative-mode)
+       (TeX-mode  . linum-mode)))
 
 
-	;; (defun on-frame-open (&optional frame)
-	;; 	"If the FRAME created in terminal don't load background color."
-	;; 		(set-face-background 'default		"#282828" frame)
-	;; 		(set-face-background 'mode-line "#282828" frame)
-	;; 		(set-face-background 'minibuffer-prompt "#282828" frame)
-	;; 		;; (set-face-background 'linum     "#282828" frame)
-	;; 		;; (set-face-background 'linum-relative-current-face	"#282828" frame)
-	;; 		)
+  ;; (defun on-frame-open (&optional frame)
+  ;;  "If the FRAME created in terminal don't load background color."
+  ;;    (set-face-background 'default   "#282828" frame)
+  ;;    (set-face-background 'mode-line "#282828" frame)
+  ;;    (set-face-background 'minibuffer-prompt "#282828" frame)
+  ;;    ;; (set-face-background 'linum     "#282828" frame)
+  ;;    ;; (set-face-background 'linum-relative-current-face  "#282828" frame)
+  ;;    )
 
-	;; (add-hook 'window-setup-hook 'on-frame-open)
+  ;; (add-hook 'window-setup-hook 'on-frame-open)
 #+END_SRC
 *** DONE ajeitar 
 
@@ -597,39 +597,39 @@
 #+BEGIN_SRC emacs-lisp
 
 (use-package all-the-icons
-	:ensure t
-	:pin melpa)
+  :ensure t
+  :pin melpa)
 
 (use-package doom-themes
-	:ensure t
-	:pin melpa
-	:custom
-		(doom-themes-enable-bold   t)
-		(doom-themes-enable-italic t)
-		(doom-themes-treemacs-theme "doom-colors")
+  :ensure t
+  :pin melpa
+  :custom
+    (doom-themes-enable-bold   t)
+    (doom-themes-enable-italic t)
+    (doom-themes-treemacs-theme "doom-colors")
 
-	:config
-		(load-theme 'doom-peacock t)
-;;	(load-theme 'doom-gruvbox t)
-		(doom-themes-treemacs-config)
-		(doom-themes-org-config))
+  :config
+    (load-theme 'doom-peacock t)
+;;  (load-theme 'doom-gruvbox t)
+    (doom-themes-treemacs-config)
+    (doom-themes-org-config))
 #+END_SRC
 
 ** Modeline
 #+BEGIN_SRC emacs-lisp
 
 (use-package doom-modeline
-	:ensure t
-	:init
-		(doom-modeline-mode 1)
+  :ensure t
+  :init
+    (doom-modeline-mode 1)
 
-	:custom
-		(doom-modeline-buffer-file-name-style 'file-name)
-		(doom-modeline-icon (display-graphic-p))
-		(doom-modeline-major-mode t)
-		(doom-modeline-major-mode-color-icon t)
-		(doom-modeline-buffer-state-icon t)
-		(doom-modeline-buffer-encoding t))
+  :custom
+    (doom-modeline-buffer-file-name-style 'file-name)
+    (doom-modeline-icon (display-graphic-p))
+    (doom-modeline-major-mode t)
+    (doom-modeline-major-mode-color-icon t)
+    (doom-modeline-buffer-state-icon t)
+    (doom-modeline-buffer-encoding t))
 
 #+END_SRC
 
@@ -637,36 +637,36 @@
 * Init
 
 #+BEGIN_SRC emacs-lisp
-	;edit this file
-	(defun find-init ()
-		(interactive)
-		(find-file (expand-file-name "~/.emacs.d/init.org")))
+  ;edit this file
+  (defun find-init ()
+    (interactive)
+    (find-file (expand-file-name "~/.emacs.d/init.org")))
 
-	(defun prepare-init (&rest _)
-		(split-window-right)
-		(find-init))
+  (defun prepare-init (&rest _)
+    (split-window-right)
+    (find-init))
 
-	(setenv "LANG" "pt_BR.UTF-8")
+  (setenv "LANG" "pt_BR.UTF-8")
 
-	(global-set-key (kbd "s-w")    'widen)
-	(global-set-key (kbd "M-i")    'find-init)
-	(global-set-key (kbd "M-r")    'eval-region)
-	(global-set-key (kbd "M-p")    'list-packages)
-	(global-set-key (kbd "M-l")    'eval-last-sexp)
-	(global-set-key (kbd "M-n")    'narrow-to-region)
-	(global-set-key (kbd "M-b")    'switch-to-buffer-other-window)
-	(global-set-key (kbd "C-x f")  'find-file)
-	(add-hook 'after-init-hook     'prepare-init)
+  (global-set-key (kbd "s-w")    'widen)
+  (global-set-key (kbd "M-i")    'find-init)
+  (global-set-key (kbd "M-r")    'eval-region)
+  (global-set-key (kbd "M-p")    'list-packages)
+  (global-set-key (kbd "M-l")    'eval-last-sexp)
+  (global-set-key (kbd "M-n")    'narrow-to-region)
+  (global-set-key (kbd "M-b")    'switch-to-buffer-other-window)
+  (global-set-key (kbd "C-x f")  'find-file)
+  (add-hook 'after-init-hook     'prepare-init)
 
 
 #+END_SRC
 
 - coisas a configurar
-	- irony
-	- treemacs
-	- multi-term
+  - irony
+  - treemacs
+  - multi-term
 # (-filter (lambda (nome)
-# 					 (string-match "^\"[^\*\ ]+*" nome))
+#            (string-match "^\"[^\*\ ]+*" nome))
 #  (--map (buffer-name it) (buffer-list)))
 
 # (--map (message (buffer-name it)) (buffer-list))
