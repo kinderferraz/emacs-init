@@ -385,7 +385,6 @@
       (split-width-threshold  30)
       (split-height-threshold 40)
       (magit-git-executable "/usr/local/Cellar/git/2.26.2/bin/git")
-			(magit-auto-revert-mode nil)
     :config
       (remove-hook 'server-switch-hook 'magit-commit-diff))
 
