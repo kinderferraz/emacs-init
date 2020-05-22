@@ -423,8 +423,9 @@
   (global-set-key (kbd "s-\\") 'suspend-frame)
   (global-set-key (kbd "C-<right>")'forward-word)
   (global-set-key (kbd "C-<left>") 'backward-word)
-  (put 'narrow-to-region 'disabled nil)
 
+  (put 'narrow-to-region   'disabled nil)
+  (setq ring-bell-function 'ignore)
 
 #+END_SRC
 
