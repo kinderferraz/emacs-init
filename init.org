@@ -633,6 +633,8 @@
     (doom-modeline-buffer-state-icon t)
     (doom-modeline-buffer-encoding t))
 
+  (remove-hook 'python-mode-hook 'doom-modeline-env-setup-python)
+
 #+END_SRC
 
 
