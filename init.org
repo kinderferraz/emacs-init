@@ -620,20 +620,20 @@
 ** Modeline
 #+BEGIN_SRC emacs-lisp
 
-(use-package doom-modeline
-  :ensure t
-  :init
-    (doom-modeline-mode 1)
+	(use-package doom-modeline
+		:ensure t
+		:init
+			(doom-modeline-mode 1)
 
-  :custom
-    (doom-modeline-buffer-file-name-style 'file-name)
-    (doom-modeline-icon (display-graphic-p))
-    (doom-modeline-major-mode t)
-    (doom-modeline-major-mode-color-icon t)
-    (doom-modeline-buffer-state-icon t)
-    (doom-modeline-buffer-encoding t))
+		:custom
+			(doom-modeline-buffer-file-name-style 'file-name)
+			(doom-modeline-icon (display-graphic-p))
+			(doom-modeline-major-mode t)
+			(doom-modeline-major-mode-color-icon t)
+			(doom-modeline-buffer-state-icon t)
+			(doom-modeline-buffer-encoding t))
 
-  (remove-hook 'python-mode-hook 'doom-modeline-env-setup-python)
+		(remove-hook 'python-mode-hook 'doom-modeline-env-setup-python)
 
 #+END_SRC
 
