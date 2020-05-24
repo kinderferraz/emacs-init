@@ -452,7 +452,11 @@
 #+BEGIN_SRC emacs-lisp
   (use-package fira-code-mode
     :ensure t
-    :config (global-fira-code-mode))
+    :config (global-fira-code-mode)
+    :custom
+      (fira-code-mode-disabled-ligatures '("[]" "#{" "#("
+                                           "#_" "#_(" "x")))
+
 
 #+END_SRC
 
