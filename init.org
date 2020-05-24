@@ -397,35 +397,36 @@
 ** Misc
 #+BEGIN_SRC emacs-lisp
 
-  (when (display-graphic-p)
-    (setq default-frame-alist
-      '((tool-bar-lines .  0)
-        (cursor-color   . "#d75f00")
-        (fullscreen     . maximized)
-        (font           . "Fira Code Retina-11")
-        (vertical-scroll-bars    . nil)
-        (ns-transparent-titlebar .   t))))
+	(when (display-graphic-p)
+		(setq default-frame-alist
+			'((tool-bar-lines .  0)
+				(cursor-color   . "#d75f00")
+				(fullscreen     . maximized)
+				;; (font           . "Fira Code Retina-11")
+        (font           . "Andale Mono-11")
+				(vertical-scroll-bars    . nil)
+				(ns-transparent-titlebar .   t))))
 
-  (unless (display-graphic-p)
-    (menu-bar-mode -1))
+	(unless (display-graphic-p)
+		(menu-bar-mode -1))
 
-  (setq-default frame-title-format
-                (concat  "%b -- emacs@" (system-name)))
-  (setq inhibit-startup-screen t)
+	(setq-default frame-title-format
+								(concat  "%b -- emacs@" (system-name)))
+	(setq inhibit-startup-screen t)
 
-  (global-set-key (kbd "TAB") 'tab-to-tab-stop)
-  (setq-default tab-width 2)
-  (setq-default default-input-method 'portuguese-prefix)
- 
-  (add-hook 'text-mode-hook 'visual-line-mode)
+	(global-set-key (kbd "TAB") 'tab-to-tab-stop)
+	(setq-default tab-width 2)
+	(setq-default default-input-method 'portuguese-prefix)
 
-  (global-unset-key (kbd "C-z"))
-  (global-set-key (kbd "s-\\") 'suspend-frame)
-  (global-set-key (kbd "C-<right>")'forward-word)
-  (global-set-key (kbd "C-<left>") 'backward-word)
+	(add-hook 'text-mode-hook 'visual-line-mode)
 
-  (put 'narrow-to-region   'disabled nil)
-  (setq ring-bell-function 'ignore)
+	(global-unset-key (kbd "C-z"))
+	(global-set-key (kbd "s-\\") 'suspend-frame)
+	(global-set-key (kbd "C-<right>")'forward-word)
+	(global-set-key (kbd "C-<left>") 'backward-word)
+
+	(put 'narrow-to-region   'disabled nil)
+	(setq ring-bell-function 'ignore)
 
 #+END_SRC
 
@@ -451,37 +452,37 @@
 
 #+BEGIN_SRC emacs-lisp
 
-(let 
-  ((alist
-    '((33 . ".\\(?:\\(?:==\\|!!\\)\\|[!=]\\)")
-      (35 . ".\\(?:###\\|##\\|_(\\|[#(?[_{]\\)")
-      (36 . ".\\(?:>\\)")
-      (37 . ".\\(?:\\(?:%%\\)\\|%\\)")
-      (38 . ".\\(?:\\(?:&&\\)\\|&\\)")
-      (42 . ".\\(?:\\(?:\\*\\*/\\)\\|\\(?:\\*[*/]\\)\\|[*/>]\\)")
-      (43 . ".\\(?:\\(?:\\+\\+\\)\\|[+>]\\)")
-      (45 . ".\\(?:\\(?:-[>-]\\|<<\\|>>\\)\\|[<>}~-]\\)")
-      (46 . ".\\(?:\\(?:\\.[.<]\\)\\|[.=-]\\)")
-      (47 . ".\\(?:\\(?:\\*\\*\\|//\\|==\\)\\|[*/=>]\\)")
-      (48 . ".\\(?:x[a-zA-Z]\\)")
-      (58 . ".\\(?:::\\|[:=]\\)")
-      (59 . ".\\(?:;;\\|;\\)")
-      (60 . ".\\(?:\\(?:!--\\)\\|\\(?:~~\\|->\\|\\$>\\|\\*>\\|\\+>\\|--\\|<[<=-]\\|=[<=>]\\||>\\)\\|[*$+~/<=>|-]\\)")
-      (61 . ".\\(?:\\(?:/=\\|:=\\|<<\\|=[=>]\\|>>\\)\\|[<=>~]\\)")
-      (62 . ".\\(?:\\(?:=>\\|>[=>-]\\)\\|[=>-]\\)")
-      (63 . ".\\(?:\\(\\?\\?\\)\\|[:=?]\\)")
-      (91 . ".\\(?:]\\)")
-      (92 . ".\\(?:\\(?:\\\\\\\\\\)\\|\\\\\\)")
-      (94 . ".\\(?:=\\)")
-      (119 . ".\\(?:ww\\)")
-      (123 . ".\\(?:-\\)")
-      (124 . ".\\(?:\\(?:|[=|]\\)\\|[=>|]\\)")
-      (126 . ".\\(?:~>\\|~~\\|[>=@~-]\\)"))))
-  (dolist
-    (char-regexp alist)
-    (set-char-table-range composition-function-table
-                          (car char-regexp)
-                         `([,(cdr char-regexp) 0 font-shape-gstring]))))
+	;; (let 
+	;;   ((alist
+	;;     '((33 . ".\\(?:\\(?:==\\|!!\\)\\|[!=]\\)")
+	;;       (35 . ".\\(?:###\\|##\\|_(\\|[#(?[_{]\\)")
+	;;       (36 . ".\\(?:>\\)")
+	;;       (37 . ".\\(?:\\(?:%%\\)\\|%\\)")
+	;;       (38 . ".\\(?:\\(?:&&\\)\\|&\\)")
+	;;       (42 . ".\\(?:\\(?:\\*\\*/\\)\\|\\(?:\\*[*/]\\)\\|[*/>]\\)")
+	;;       (43 . ".\\(?:\\(?:\\+\\+\\)\\|[+>]\\)")
+	;;       (45 . ".\\(?:\\(?:-[>-]\\|<<\\|>>\\)\\|[<>}~-]\\)")
+	;;       (46 . ".\\(?:\\(?:\\.[.<]\\)\\|[.=-]\\)")
+	;;       (47 . ".\\(?:\\(?:\\*\\*\\|//\\|==\\)\\|[*/=>]\\)")
+	;;       (48 . ".\\(?:x[a-zA-Z]\\)")
+	;;       (58 . ".\\(?:::\\|[:=]\\)")
+	;;       (59 . ".\\(?:;;\\|;\\)")
+	;;       (60 . ".\\(?:\\(?:!--\\)\\|\\(?:~~\\|->\\|\\$>\\|\\*>\\|\\+>\\|--\\|<[<=-]\\|=[<=>]\\||>\\)\\|[*$+~/<=>|-]\\)")
+	;;       (61 . ".\\(?:\\(?:/=\\|:=\\|<<\\|=[=>]\\|>>\\)\\|[<=>~]\\)")
+	;;       (62 . ".\\(?:\\(?:=>\\|>[=>-]\\)\\|[=>-]\\)")
+	;;       (63 . ".\\(?:\\(\\?\\?\\)\\|[:=?]\\)")
+	;;       (91 . ".\\(?:]\\)")
+	;;       (92 . ".\\(?:\\(?:\\\\\\\\\\)\\|\\\\\\)")
+	;;       (94 . ".\\(?:=\\)")
+	;;       (119 . ".\\(?:ww\\)")
+	;;       (123 . ".\\(?:-\\)")
+	;;       (124 . ".\\(?:\\(?:|[=|]\\)\\|[=>|]\\)")
+	;;       (126 . ".\\(?:~>\\|~~\\|[>=@~-]\\)"))))
+	;;   (dolist
+	;;     (char-regexp alist)
+	;;     (set-char-table-range composition-function-table
+	;;                           (car char-regexp)
+	;;                          `([,(cdr char-regexp) 0 font-shape-gstring]))))
 #+END_SRC
 
 ** Cursors
