@@ -402,8 +402,7 @@
 			'((tool-bar-lines .  0)
 				(cursor-color   . "#d75f00")
 				(fullscreen     . maximized)
-				;; (font           . "Fira Code Retina-11")
-        (font           . "Andale Mono-11")
+				(font           . "Fira Code Retina-11")
 				(vertical-scroll-bars    . nil)
 				(ns-transparent-titlebar .   t))))
 
