@@ -171,8 +171,6 @@
 ** Python
 
 #+BEGIN_SRC emacs-lisp
-    :config
-      (elpy-enable)
 	(use-package elpy
 		:ensure t
 		:hook
