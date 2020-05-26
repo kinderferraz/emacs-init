@@ -573,23 +573,23 @@
 ** Theme
 #+BEGIN_SRC emacs-lisp
 
-	(use-package all-the-icons
-		:ensure t
-		:pin melpa)
+  (use-package all-the-icons
+    :ensure t
+    :pin melpa)
 
-	(use-package doom-themes
-		:ensure t
-		:pin melpa
-		:custom
-			(doom-themes-enable-bold   t)
-			(doom-themes-enable-italic t)
-			(doom-themes-treemacs-theme "doom-colors")
+  (use-package doom-themes
+    :ensure t
+    :pin melpa
+    :custom
+      (doom-themes-enable-bold   t)
+      (doom-themes-enable-italic t)
+      (doom-themes-treemacs-theme "doom-colors")
 
-		:config
-			(load-theme 'doom-peacock t)
-	;;  (load-theme 'doom-gruvbox t)
-			(doom-themes-treemacs-config)
-			(doom-themes-org-config))
+    :config
+      (load-theme 'doom-peacock t)
+  ;;  (load-theme 'doom-gruvbox t)
+      (doom-themes-treemacs-config)
+      (doom-themes-org-config))
 #+END_SRC
 
 ** Modeline
