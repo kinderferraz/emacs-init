@@ -88,16 +88,16 @@
 #+BEGIN_SRC emacs-lisp
   (use-package org-journal
     :ensure t
-  ;;  :hook (bind-key (kbd "C-c C-s") 'org-journal-schedule)
+    ;;  :hook (bind-key (kbd "C-c C-s") 'org-journal-schedule)
     :bind ("C-c n" . org-journal-new-entry))
 
 
   (defun org-journal-find-location ()
-  ;; Open today's journal, but specify a non-nil prefix argument in order to
-  ;; inhibit inserting the heading; org-capture will insert the heading.
+    ;; Open today's journal, but specify a non-nil prefix argument in order to
+    ;; inhibit inserting the heading; org-capture will insert the heading.
     (org-journal-new-entry t)
-  ;; Position point on the journal's top-level heading so that org-capture
-  ;; will add the new entry as a child entry.
+    ;; Position point on the journal's top-level heading so that org-capture
+    ;; will add the new entry as a child entry.
     (goto-char (point-min)))
 
   (setq org-capture-templates 
@@ -172,21 +172,21 @@
 ** Python
 
 #+BEGIN_SRC emacs-lisp
-	(use-package elpy
-		:ensure t
-		:hook
-			(python-mode . elpy-mode)
-			(python-mode . elpy-enable)
-		:custom
-			(python-shell-intrepreter "python3")
-			(python-shell-interpreter-args "-i")
-			(python-shell-completion-native-enable         nil)
-			(python-shell-intrepreter-args    "--colors=Linux")
-			(compilation-ask-about-save                    nil))
+  (use-package elpy
+    :ensure t
+    :hook
+      (python-mode . elpy-mode)
+      (python-mode . elpy-enable)
+    :custom
+      (python-shell-intrepreter "python3")
+      (python-shell-interpreter-args "-i")
+      (python-shell-completion-native-enable         nil)
+      (python-shell-intrepreter-args    "--colors=Linux")
+      (compilation-ask-about-save                    nil))
 
-	(use-package py-autopep8
-		:ensure t
-		:hook (python-mode . py-autopep8-enable-on-save))
+  (use-package py-autopep8
+    :ensure t
+    :hook (python-mode . py-autopep8-enable-on-save))
 
 #+END_SRC
 *** TODO configurar python
@@ -397,35 +397,35 @@
 ** Misc
 #+BEGIN_SRC emacs-lisp
 
-	(when (display-graphic-p)
-		(setq default-frame-alist
-			'((tool-bar-lines .  0)
-				(cursor-color   . "#d75f00")
-				(fullscreen     . maximized)
-				(font           . "Fira Code Retina-11")
-				(vertical-scroll-bars    . nil)
-				(ns-transparent-titlebar .   t))))
+  (when (display-graphic-p)
+    (setq default-frame-alist
+      '((tool-bar-lines .  0)
+        (cursor-color   . "#d75f00")
+        (fullscreen     . maximized)
+        (font           . "Fira Code Retina-11")
+        (vertical-scroll-bars    . nil)
+        (ns-transparent-titlebar .   t))))
 
-	(unless (display-graphic-p)
-		(menu-bar-mode -1))
+  (unless (display-graphic-p)
+    (menu-bar-mode -1))
 
-	(setq-default frame-title-format
-								(concat  "%b -- emacs@" (system-name)))
-	(setq inhibit-startup-screen t)
+  (setq-default frame-title-format
+                (concat  "%b -- emacs@" (system-name)))
+  (setq inhibit-startup-screen t)
 
-	(global-set-key (kbd "TAB") 'tab-to-tab-stop)
-	(setq-default tab-width 2)
-	(setq-default default-input-method 'portuguese-prefix)
+  (global-set-key (kbd "TAB") 'tab-to-tab-stop)
+  (setq-default tab-width 2)
+  (setq-default default-input-method 'portuguese-prefix)
 
-	(add-hook 'text-mode-hook 'visual-line-mode)
+  (add-hook 'text-mode-hook 'visual-line-mode)
 
-	(global-unset-key (kbd "C-z"))
-	(global-set-key (kbd "s-\\") 'suspend-frame)
-	(global-set-key (kbd "C-<right>")'forward-word)
-	(global-set-key (kbd "C-<left>") 'backward-word)
+  (global-unset-key (kbd "C-z"))
+  (global-set-key (kbd "s-\\") 'suspend-frame)
+  (global-set-key (kbd "C-<right>")'forward-word)
+  (global-set-key (kbd "C-<left>") 'backward-word)
 
-	(put 'narrow-to-region   'disabled nil)
-	(setq ring-bell-function 'ignore)
+  (put 'narrow-to-region   'disabled nil)
+  (setq ring-bell-function 'ignore)
 
 #+END_SRC
 
@@ -596,18 +596,18 @@
 ** Modeline
 #+BEGIN_SRC emacs-lisp
 
-	(use-package doom-modeline
-		:ensure t
-		:init
-			(doom-modeline-mode 1)
+  (use-package doom-modeline
+    :ensure t
+    :init
+      (doom-modeline-mode 1)
 
-		:custom
-			(doom-modeline-buffer-file-name-style 'file-name)
-			(doom-modeline-icon (display-graphic-p))
-			(doom-modeline-major-mode t)
-			(doom-modeline-major-mode-color-icon t)
-			(doom-modeline-buffer-state-icon t)
-			(doom-modeline-buffer-encoding t))
+    :custom
+      (doom-modeline-buffer-file-name-style 'file-name)
+      (doom-modeline-icon (display-graphic-p))
+      (doom-modeline-major-mode t)
+      (doom-modeline-major-mode-color-icon t)
+      (doom-modeline-buffer-state-icon t)
+      (doom-modeline-buffer-encoding t))
 
 
 #+END_SRC
