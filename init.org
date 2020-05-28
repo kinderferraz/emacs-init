@@ -616,7 +616,7 @@
 * Init
 
 #+BEGIN_SRC emacs-lisp
-  ;edit this file
+  ;; edit this file
   (defun find-init ()
     (interactive)
     (find-file (expand-file-name "~/.emacs.d/init.org")))
