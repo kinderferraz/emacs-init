@@ -50,37 +50,43 @@
 * Org
 ** Plain org
 #+BEGIN_SRC emacs-lisp
-  
   (use-package org
-    :ensure t
-    :pin org
+		:ensure t
+		:pin org
 
-    :custom
-      ;; dirs
-      (org-directory   "~/org/")
-      (org-journal-dir "~/org/journal/" )
+		:custom
+			;; dirs
+			(org-directory   "~/org/")
+			(org-journal-dir "~/org/journal/" )
 
-      ;; files
-      (org-default-notes-file (concat org-directory "notes.org"))
-      (org-agenda-files      '(list "~/org/notes.org"
-                                    "~/org/journal/"))
-      ;; formats
-      (org-journal-file-format "%d.%m.%y.org")    
-      (org-journal-date-format "%A :: %d/%m/%Y")
-      (org-journal-time-format "%H:M")
+			;; files
+			(org-default-notes-file (concat org-directory "notes.org"))
+			(org-agenda-files      '(list "~/org/notes.org"
+																			"~/org/journal/"))
+			;; formats
+			(org-journal-file-format "%d.%m.%y.org")    
+			(org-journal-date-format "%A :: %d/%m/%Y")
+			(org-journal-time-format "%H:M")
 
-      ;; prefixes
-      (org-journal-date-prefix "* ")
-      (org-journal-time-prefix "** ")
+			;; prefixes
+			(org-journal-date-prefix "-> ")
+			(org-journal-time-prefix "<> ")
 
-      ;; misc
-      (org-deadline-warning-days 7)
-      (org-display-inline-images t)
-      (org-journal-enable-agenda-integration t)
-      (org-extend-today-until 6)
+			;; misc
+			(org-deadline-warning-days 7)
+			(org-display-inline-images t)
+			(org-journal-enable-agenda-integration t)
+			(org-extend-today-until 6)
 
-      (org-cycle-emulate-tab 'exc-hl-bol)
-      (org-support-shift-select 'always))
+			(org-cycle-emulate-tab 'exc-hl-bol)
+			(org-support-shift-select 'always)
+
+			(org-todo-keywords '((sequence "TODO" "DESIGNING" "CODING" "|" "DONE" 
+                                     "FORGOTTEN")))
+
+			;; :bind (:map org-mode-map
+			;;   ("s-<right>"))
+)
 
 #+END_SRC
 
@@ -189,7 +195,6 @@
     :hook (python-mode . py-autopep8-enable-on-save))
 
 #+END_SRC
-*** TODO configurar python
 
 ** JAVA
 #+BEGIN_SRC emacs-lisp
@@ -569,7 +574,6 @@
 
   ;; (add-hook 'window-setup-hook 'on-frame-open)
 #+END_SRC
-*** DONE ajeitar 
 
 ** Theme
 #+BEGIN_SRC emacs-lisp
@@ -640,14 +644,3 @@
 
 #+END_SRC
 
-- coisas a configurar
-  - irony
-  - treemacs
-  - multi-term
-# (-filter (lambda (nome)
-#            (string-match "^\"[^\*\ ]+*" nome))
-#  (--map (buffer-name it) (buffer-list)))
-
-# (--map (message (buffer-name it)) (buffer-list))
-
-# (treemacs--defstruct treemacs-buffers name buffers)
