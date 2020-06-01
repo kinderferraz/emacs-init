@@ -293,15 +293,11 @@
 
     :custom
       (js-indent-level 2)
-      (sgml-basic-offset 2))
-
-#+END_SRC
-
-** NODE
-#+BEGIN_SRC emacs-lisp
-  (use-package npm-mode
-    :pin melpa
-    :ensure t)
+      (sgml-basic-offset 2)
+    :config
+      (use-package npm-mode
+        :pin melpa
+        :ensure t))
 
 #+END_SRC
 
