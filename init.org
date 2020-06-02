@@ -284,6 +284,11 @@
     :custom
       (css-indent-offset 2))
 
+#+END_SRC
+
+** Node && TypeScrpipt
+#+BEGIN_SRC emacs-lisp
+
   (use-package rjsx-mode
     :ensure t
     :pin melpa
@@ -298,6 +303,14 @@
       (use-package npm-mode
         :pin melpa
         :ensure t))
+
+  (use-package tide
+    :ensure t
+    :after (typescript-mode company flycheck)
+
+    :hook  ((typescript-mode . tide-setup)
+            (typescript-mode . tide-hl-identifier-mode)
+            (before-save . tide-format-before-save)))
 
 #+END_SRC
 
