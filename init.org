@@ -143,6 +143,7 @@
 
 * Languages
 
+
 ** Yasnippets
 #+BEGIN_SRC emacs-lisp
 
@@ -160,7 +161,7 @@
 
 #+END_SRC
 
-** Compilação
+** Syntax Check
 #+BEGIN_SRC emacs-lisp
   (use-package flycheck
     :ensure t
@@ -289,6 +290,15 @@
     :custom
       (css-indent-offset 2))
 
+  (use-package emmet-mode
+    :ensure t
+    :hook 
+      ((css-mode-hook   . emmet-mode)
+       (sgml-mode-hook  . emmet-mode))
+
+     :custom 
+       (emmet-indent-after-insert nil)
+       (emmet-expand-jsx-className? t))
 #+END_SRC
 
 ** Node & TypeScrpipt
