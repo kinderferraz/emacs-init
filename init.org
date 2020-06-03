@@ -123,6 +123,12 @@
 
 * TERM
 #+BEGIN_SRC emacs-lisp
+  (require 'ansi-color)
+  (defun colorize-compilation-buffer ()
+    (let ((inhibit-read-only t))
+      (ansi-color-apply-on-region (point-min) (point-max))))
+  (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
+
   (use-package exec-path-from-shell
     :ensure t
     :config
@@ -296,31 +302,43 @@
 
 #+END_SRC
 
-** Node && TypeScrpipt
+** Node & TypeScrpipt
 #+BEGIN_SRC emacs-lisp
 
-  (use-package rjsx-mode
-    :ensure t
-    :pin melpa
-    :mode
-      ("\\.js\\'" . rjsx-mode)
-      ("\\.jsx\\'" . rjsx-mode)
+		(use-package rjsx-mode
+			:ensure t
+			:pin melpa
+			:mode
+				("\\.js\\'" . rjsx-mode)
+				("\\.jsx\\'" . rjsx-mode)
 
-    :custom
-      (js-indent-level 2)
-      (sgml-basic-offset 2)
-    :config
-      (use-package npm-mode
-        :pin melpa
-        :ensure t))
+			:custom
+				(js-indent-level 2)
+				(sgml-basic-offset 0))
 
-  (use-package tide
-    :ensure t
-    :after (typescript-mode company flycheck)
+	(use-package tide
+		:ensure t
+		:after (typescript-mode company flycheck)
+		:hook ((typescript-mode . company-mode)
+           (typescript-mode . tide-setup)
+					 (typescript-mode . tide-hl-identifier-mode)
+					 (before-save . tide-format-before-save))
 
-    :hook  ((typescript-mode . tide-setup)
-            (typescript-mode . tide-hl-identifier-mode)
-            (before-save . tide-format-before-save)))
+		:config
+      (setq typescript-indent-level 2)
+			(setq tide-format-options 
+				'(:indentSize 2
+					:indentStyle 'block
+          :convertTabsToSpaces nil
+					:placeOpenBraceOnNewLineForFunctions nil 
+					:insertSpaceAfterSemicolonInForStatements nil
+					:insertSpaceAfterFunctionKeywordForAnonymousFunctions t)))
+
+		(use-package npm-mode
+			:pin melpa
+			:ensure t
+			:hook ((rjsx-mode       . npm-mode)
+						 (typescript-mode . npm-mode)))
 
 #+END_SRC
 
