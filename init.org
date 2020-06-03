@@ -305,20 +305,25 @@
 ** Node & TypeScrpipt
 #+BEGIN_SRC emacs-lisp
 
-		(use-package rjsx-mode
-			:ensure t
-			:pin melpa
-			:mode
-				("\\.js\\'" . rjsx-mode)
-				("\\.jsx\\'" . rjsx-mode)
+	(use-package rjsx-mode
+		:ensure t
+		:pin melpa
+		:mode
+			("\\.js\\'"  . rjsx-mode)
+			("\\.jsx\\'" . rjsx-mode)
 
-			:custom
-				(js-indent-level 2)
-				(sgml-basic-offset 0))
+		:custom
+			(js-indent-level 2)
+			(sgml-basic-offset 0))
 
 	(use-package tide
 		:ensure t
 		:after (typescript-mode company flycheck)
+		:mode
+			("\\.ts\\'"  . typescript-mode)
+			("\\.tsx\\'" . typescript-mode)
+
+
 		:hook ((typescript-mode . company-mode)
            (typescript-mode . tide-setup)
 					 (typescript-mode . tide-hl-identifier-mode)
