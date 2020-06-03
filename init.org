@@ -143,17 +143,6 @@
 
 * Languages
 
-** AC
-#+BEGIN_SRC emacs-lisp
-
-  (use-package auto-complete
-    :ensure t
-    :config (ac-config-default)
-    :custom (ac-fuzzy-enable t)
-    :hook   (org-mode . auto-complete-mode))
-
-#+END_SRC
-
 ** Yasnippets
 #+BEGIN_SRC emacs-lisp
 
