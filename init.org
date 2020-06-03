@@ -323,8 +323,8 @@
 			("\\.tsx\\'" . typescript-mode)
 
 
-		:hook ((typescript-mode . company-mode)
-           (typescript-mode . tide-setup)
+		:hook ((typescript-mode . tide-setup)
+           (typescript-mode . company-mode)
 					 (typescript-mode . tide-hl-identifier-mode)
 					 (before-save . tide-format-before-save))
 
