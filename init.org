@@ -328,11 +328,17 @@
 					:insertSpaceAfterSemicolonInForStatements nil
 					:insertSpaceAfterFunctionKeywordForAnonymousFunctions t)))
 
-		(use-package npm-mode
-			:pin melpa
-			:ensure t
-			:hook ((rjsx-mode       . npm-mode)
-						 (typescript-mode . npm-mode)))
+  ;; enable typescript-tslint checker
+#+END_SRC
+
+** NPM 
+#+BEGIN_SRC emacs-lisp
+	(use-package npm-mode
+		:pin melpa
+		:ensure t
+		:hook ((rjsx-mode       . npm-mode)
+					 (typescript-mode . npm-mode)
+					 (web-mode        . npm-mode)))
 
 #+END_SRC
 
