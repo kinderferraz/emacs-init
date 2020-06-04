@@ -272,27 +272,19 @@
 
 ** WEB
 #+BEGIN_SRC emacs-lisp
-  (use-package mhtml-mode
-    :ensure nil
-    :mode ("\\.html\\'" . mhtml-mode)
-    :bind (:map mhtml-mode-map
-      ("C-<return>" . 'html-paragraph)
-      ("C-c r"      . 'html-horizontal-rule)
-      ("C-c t"      . 'sgml-tag)
-      ("M-<return>" . 'html-list-item)
-      ("C-c \\"     . 'sgml-close-tag)))
-
-  (use-package css
-    :ensure nil
-    :mode ("\\.css\\'" . css-mode)
-    :custom
-      (css-indent-offset 2))
+  (use-package web-mode
+    :ensure t
+    :config
+      (add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
+    :hook (web-mode . (lambda ()
+            (when (string-equal "tsx" (file-name-extension buffer-file-name))
+              (tide-setup)))))
 
   (use-package emmet-mode
     :ensure t
     :hook 
-      ((css-mode-hook   . emmet-mode)
-       (sgml-mode-hook  . emmet-mode))
+      ((web-mode  . emmet-mode)
+       (rjsx-mode . emmet-mode))
 
      :custom 
        (emmet-indent-after-insert nil)
