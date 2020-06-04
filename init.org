@@ -300,8 +300,8 @@
 		:ensure t
 		:pin melpa
 		:mode
-			("\\.js\\'"  . rjsx-mode)
-			("\\.jsx\\'" . rjsx-mode)
+			(("\\.js\\'"  . rjsx-mode)
+			 ("\\.jsx\\'" . rjsx-mode))
 
 		:custom
 			(js-indent-level 2)
