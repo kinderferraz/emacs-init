@@ -573,7 +573,12 @@
       (treemacs-follow-mode              t)
 
     :bind (:map global-map
-            ("M-t" . treemacs)))
+            ("M-t" . treemacs))
+
+    :config
+      (defvar treemacs-custom-tsx-icon
+              (all-the-icons-icon-for-file "name.ts"))
+      (treemacs-define-custom-icon treemacs-custom-tsx-icon "tsx"))
 
   (use-package treemacs-magit
     :ensure t
