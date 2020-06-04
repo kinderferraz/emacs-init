@@ -142,8 +142,6 @@
 
 
 * Languages
-
-
 ** Yasnippets
 #+BEGIN_SRC emacs-lisp
 
@@ -315,25 +313,23 @@
 			(js-indent-level 2)
 			(sgml-basic-offset 0))
 
+	;; temp solution
+  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode))
+
 	(use-package tide
 		:ensure t
 		:after (typescript-mode company flycheck)
-		:mode
-			("\\.ts\\'"  . typescript-mode)
-			("\\.tsx\\'" . typescript-mode)
-
-
 		:hook ((typescript-mode . tide-setup)
-           (typescript-mode . company-mode)
+					 (typescript-mode . company-mode)
 					 (typescript-mode . tide-hl-identifier-mode)
 					 (before-save . tide-format-before-save))
 
 		:config
-      (setq typescript-indent-level 2)
+			(setq typescript-indent-level 2)
 			(setq tide-format-options 
 				'(:indentSize 2
 					:indentStyle 'block
-          :convertTabsToSpaces nil
+					:convertTabsToSpaces nil
 					:placeOpenBraceOnNewLineForFunctions nil 
 					:insertSpaceAfterSemicolonInForStatements nil
 					:insertSpaceAfterFunctionKeywordForAnonymousFunctions t)))
@@ -532,8 +528,8 @@
     :hook (prog-mode  . origami-mode)
           (latex-mode . origami-mode)
     :bind
-      ("M-f" . origami-recursively-toggle-node)
-      ("M-t" . origami-toggle-all-nodes))
+      ("C-f" . origami-recursively-toggle-node)
+      ("C-t" . origami-toggle-all-nodes))
 
   (use-package rainbow-delimiters 
     :ensure t
@@ -585,7 +581,7 @@
       (treemacs-follow-mode              t)
 
     :bind (:map global-map
-            ("C-t" . treemacs)))
+            ("M-t" . treemacs)))
 
   (use-package treemacs-magit
     :ensure t
