@@ -307,12 +307,9 @@
 			(js-indent-level 2)
 			(sgml-basic-offset 0))
 
-	;; temp solution
-  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode))
-
 	(use-package tide
 		:ensure t
-		:after (typescript-mode company flycheck)
+		:requires (typescript-mode company flycheck)
 		:hook ((typescript-mode . tide-setup)
 					 (typescript-mode . company-mode)
 					 (typescript-mode . tide-hl-identifier-mode)
