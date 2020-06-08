@@ -520,13 +520,6 @@
 
 ** Delimiters
 #+BEGIN_SRC emacs-lisp
-    (use-package origami
-    :ensure t
-    :hook (prog-mode  . origami-mode)
-          (latex-mode . origami-mode)
-    :bind
-      ("C-f" . origami-recursively-toggle-node)
-      ("C-t" . origami-toggle-all-nodes))
 
   (use-package rainbow-delimiters 
     :ensure t
