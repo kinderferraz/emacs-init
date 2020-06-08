@@ -293,11 +293,21 @@
 #+BEGIN_SRC emacs-lisp
   (use-package web-mode
     :ensure t
-    :config
-      (add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
-    :hook (web-mode . (lambda ()
+    :init
+      (add-to-list 'auto-mode-alist '("\\.html?\\'"  . web-mode))
+      (add-to-list 'auto-mode-alist '("\\.css\\'"    . web-mode))
+      (add-to-list 'auto-mode-alist '("\\.tsx\\'"   . web-mode))
+    :hook 
+      ((web-mode . company-mode)
+       (web-mode . (lambda ()
             (when (string-equal "tsx" (file-name-extension buffer-file-name))
-              (tide-setup)))))
+              (progn
+                (tide-setup)
+                (add-hook 'before-save 'tide-format-before-save))))))
+    :custom
+      (web-mode-markup-indent-offset 2)
+      (web-mode-css-indent-offset 2)
+      (web-mode-code-indent-offset 2))
 
   (use-package emmet-mode
     :ensure t
@@ -326,11 +336,10 @@
 
 	(use-package tide
 		:ensure t
-		:requires (typescript-mode company flycheck)
+		:after (typescript-mode company flycheck)
 		:hook ((typescript-mode . tide-setup)
-					 (typescript-mode . company-mode)
 					 (typescript-mode . tide-hl-identifier-mode)
-					 (before-save . tide-format-before-save))
+					 (before-save     . tide-format-before-save))
 
 		:config
 			(setq typescript-indent-level 2)
@@ -512,7 +521,6 @@
     :custom
       (fira-code-mode-disabled-ligatures '("[]" "#{" "#("
                                            "#_" "#_(" "x")))
-
 
 #+END_SRC
 
