@@ -163,9 +163,17 @@
 #+BEGIN_SRC emacs-lisp
   (use-package flycheck
     :ensure t
-    :init (global-flycheck-mode)
+    :init 
+      (global-flycheck-mode)
     :config
-      (flycheck-add-mode 'typescript-tslint 'web-mode))
+      (flycheck-add-mode 'typescript-tslint 'web-mode)
+      (flycheck-add-mode 'javascript-eslint 'rjsx-mode)
+		)
+
+  (use-package flycheck-pos-tip
+    :ensure t
+    :after flycheck
+    :config (flycheck-pos-tip-mode))
 
 #+END_SRC
 
