@@ -192,21 +192,30 @@
 ** Python
 
 #+BEGIN_SRC emacs-lisp
-  (use-package elpy
-    :ensure t
-    :hook
-      (python-mode . elpy-mode)
-      (python-mode . elpy-enable)
-    :custom
-      (python-shell-intrepreter "python3")
-      (python-shell-interpreter-args "-i")
-      (python-shell-completion-native-enable         nil)
-      (python-shell-intrepreter-args    "--colors=Linux")
-      (compilation-ask-about-save                    nil))
+(use-package elpy
+  :ensure t
+  :init
+  (elpy-enable))
 
-  (use-package py-autopep8
-    :ensure t
-    :hook (python-mode . py-autopep8-enable-on-save))
+  ;; (use-package elpy
+  ;;   :ensure t
+  ;;   :init
+  ;;     (elpy-enable)
+  ;;   :hook
+  ;;     (python-mode . elpy-mode)
+  ;;   :custom
+  ;;     (python-indent-offset 4)
+  ;;     (python-shell-intrepreter "/usr/local/bin/python3")
+  ;;     (python-shell-interpreter-args "-i")
+  ;;     (python-shell-completion-native-enable         nil)
+  ;;     (python-shell-intrepreter-args    "--colors=Linux")
+  ;;     (compilation-ask-about-save                    nil))
+
+  ;; ;; (setq elpy-rpc-virtualenv-path ’current)
+
+  ;; (use-package py-autopep8
+  ;;   :ensure t
+  ;;   :hook (python-mode . py-autopep8-enable-on-save))
 
 #+END_SRC
 
