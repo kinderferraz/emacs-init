@@ -518,20 +518,20 @@
 
 ** Cursors
 #+BEGIN_SRC emacs-lisp
-  (setq-default cursor-type '(bar . 1))
-  
-  (global-hl-line-mode)
+	;; (setq-default cursor-type '(bar . 2))
 
-  (use-package multiple-cursors
-    :ensure t
-    :bind
-      ((:map global-map)
-        ("C-x C-e"  . 'mc/edit-lines)
-        ("C->"      . 'mc/mark-next-like-this)
-        ("C-<"      . 'mc/mark-previous-like-this)
-        ("C-c C-<"  . 'mc/mark-all-like-this))
-    :config
-      (define-key mc/keymap (kbd "<return>") nil))
+	(global-hl-line-mode)
+
+	(use-package multiple-cursors
+		:ensure t
+		:bind
+			((:map global-map)
+				 ("C-c e"    . 'mc/edit-lines)
+				 ("C-."      . 'mc/mark-next-like-this)
+				 ("C-,"      . 'mc/mark-previous-like-this)
+				 ("C-c C-."  . 'mc/mark-all-like-this)
+				 ("C-c >"    . 'mc/edit-ends-of-lines)
+				 ("C-c <"    . 'mc/edit-beginnings-of-lines)))
 
 #+END_SRC
 
