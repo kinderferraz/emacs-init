@@ -673,6 +673,18 @@
 
 #+END_SRC
 
+** Folding
+#+BEGIN_SRC emacs-lisp
+  (use-package hideshow
+    :ensure nil
+    :hook (prog-mode . hs-minor-mode)
+    :bind
+     (("C-f" . hs-toggle-hiding)
+      ("C-t" . hs-hide-all)
+      ("C-a" . hs-show-all)))
+
+#+END_SRC
+
 
 * Init
 
