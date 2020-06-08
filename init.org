@@ -179,11 +179,11 @@
 
 ** Company
 #+BEGIN_SRC emacs-lisp
-	(use-package company
-		:ensure t
-		:pin melpa
-		;; :hook (after-init . company-mode)
-		)
+  (use-package company
+    :ensure t
+    :pin melpa
+    :hook (after-init . global-company-mode)
+    :bind ("s-." . company-manual-begin))
 
 #+END_SRC
 
