@@ -594,10 +594,23 @@
     :bind (:map global-map
             ("M-t" . treemacs))
 
-    :config
-      (defvar treemacs-custom-tsx-icon
-              (all-the-icons-icon-for-file "name.ts"))
-      (treemacs-define-custom-icon treemacs-custom-tsx-icon "tsx"))
+    :hook
+      ((treemacs-mode . (lambda ()
+        (treemacs-create-icon
+          :icon (format "  %s\t"
+                  (all-the-icons-fileicon "tsx"
+                    :height 0.75
+                    :v-adjust -0.2
+                    :face 'all-the-icons-yellow))
+          :extensions ("tsx"))))
+       (treemacs-mode . (lambda ()
+         (treemacs-create-icon
+          :icon (format "  %s\t"
+                  (all-the-icons-faicon "map-signs"
+                    :height 0.8
+                    :v-adjust 0.0
+                    :face 'all-the-icons-blue))
+          :extensions ("routes.ts"))))))
 
   (use-package treemacs-magit
     :ensure t
