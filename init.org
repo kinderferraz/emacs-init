@@ -204,10 +204,9 @@
     ((python-mode . elpy-mode))
   :custom
       (python-indent-offset 4)
-      (python-shell-intrepreter "/usr/local/bin/python3")
+      (python-shell-intrepreter "/usr/local/Cellar/python/3.7.7/bin/python3")
       (python-shell-interpreter-args "-i")
       (python-shell-completion-native-enable         nil)
-      (python-shell-intrepreter-args    "--colors=Linux")
       (compilation-ask-about-save                    nil))
 
   (use-package py-autopep8
