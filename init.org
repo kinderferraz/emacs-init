@@ -192,30 +192,27 @@
 ** Python
 
 #+BEGIN_SRC emacs-lisp
+
 (use-package elpy
   :ensure t
   :init
-  (elpy-enable))
+    (elpy-enable)
+  :config
+    (delete 'elpy-module-highlight-indentation elpy-modules)
+    (delete 'elpy-module-flymake elpy-modules)
+  :hook
+    ((python-mode . elpy-mode))
+  :custom
+      (python-indent-offset 4)
+      (python-shell-intrepreter "/usr/local/bin/python3")
+      (python-shell-interpreter-args "-i")
+      (python-shell-completion-native-enable         nil)
+      (python-shell-intrepreter-args    "--colors=Linux")
+      (compilation-ask-about-save                    nil))
 
-  ;; (use-package elpy
-  ;;   :ensure t
-  ;;   :init
-  ;;     (elpy-enable)
-  ;;   :hook
-  ;;     (python-mode . elpy-mode)
-  ;;   :custom
-  ;;     (python-indent-offset 4)
-  ;;     (python-shell-intrepreter "/usr/local/bin/python3")
-  ;;     (python-shell-interpreter-args "-i")
-  ;;     (python-shell-completion-native-enable         nil)
-  ;;     (python-shell-intrepreter-args    "--colors=Linux")
-  ;;     (compilation-ask-about-save                    nil))
-
-  ;; ;; (setq elpy-rpc-virtualenv-path ’current)
-
-  ;; (use-package py-autopep8
-  ;;   :ensure t
-  ;;   :hook (python-mode . py-autopep8-enable-on-save))
+  (use-package py-autopep8
+    :ensure t
+    :hook (python-mode . py-autopep8-enable-on-save))
 
 #+END_SRC
 
@@ -678,6 +675,7 @@
   (use-package hideshow
     :ensure nil
     :hook (prog-mode . hs-minor-mode)
+    :custom (hs-allow-nesting t)
     :bind
      (("C-f" . hs-toggle-hiding)
       ("C-t" . hs-hide-all)
