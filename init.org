@@ -541,7 +541,6 @@
 
 ** Delimiters
 #+BEGIN_SRC emacs-lisp
-
   (use-package rainbow-delimiters 
     :ensure t
     :hook ((prog-mode LaTeX-mode). rainbow-delimiters-mode)
@@ -586,6 +585,7 @@
       ("C-a" . hs-show-all)))
 
 #+END_SRC
+
 ** Treemacs
 #+BEGIN_SRC emacs-lisp
 
@@ -694,7 +694,18 @@
 
 #+END_SRC
 
+** Folding
+#+BEGIN_SRC emacs-lisp
+  (use-package hideshow
+    :ensure nil
+    :hook (prog-mode . hs-minor-mode)
+    :custom (hs-allow-nesting t)
+    :bind
+     (("C-f" . hs-toggle-hiding)
+      ("C-t" . hs-hide-all)
+      ("C-a" . hs-show-all)))
 
+#+END_SRC
 
 
 * Init
@@ -704,6 +715,10 @@
   (defun find-init ()
     (interactive)
     (find-file (expand-file-name "~/.emacs.d/init.org")))
+
+  (defun prepare-init (&rest _)
+    (split-window-right)
+    (find-init))
 
   (setenv "LANG" "pt_BR.UTF-8")
 
