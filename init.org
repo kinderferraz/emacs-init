@@ -453,10 +453,11 @@
     :ensure t
     :bind (:map global-map ("C-x g" . 'magit-status))
     :custom
-      (split-width-threshold  30)
-      (split-height-threshold 40)
       (magit-git-executable "/usr/local/Cellar/git/2.26.2/bin/git")
       (magit-auto-revert-mode t)
+    :custom-face
+      (magit-diff-removed           ((t (:background "#352830"))))
+      (magit-diff-removed-highlight ((t (:background "#562745"))))
     :config
       (remove-hook 'server-switch-hook 'magit-commit-diff))
 
