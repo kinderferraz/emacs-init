@@ -679,10 +679,13 @@
       (doom-themes-treemacs-theme "doom-colors")
 
     :config
-      (load-theme 'doom-peacock t)
-  ;;  (load-theme 'doom-gruvbox t)
+      (load-theme 'doom-snazzy       t)
+      ;; (load-theme 'doom-horizon      t)
+      ;; (load-theme 'doom-acario-dark     t)
+      ;; (load-theme 'doom-challenger-deep t)
       (doom-themes-treemacs-config)
       (doom-themes-org-config))
+
 #+END_SRC
 
 ** Modeline
