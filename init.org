@@ -289,10 +289,9 @@
 #+BEGIN_SRC emacs-lisp
   (use-package web-mode
     :ensure t
-    :init
-      (add-to-list 'auto-mode-alist '("\\.html?\\'"  . web-mode))
-      (add-to-list 'auto-mode-alist '("\\.css\\'"    . web-mode))
-      (add-to-list 'auto-mode-alist '("\\.tsx\\'"   . web-mode))
+    :mode (("\\.html?\\'"  . web-mode)
+           ("\\.css\\'"    . web-mode)
+           ("\\.tsx\\'"    . web-mode))
     :hook 
       ((web-mode . company-mode)
        (web-mode . (lambda ()
@@ -332,12 +331,14 @@
 
 	(use-package tide
 		:ensure t
+    :mode (("\\.ts\\'" . typescript-mode))
 		:after (typescript-mode company flycheck)
 		:hook ((typescript-mode . tide-setup)
 					 (typescript-mode . tide-hl-identifier-mode)
 					 (before-save     . tide-format-before-save))
 
 		:config
+      (bind-key "C-c t s" #'tide-rename-symbol tide-mode-map)
 			(setq typescript-indent-level 2)
 			(setq tide-format-options 
 				'(:indentSize 2
@@ -347,8 +348,17 @@
 					:insertSpaceAfterSemicolonInForStatements nil
 					:insertSpaceAfterFunctionKeywordForAnonymousFunctions t)))
 
-  ;; enable typescript-tslint checker
 #+END_SRC
+
+
+* Testing
+** Mocha (js)
+#+BEGIN_SRC emacs-lisp
+  (use-package mocha
+    :ensure t)
+
+#+END_SRC
+
 
 ** NPM 
 #+BEGIN_SRC emacs-lisp
