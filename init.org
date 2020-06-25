@@ -379,6 +379,11 @@
     :custom
       (plantuml-jat-path "~/.plantuml"))
 
+  ;; print code
+  (use-package carbon-now-sh
+    :ensure t
+    :bind ("M-c" . 'carbon-now-sh))
+
 #+END_SRC
 
 
