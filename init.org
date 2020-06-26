@@ -342,11 +342,16 @@
 			(setq typescript-indent-level 2)
 			(setq tide-format-options 
 				'(:indentSize 2
-					:indentStyle 'block
+					:indentStyle "Block"
 					:convertTabsToSpaces nil
 					:placeOpenBraceOnNewLineForFunctions nil 
 					:insertSpaceAfterSemicolonInForStatements nil
-					:insertSpaceAfterFunctionKeywordForAnonymousFunctions t)))
+					:insertSpaceAfterFunctionKeywordForAnonymousFunctions t))
+      (setq tide-user-preferences
+        '(:includeCompletionsForModuleExports t
+					:includeCompletionsWithInsertText t
+					:allowTextChangesInNewFiles t
+					:quotePreference "single")))
 
 #+END_SRC
 
