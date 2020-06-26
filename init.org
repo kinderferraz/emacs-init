@@ -593,12 +593,17 @@
 #+BEGIN_SRC emacs-lisp
   (use-package hideshow
     :ensure nil
-    :hook (prog-mode . hs-minor-mode)
+    :hook ((prog-mode     . hs-minor-mode)
+           (c-mode-common . set-c-regexp))
     :custom (hs-allow-nesting t)
     :bind
      (("C-f" . hs-toggle-hiding)
       ("C-t" . hs-hide-all)
-      ("C-a" . hs-show-all)))
+      ("C-a" . hs-show-all))
+    :init
+     (defun set-c-regexp ()
+       (setq hs-block-start-regexp "\\s(")
+       (setq hs-block-end-regexp   "\\s)")))
 
 #+END_SRC
 
@@ -685,8 +690,9 @@
       (doom-themes-treemacs-theme "doom-colors")
 
     :config
-      (load-theme 'doom-snazzy       t)
-      ;; (load-theme 'doom-horizon      t)
+      (load-theme 'doom-snazzy           t)
+      ;;(load-theme 'doom-horizon          t)
+      ;; (load-theme 'doom-laserwave       t)
       ;; (load-theme 'doom-acario-dark     t)
       ;; (load-theme 'doom-challenger-deep t)
       (doom-themes-treemacs-config)
