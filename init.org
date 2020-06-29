@@ -324,6 +324,7 @@
 		:mode
 			(("\\.js\\'"  . rjsx-mode)
 			 ("\\.jsx\\'" . rjsx-mode))
+    :hook (rjsx-mode . tide-setup)
 
 		:custom
 			(js-indent-level 2)
@@ -578,7 +579,7 @@
   ;; TODO: fix this
   (use-package smartparens
     :ensure t
-    :hook ((prog-mode text-mode org-mode). smartparens-mode)
+    :hook ((prog-mode text-mode org-mode) . smartparens-mode)
           ((emacs-lisp-mode) . smartparens-strict-mode)
     :bind ("C-c s u" . sp-unwrap-sexp)
           ("C-c s n" . sp-up-sexp)
