@@ -513,6 +513,8 @@
 #+END_SRC
 
 ** Windows
+Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/questions/20492/how-can-i-get-a-sensible-split-window-policy][this stack exchange answer]]
+
 #+BEGIN_SRC emacs-lisp
   ;; janelas -- buffer
   (use-package buffer-move
@@ -527,6 +529,21 @@
     :ensure t
     :bind ("M-o" . 'ace-window))
 
+  (setq split-height-threshold 120
+        split-width-threshold 160)
+
+  (defun my-split-window-sensibly (&optional window)
+    "replacement `split-window-sensibly' function which prefers vertical splits"
+    (interactive)
+    (let ((window (or window (selected-window))))
+         (or (and (window-splittable-p window t)
+                  (with-selected-window window
+                    (split-window-right)))
+             (and (window-splittable-p window)
+                  (with-selected-window window
+                    (split-window-below))))))
+
+  (setq split-window-preferred-function #'my-split-window-sensibly)
 
 #+END_SRC
 
