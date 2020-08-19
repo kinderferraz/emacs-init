@@ -220,6 +220,7 @@
   (use-package jdee
     :ensure t
     :custom
+      (jdee-jdk-registry '(("10.0.2" . "/usr/local/Cellar/openjdk/13.0.2+8_2")))
       (jdee-server-dir "~/myJars")
       (jde-jdk         "1.8.0_162")
       (jdee-flycheck-enable-p nil)
@@ -639,13 +640,14 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
       (treemacs-python-executable "/usr/local/bin/python3")
       (treemacs-collapse-dirs 
         (if (executable-find "python") 3 0))
-      (treemacs-display-in-side-window   t)
-      (treemacs-indentation              2)
-      (treemacs-indentation-string     " ")
-      (treemacs-width                   25)
-      (treemacs-filewatch-mode           t)
-      (treemacs-fringe-indicator-mode    t)
-      (treemacs-follow-mode              t)
+      (treemacs-display-in-side-window      t)
+      (treemacs-indentation                 2)
+      (treemacs-indentation-string        " ")
+      (treemacs-width                      25)
+      (treemacs-filewatch-mode              t)
+      (treemacs-fringe-indicator-mode       t)
+      (treemacs-follow-mode                 t)
+      (treemacs-workspace-switch-cleanup 'all)
 
     :bind (:map global-map
             ("M-t" . treemacs))
