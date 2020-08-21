@@ -187,7 +187,6 @@
 
 #+END_SRC
 
-
 ** Projetcs
 #+BEGIN_SRC emacs-lisp
   (use-package projectile
@@ -203,6 +202,7 @@
 				:test-suffix ".spec"))
 
 #+END_SRC
+
 
 ** C / C++
 ** Python
@@ -500,6 +500,7 @@
   (when (display-graphic-p)
     (setq default-frame-alist
       '((tool-bar-lines .  0)
+        (cursor-type    . bar)
         (cursor-color   . "#d75f00")
         (fullscreen     . maximized)
         (font           . "Fira Code Retina-11")
@@ -755,7 +756,8 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
       (doom-modeline-major-mode t)
       (doom-modeline-major-mode-color-icon t)
       (doom-modeline-buffer-state-icon t)
-      (doom-modeline-buffer-encoding t))
+      (doom-modeline-buffer-encoding t)
+      (doom-modeline-project-detection 'projectile))
 
 
 #+END_SRC
