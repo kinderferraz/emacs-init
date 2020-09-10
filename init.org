@@ -1,12 +1,11 @@
-#+AUTHOR: Kinder Rodrigues
 #+Title: Emacs Init.el
+#+AUTHOR: Kinder Rodrigues
 #+STARTUP: overview
 #+PROPERTY: header-args :comments yes :results silent :tangle yes
 #+REVEAL_THEME: night
 
 * Repos
 #+BEGIN_SRC emacs-lisp
-
   (defun tangle-init ()
   "If the current buffer is 'init.org' the code-blocks are
   tangled, and the tangled file is compiled."
@@ -20,9 +19,9 @@
 
   (setq package-enable-at-startup nil)
   (setq package-archives
-    '(("melpa"        . "https://melpa.org/packages/")    
+    '(("melpa"        . "https://melpa.org/packages/")
       ("melpa-stable" . "http://stable.melpa.org/packages/")
-      ("gnu"          . "https://elpa.gnu.org/packages/")     
+      ("gnu"          . "https://elpa.gnu.org/packages/")
       ("org"          . "http://orgmode.org/elpa/")))
 
   (add-to-list 'load-path "~/.emacs.d/mypackages")
@@ -44,7 +43,7 @@
     :custom
       (auto-package-update-delete-old-versions t))
 
-#+END_SRC
+	#+END_SRC
 
 
 * Org
@@ -64,7 +63,7 @@
 			(org-agenda-files      '(list "~/org/notes.org"
 																			"~/org/journal/"))
 			;; formats
-			(org-journal-file-format "%d.%m.%y.org")    
+			(org-journal-file-format "%d.%m.%y.org")
 			(org-journal-date-format "%A :: %d/%m/%Y")
 			(org-journal-time-format "%H:M")
 
@@ -81,14 +80,14 @@
 			(org-cycle-emulate-tab 'exc-hl-bol)
 			(org-support-shift-select 'always)
 
-			(org-todo-keywords '((sequence "TODO" "DESIGNING" "CODING" "|" "DONE" 
+			(org-todo-keywords '((sequence "TODO" "DESIGNING" "CODING" "|" "DONE"
                                      "FORGOTTEN")))
 
 			;; :bind (:map org-mode-map
 			;;   ("s-<right>"))
 )
 
-#+END_SRC
+	 #+END_SRC
 
 ** Org-journal
 #+BEGIN_SRC emacs-lisp
@@ -106,7 +105,7 @@
     ;; will add the new entry as a child entry.
     (goto-char (point-min)))
 
-  (setq org-capture-templates 
+  (setq org-capture-templates
     '(("j" "Journal entry" entry (function org-journal-find-location)
        "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?")))
 #+END_SRC
@@ -147,9 +146,11 @@
 
   (use-package yasnippet
     :ensure t
-    :hook (c-mode      . yas-minor-mode)
-          (python-mode . yas-minor-mode)
-          (lisp-mode   . yas-minor-mode))
+    :hook (prog-mode . yas-minor-mode)
+    :bind (:map yas-minor-mode-map
+      ("C-'" . yas-expand)
+      ("TAB" . nil)))
+
 
   (use-package yasnippet-snippets
     :ensure t)
@@ -163,7 +164,8 @@
 #+BEGIN_SRC emacs-lisp
   (use-package flycheck
     :ensure t
-    :init 
+    :after (lsp lsp-java)
+    :init
       (global-flycheck-mode)
     :config
       (flycheck-add-mode 'typescript-tslint 'web-mode)
@@ -204,6 +206,38 @@
 #+END_SRC
 
 
+** LSP
+#+BEGIN_SRC emacs-lisp
+  (use-package lsp-mode
+    :ensure t
+    :hook ((haskell-mode   . lsp)
+           ;; (python-mode . lsp)
+           (c++-mode       . lsp)
+           (java-mode      . lsp))
+    :commands lsp)
+
+  (use-package lsp-ui
+    :commands lsp-ui-mode)
+#+END_SRC
+
+** DAP
+#+BEGIN_SRC emacs-lisp
+	(use-package dap-mode
+    :ensure t
+		:after lsp-mode
+	  :config (progn
+              (dap-mode t)
+              (dap-ui-mode t)
+              (dap-tooltip-mode 1)
+              (tooltip-mode 1)))
+
+  (use-package dap-java
+    :ensure nil
+    :custom (dap-java-java-command "zsh java"))
+
+#+END_SRC
+
+
 ** C / C++
 ** Python
 
@@ -233,48 +267,27 @@
 
 ** JAVA
 #+BEGIN_SRC emacs-lisp
-  (use-package jdee
+  (use-package lsp-java
     :ensure t
     :custom
-      (jdee-jdk-registry '(("10.0.2" . "/usr/local/Cellar/openjdk/13.0.2+8_2")))
-      (jdee-server-dir "~/myJars")
-      (jde-jdk         "1.8.0_162")
-      (jdee-flycheck-enable-p nil)
-      (jdee-resolve-relative-paths-p t)
-      (jdee-enable-abbrev-mode t)
-      (tempo-interactive t)
-      (jdee-global-classpath nil)
-      (jdee-built-class-path '("../classes")) ;teste -- tira um ponto de todos
-      (jdee-sourcepath '("../src")) ;teste
-      (jdee-run-option-classpath '("../classes")) ;NAO MUDA
-      (jdee-compile-option-directory "../classes") ;teste
-;     (jdee-build-function (quote jdee-ant-build))
-;     (jdee-ant-home (quote ("/usr/local/Cellar/ant/1.10.7")))
-      (jdee-ant-enable-find t)
-      (jdee-complete-function 'jdee-complete-minibuf)
+      ((lsp-java-save-actions-organize-imports t)
+       (lsp-java-import-maven-enabled t)
+       (c-basic-offset 2))
+    :bind (:map lsp-mode-map
+      ("C-j g" . 'lsp-java-generate-getters-and-setters)))
 
+  (use-package dap-java
+    :ensure nil
+    ;; :custom (dap-java-java-command "java --enable-preview")
+  )
 
-    :bind (:map jdee-mode-map
-      ("C-j c" . jdee-compile)
-      ("C-j b" . jdee-build)
-      ("C-j r" . jdee-run)
-      ("C-j ;" . jdee-complete)
-      ("C-j g" . jdee-wiz-get-set-methods)
-      ("C-j o" . jdee-wiz-overrided-method)
-      ("C-j i" . jdee-wiz-implement-interface)
-      ("C-j p" . jdee-create-new-project)
-      ("C-j f" . jdee-gen-buffer)
-      ))
-
-    
-      
 #+END_SRC
 
 ** Haskell
 #+BEGIN_SRC emacs-lisp
   (use-package intero
     :ensure t
-    :hook (haskell-mode . intero-mode)) 
+    :hook (haskell-mode . intero-mode))
 
   (use-package haskell-mode
     :ensure t
@@ -282,7 +295,7 @@
            ("\\.cabal\\'" . haskell-cabal-mode)
            ("\\.hcr\\'"   . haskell-core-mode))
     :interpreter ("haskell" . haskell-mode)
-    
+
     :config
       (require 'haskell)
       (require 'haskell-mode)
@@ -308,8 +321,9 @@
     :ensure t
     :mode (("\\.html?\\'"  . web-mode)
            ("\\.css\\'"    . web-mode)
-           ("\\.tsx\\'"    . web-mode))
-    :hook 
+           ("\\.tsx\\'"    . web-mode)
+           ("\\.jsp\\'"    . web-mode))
+    :hook
       ((web-mode . company-mode)
        (web-mode . (lambda ()
             (when (string-equal "tsx" (file-name-extension buffer-file-name))
@@ -319,15 +333,19 @@
     :custom
       (web-mode-markup-indent-offset 2)
       (web-mode-css-indent-offset 2)
-      (web-mode-code-indent-offset 2))
+      (web-mode-code-indent-offset 2)
+
+    :config
+      (nconc web-mode-content-types-alist
+        '(("jsp" . "\\.jsp$"))))
 
   (use-package emmet-mode
     :ensure t
-    :hook 
+    :hook
       ((web-mode  . emmet-mode)
        (rjsx-mode . emmet-mode))
 
-     :custom 
+     :custom
        (emmet-indent-after-insert nil)
        (emmet-expand-jsx-className? t))
 #+END_SRC
@@ -358,11 +376,11 @@
 		:config
       (bind-key "C-c t s" #'tide-rename-symbol tide-mode-map)
 			(setq typescript-indent-level 2)
-			(setq tide-format-options 
+			(setq tide-format-options
 				'(:indentSize 2
 					:indentStyle "Block"
 					:convertTabsToSpaces nil
-					:placeOpenBraceOnNewLineForFunctions nil 
+					:placeOpenBraceOnNewLineForFunctions nil
 					:insertSpaceAfterSemicolonInForStatements nil
 					:insertSpaceAfterFunctionKeywordForAnonymousFunctions t))
       (setq tide-user-preferences
@@ -383,7 +401,7 @@
 #+END_SRC
 
 
-** NPM 
+** NPM
 #+BEGIN_SRC emacs-lisp
 	(use-package npm-mode
 		:pin melpa
@@ -434,11 +452,11 @@
     :mode ("\\.tex\\'" . LaTeX-mode)
 
     :hook
-      (TeX-mode  . TeX-fold-mode) 
+      (TeX-mode  . TeX-fold-mode)
       (TeX-mode  . prettify-symbols-mode)
       (TeX-mode  . auto-fill-mode)
 
-    :init 
+    :init
       (add-hook 'TeX-after-compilation-finished-functions
                #'TeX-revert-document-buffer)
 
@@ -515,11 +533,13 @@
   (setq inhibit-startup-screen t)
 
   (global-set-key (kbd "TAB") 'tab-to-tab-stop)
+  (global-set-key (kbd "S-<backspace>") 'delete-trailing-whitespace)
   (setq-default tab-width 2)
   (setq-default default-input-method 'portuguese-prefix)
 
   (add-hook 'text-mode-hook 'visual-line-mode)
 
+  (global-unset-key (kbd "C-j"))
   (global-unset-key (kbd "C-z"))
   (global-set-key (kbd "s-\\") 'suspend-frame)
   (global-set-key (kbd "C-<right>")'forward-word)
@@ -594,11 +614,22 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
 				 ("C-c >"    . 'mc/edit-ends-of-lines)
 				 ("C-c <"    . 'mc/edit-beginnings-of-lines)))
 
+  (defun move-line-up ()
+    (interactive)
+    (transpose-lines 1)
+    (forward-line -2))
+
+  (defun move-line-down ()
+    (interactive)
+    (forward-line 1)
+    (transpose-lines 1)
+    (forward-line -1))
+
 #+END_SRC
 
 ** Delimiters
 #+BEGIN_SRC emacs-lisp
-  (use-package rainbow-delimiters 
+  (use-package rainbow-delimiters
     :ensure t
     :hook ((prog-mode LaTeX-mode). rainbow-delimiters-mode)
     :custom-face
@@ -648,48 +679,48 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
 
 #+END_SRC
 
+** Icons
+#+BEGIN_SRC emacs-lisp
+  (use-package all-the-icons
+    :ensure t
+    :pin melpa
+    :config (nconc all-the-icons-icon-alist
+             '(("\\.jsp$" all-the-icons-fileicon "ejs"
+                 :height 1.0
+                 :face all-the-icons-red)
+               ("^routes.ts$" all-the-icons-faicon "map-signs"
+                 :height 1.0
+                 :face all-the-icons-blue)
+               ("^\\.ts$" all-the-icons-fileicon "tsx"
+                 :height 0.75
+                 :v-adjust -0.2
+                 :face all-the-icons-blue))))
+#+END_SRC
+
 ** Treemacs
 #+BEGIN_SRC emacs-lisp
 
-  (use-package treemacs
-    :ensure t
-    :custom
-      (treemacs-python-executable "/usr/local/bin/python3")
-      (treemacs-collapse-dirs 
-        (if (executable-find "python") 3 0))
-      (treemacs-display-in-side-window      t)
-      (treemacs-indentation                 2)
-      (treemacs-indentation-string        " ")
-      (treemacs-width                      25)
-      (treemacs-filewatch-mode              t)
-      (treemacs-fringe-indicator-mode       t)
-      (treemacs-follow-mode                 t)
-      (treemacs-workspace-switch-cleanup 'all)
+	(use-package treemacs
+		:ensure t
+		:custom
+			(treemacs-python-executable "/usr/local/bin/python3")
+			(treemacs-collapse-dirs
+				(if (executable-find "python") 3 0))
+			(treemacs-display-in-side-window      t)
+			(treemacs-indentation                 2)
+			(treemacs-indentation-string        " ")
+			(treemacs-width                      25)
+			(treemacs-filewatch-mode              t)
+			(treemacs-fringe-indicator-mode       t)
+			(treemacs-follow-mode                 t)
+			(treemacs-workspace-switch-cleanup 'all)
 
-    :bind (:map global-map
-            ("M-t" . treemacs))
+		:bind (:map global-map
+						("M-t" . treemacs)))
 
-    :hook
-      ((treemacs-mode . (lambda ()
-        (treemacs-create-icon
-          :icon (format "  %s\t"
-                  (all-the-icons-fileicon "tsx"
-                    :height 0.75
-                    :v-adjust -0.2
-                    :face 'all-the-icons-yellow))
-          :extensions ("tsx"))))
-       (treemacs-mode . (lambda ()
-         (treemacs-create-icon
-          :icon (format "  %s\t"
-                  (all-the-icons-faicon "map-signs"
-                    :height 0.8
-                    :v-adjust 0.0
-                    :face 'all-the-icons-blue))
-          :extensions ("routes.ts"))))))
-
-  (use-package treemacs-magit
-    :ensure t
-    :after magit treemacs)
+	(use-package treemacs-magit
+		:ensure t
+		:after magit treemacs)
 
 
 #+END_SRC
@@ -703,6 +734,7 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
        (org-mode  . linum-relative-mode)
        (TeX-mode  . linum-mode)))
 
+  (setq-default show-trailing-whitespace t)
 
   ;; (defun on-frame-open (&optional frame)
   ;;  "If the FRAME created in terminal don't load background color."
@@ -718,10 +750,6 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
 
 ** Theme
 #+BEGIN_SRC emacs-lisp
-
-  (use-package all-the-icons
-    :ensure t
-    :pin melpa)
 
   (use-package doom-themes
     :ensure t
@@ -765,7 +793,6 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
 
 
 * Init
-
 #+BEGIN_SRC emacs-lisp
   ;; edit this file
   (defun find-init ()
@@ -787,7 +814,6 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
   (global-set-key (kbd "M-b")    'switch-to-buffer-other-window)
   (global-set-key (kbd "C-x f")  'find-file)
   (add-hook 'after-init-hook     'prepare-init)
-
 
 #+END_SRC
 
