@@ -181,6 +181,9 @@
     :pin melpa
     :hook (after-init . global-company-mode)
     :bind ("s-." . company-manual-begin))
+
+  (use-package company-box
+    :hook (company-mode . company-box-mode))
 #+END_SRC
 
 ** Projetcs
@@ -217,9 +220,20 @@
 
   (use-package lsp-ui
     :custom
-      (lsp-ui-sideline-enable nil)
       (lsp-ui-imenu-enable nil)
+      (lsp-ui-peek-enable nil)
+
+      ;; sideline
+      (lsp-ui-sideline-delay 4)
+      (lsp-ui-sideline-update-mode 'line)
+      (lsp-ui-sideline-show-code-actions nil)
+
+      ;; docs
+      (lsp-ui-doc-show-whit-mouse nil)
+      (lsp-ui-doc-show-with-cursors nil)
       (lsp-ui-doc-show-over-cursors nil)
+      (lsp-ui-doc-position 'at-point)
+      (lsp-ui-doc-delay 2)
     :bind
       (:map lsp-ui-mode-map
          ("s-," . lsp-ui-doc-show)))
@@ -721,6 +735,7 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
       (treemacs-fringe-indicator-mode       t)
       (treemacs-follow-mode                 t)
       (treemacs-workspace-switch-cleanup 'all)
+      (treemacs-silent-refresh              t)
 
     :bind (:map global-map
             ("M-t" . treemacs)))
@@ -823,3 +838,4 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
   (add-hook 'after-init-hook     'prepare-init)
 
 #+END_SRC
+
