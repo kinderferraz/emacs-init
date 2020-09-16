@@ -162,7 +162,6 @@
 #+BEGIN_SRC emacs-lisp
   (use-package flycheck
     :ensure t
-    :after (lsp lsp-java)
     :config
       (global-flycheck-mode 1)
       (flycheck-add-mode 'typescript-tslint 'web-mode)
@@ -213,12 +212,18 @@
     :ensure t
     :hook ((haskell-mode   . lsp-mode)
            ;; (python-mode . lsp-mode)
-           (c++-mode       . lsp-mode)
-           (java-mode      . lsp-mode))
+           (c++-mode       . lsp-mode))
     :commands lsp)
 
   (use-package lsp-ui
-    :commands lsp-ui-mode)
+    :custom
+      (lsp-ui-sideline-enable nil)
+      (lsp-ui-imenu-enable nil)
+      (lsp-ui-doc-show-over-cursors nil)
+    :bind
+      (:map lsp-ui-mode-map
+         ("s-," . lsp-ui-doc-show)))
+
 #+END_SRC
 
 ** DAP
@@ -270,6 +275,7 @@
 #+BEGIN_SRC emacs-lisp
   (use-package lsp-java
     :ensure t
+    :hook ((java-mode . lsp))
     :custom
       ((lsp-java-save-actions-organize-imports t)
        (lsp-java-import-maven-enabled t)
@@ -817,4 +823,3 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
   (add-hook 'after-init-hook     'prepare-init)
 
 #+END_SRC
-
