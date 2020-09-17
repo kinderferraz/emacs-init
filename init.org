@@ -207,6 +207,15 @@
 
 #+END_SRC
 
+** Comint
+#+BEGIN_SRC emacs-lisp
+  (use-package comint
+    :ensure nil
+    :bind (:map comint-mode-map
+      ("C-l" . comint-clear-buffer)))
+
+#+END_SRC
+
 
 * Languages
 ** LSP
@@ -409,6 +418,27 @@
           :includeCompletionsWithInsertText t
           :allowTextChangesInNewFiles t
           :quotePreference "single")))
+
+#+END_SRC
+
+** SQL
+#+BEGIN_SRC emacs-lisp
+  (use-package sql
+    :ensure nil
+    :custom
+      (sql-user "root")
+      (sql-password nil)
+    :hook (sql-mode . (lambda ()
+       (company-box-mode -1)))
+    :config
+      ;; configuração teste, base de dados usada numa aula
+      ;; no terminal:
+      ;; psql -h "lallah.db.elephantsql.com" skcpwxys skcpwxys
+      (setq sql-postgres-login-params
+        '((user :default "skcpwxys")
+          (database :default "skcpwxys")
+          (server :default "lallah.db.elephantsql.com")
+          (port :default 5432))))
 
 #+END_SRC
 
@@ -838,4 +868,3 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
   (add-hook 'after-init-hook     'prepare-init)
 
 #+END_SRC
-
