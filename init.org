@@ -184,6 +184,10 @@
 
   (use-package company-box
     :hook (company-mode . company-box-mode))
+
+  (use-package company-web
+    :ensure t)
+
 #+END_SRC
 
 ** Projetcs
@@ -212,7 +216,7 @@
   (use-package comint
     :ensure nil
     :bind (:map comint-mode-map
-      ("C-l" . comint-clear-buffer)))
+      ("M-l" . comint-clear-buffer)))
 
 #+END_SRC
 
@@ -298,14 +302,12 @@
     :custom
       ((lsp-java-save-actions-organize-imports t)
        (lsp-java-import-maven-enabled t)
-       (c-basic-offset 2))
+       (c-basic-offset 4))
     :bind (:map lsp-mode-map
       ("C-j g" . 'lsp-java-generate-getters-and-setters)))
 
   (use-package dap-java
-    :ensure nil
-    ;; :custom (dap-java-java-command "java --enable-preview")
-  )
+    :ensure nil)
 
 #+END_SRC
 
@@ -355,7 +357,10 @@
             (when (string-equal "tsx" (file-name-extension buffer-file-name))
               (progn
                 (tide-setup)
-                (add-hook 'before-save 'tide-format-before-save))))))
+                (add-hook 'before-save 'tide-format-before-save)))))
+       (web-mode . (lambda ()
+            (set (make-local-variable 'company-backends)
+                '(company-web-html company-files)))))
     :custom
       (web-mode-markup-indent-offset 2)
       (web-mode-css-indent-offset 2)
@@ -431,10 +436,39 @@
       ;; no terminal:
       ;; psql -h "lallah.db.elephantsql.com" skcpwxys skcpwxys
       (setq sql-postgres-login-params
-        '((user :default "skcpwxys")
+        '((user     :default "skcpwxys")
           (database :default "skcpwxys")
-          (server :default "lallah.db.elephantsql.com")
-          (port :default 5432))))
+          (server   :default "lallah.db.elephantsql.com")
+          (port     :default 5432)))
+      (setq sql-mysql-login-params
+        '((user     :default "root")
+          (password)
+          (database :default "imobiliaria")
+          (server   :default "localhost"))))
+
+  (use-package sqlformat
+    :ensure t
+    :hook (sql-mode . sqlformat-on-save)
+    :custom
+      (sqlformat-command 'pgformatter)
+      (sqlformat-args '("-s" "2" "-u" "1")))
+
+  ;;(use-package sql-indent
+  ;;  :ensure t
+  ;;  :hook (sql-mode . sqlind-minor-mode)
+  ;;  :config
+  ;;    (defvar my-sql-indentation-offsets-alist
+  ;;     `((select-clause 0)
+  ;;       (insert-clause 0)
+  ;;       (delete-clause 0)
+  ;;       (update-clause 0)
+  ;;       (nested-statement-open 0)
+  ;;       ,@sqlind-default-indentation-offsets-alist))
+
+  ;;   (add-hook 'sqlind-minor-mode-hook
+  ;;    (lambda ()
+  ;;       (setq sqlind-indentation-offsets-alist
+  ;;             my-sql-indentation-offsets-alist))))
 
 #+END_SRC
 
