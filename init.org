@@ -260,16 +260,11 @@
               (dap-tooltip-mode 1)
               (tooltip-mode 1)))
 
-  (use-package dap-java
-    :ensure nil
-    :custom (dap-java-java-command "zsh java"))
-
 #+END_SRC
 
 
 ** C / C++
 ** Python
-
 #+BEGIN_SRC emacs-lisp
 
 (use-package elpy
@@ -283,7 +278,8 @@
     ((python-mode . elpy-mode))
   :custom
       (python-indent-offset 4)
-      (python-shell-intrepreter "/usr/local/Cellar/python/3.7.7/bin/python3")
+      (elpy-rpc-python-command "/usr/local/bin/python3")
+      (python-shell-interpreter "python3")
       (python-shell-interpreter-args "-i")
       (python-shell-completion-native-enable         nil)
       (compilation-ask-about-save                    nil))
@@ -583,12 +579,14 @@
                 (concat  "%b -- emacs@" (system-name)))
   (setq inhibit-startup-screen t)
 
+  (setq-default indent-tabs-mode nil)
   (global-set-key (kbd "TAB") 'tab-to-tab-stop)
   (global-set-key (kbd "S-<backspace>") 'delete-trailing-whitespace)
   (setq-default tab-width 2)
   (setq-default default-input-method 'portuguese-prefix)
 
   (add-hook 'text-mode-hook 'visual-line-mode)
+  (add-hook 'prog-mode-hook 'visual-line-mode)
 
   (global-unset-key (kbd "C-j"))
   (global-unset-key (kbd "C-z"))
@@ -784,7 +782,9 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
     :hook
       ((prog-mode . linum-relative-mode)
        (org-mode  . linum-relative-mode)
-       (TeX-mode  . linum-mode)))
+       (TeX-mode  . linum-mode))
+    :custom-face
+      (hl-line ((t (:background "#27212d")))))
 
   (setq-default show-trailing-whitespace t)
 
@@ -812,11 +812,11 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
       (doom-themes-treemacs-theme "doom-colors")
 
     :config
-      (load-theme 'doom-snazzy           t)
-      ;;(load-theme 'doom-horizon          t)
-      ;; (load-theme 'doom-laserwave       t)
-      ;; (load-theme 'doom-acario-dark     t)
-      ;; (load-theme 'doom-challenger-deep t)
+      ;; (load-theme 'doom-snazzy           t)
+      ;; (load-theme 'doom-horizon          t)
+      (load-theme 'doom-laserwave           t)
+      ;; (load-theme 'doom-acario-dark      t)
+      ;; (load-theme 'doom-challenger-deep  t)
       (doom-themes-treemacs-config)
       (doom-themes-org-config))
 
@@ -829,15 +829,18 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
     :ensure t
     :init
       (doom-modeline-mode 1)
+      (column-number-mode 1)
 
     :custom
-      (doom-modeline-buffer-file-name-style 'file-name)
-      (doom-modeline-icon (display-graphic-p))
       (doom-modeline-major-mode t)
-      (doom-modeline-major-mode-color-icon t)
-      (doom-modeline-buffer-state-icon t)
       (doom-modeline-buffer-encoding t)
-      (doom-modeline-project-detection 'projectile))
+      (doom-modeline-buffer-state-icon t)
+      (doom-modeline-major-mode-color-icon t)
+      (doom-modeline-icon (display-graphic-p))
+      (doom-modeline-project-detection 'projectile)
+      (doom-modeline-buffer-file-name-style 'buffer-name)
+      (doom-modeline-indent-info t)
+      (doom-modeline-height 20))
 
 
 #+END_SRC
@@ -863,6 +866,8 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
   (global-set-key (kbd "M-p")    'list-packages)
   (global-set-key (kbd "M-l")    'eval-last-sexp)
   (global-set-key (kbd "M-n")    'narrow-to-region)
+  (global-set-key (kbd "<down>") 'next-logical-line)
+  (global-set-key (kbd "<up>")   'previous-logical-line)
   (global-set-key (kbd "M-b")    'switch-to-buffer-other-window)
   (global-set-key (kbd "C-x f")  'find-file)
   (add-hook 'after-init-hook     'prepare-init)
