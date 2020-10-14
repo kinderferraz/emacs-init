@@ -1,909 +1,163 @@
-#+Title: Emacs Init.el
-#+AUTHOR: Kinder Rodrigues
-#+STARTUP: overview
-#+PROPERTY: header-args :comments yes :results silent :tangle yes
-#+REVEAL_THEME: night
+#+title: emacs init.el
+#+author: kinder rodrigues
+#+email: ferraz.alkindar@gmail.com
+#+startup: overview
+#+property: header-args :comments yes :results silent :tangle yes
+#+reveal_theme: night
 
-* Repos
-#+BEGIN_SRC emacs-lisp
-  (defun tangle-init ()
-  "If the current buffer is 'init.org' the code-blocks are
-  tangled, and the tangled file is compiled."
-  (when (equal (buffer-file-name)
-    (expand-file-name (concat user-emacs-directory "init.org")))
-    ;; Avoid running hooks when tangling.
-    (let ((prog-mode-hook nil))
-    (org-babel-tangle))))
+* Before init
+First things first, this is Brasil <3
+#+begin_src elisp
+;; (setq org-export-async-debug nil)
+(setenv "lang" "pt_br.utf-8")
 
-  (add-hook 'after-save-hook 'tangle-init)
-
-  (setq package-enable-at-startup nil)
-  (setq package-archives
-    '(("melpa"        . "https://melpa.org/packages/")
-      ("melpa-stable" . "http://stable.melpa.org/packages/")
-      ("gnu"          . "https://elpa.gnu.org/packages/")
-      ("org"          . "http://orgmode.org/elpa/")))
-
-  (add-to-list 'load-path "~/.emacs.d/mypackages")
-
-  (package-initialize)
-
-  (unless (package-installed-p 'use-package)
-          (package-refresh-contents)
-          (package-install 'use-package))
-
-  (eval-when-compile (require 'use-package))
-
-  (setq use-package-always-ensure t)
-
-  ;; auto-package-update
-  (use-package auto-package-update
-    :config
-      (auto-package-update-maybe)
-    :custom
-      (auto-package-update-delete-old-versions t))
-
-  #+END_SRC
+(setq inhibit-startup-screen t)
+(setq gc-cons-threshold   (* 500 1000 1000))
+(put 'narrow-to-region       'disabled nil)
+(put 'downcase-region        'disabled nil)
+#+end_src
 
 
-* Org
-** Plain org
-#+BEGIN_SRC emacs-lisp
-  (use-package org
-    :ensure t
-    :pin org
+* Package Management
+#+begin_src emacs-lisp
+(setq package-enable-at-startup nil)
+(setq package-archives
+      '(("melpa"        . "https://melpa.org/packages/")
+        ("melpa-stable" . "http://stable.melpa.org/packages/")
+        ("gnu"          . "https://elpa.gnu.org/packages/")
+        ("org"          . "http://orgmode.org/elpa/")))
 
-    :custom
-      ;; dirs
-      (org-directory   "~/org/")
-      (org-journal-dir "~/org/journal/" )
+(package-initialize)
 
-      ;; files
-      (org-default-notes-file (concat org-directory "notes.org"))
-      (org-agenda-files      '(list "~/org/notes.org"
-                                      "~/org/journal/"))
-      ;; formats
-      (org-journal-file-format "%d.%m.%y.org")
-      (org-journal-date-format "%A :: %d/%m/%Y")
-      (org-journal-time-format "%H:M")
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
 
-      ;; prefixes
-      (org-journal-date-prefix "-> ")
-      (org-journal-time-prefix "<> ")
+(eval-when-compile (require 'use-package))
 
-      ;; misc
-      (org-deadline-warning-days 7)
-      (org-display-inline-images t)
-      (org-journal-enable-agenda-integration t)
-      (org-extend-today-until 6)
+(setq use-package-always-ensure t)
+(require 'bind-key)
 
-      (org-cycle-emulate-tab 'exc-hl-bol)
-      (org-support-shift-select 'always)
-
-      (org-todo-keywords '((sequence "TODO" "DESIGNING" "CODING" "|" "DONE"
-                                     "FORGOTTEN")))
-
-      ;; :bind (:map org-mode-map
-      ;;   ("s-<right>"))
-)
-
-   #+END_SRC
-
-** Org-journal
-#+BEGIN_SRC emacs-lisp
-  (use-package org-journal
-    :ensure t
-    ;;  :hook (bind-key (kbd "C-c C-s") 'org-journal-schedule)
-    :bind ("C-c n" . org-journal-new-entry))
-
-
-  (defun org-journal-find-location ()
-    ;; Open today's journal, but specify a non-nil prefix argument in order to
-    ;; inhibit inserting the heading; org-capture will insert the heading.
-    (org-journal-new-entry t)
-    ;; Position point on the journal's top-level heading so that org-capture
-    ;; will add the new entry as a child entry.
-    (goto-char (point-min)))
-
-  (setq org-capture-templates
-    '(("j" "Journal entry" entry (function org-journal-find-location)
-       "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?")))
-#+END_SRC
-
-** Org-reveal
-#+BEGIN_SRC emacs-lisp
-  (use-package ox-reveal
-    :ensure t
-    :init
-      (setq org-reveal-root "file:///Users/alkindarferraz/reveal.js"))
-
-#+END_SRC
-
-
-* TERM
-#+BEGIN_SRC emacs-lisp
-  (require 'ansi-color)
-  (defun colorize-compilation-buffer ()
-    (let ((inhibit-read-only t))
-      (ansi-color-apply-on-region (point-min) (point-max))))
-  (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
-
-  (use-package exec-path-from-shell
-    :ensure t
-    :init
-      (when (memq window-system '(mac ns x))
-        (exec-path-from-shell-initialize)))
-
-  (use-package term
-    :ensure nil)
-
-#+END_SRC
-
-
-* Prog preferences
-** Yasnippets
-#+BEGIN_SRC emacs-lisp
-  (use-package yasnippet
-    :ensure t
-    :hook (prog-mode . yas-minor-mode)
-    :bind (:map yas-minor-mode-map
-      ("C-'" . yas-expand)
-      ("TAB" . nil))
-    :config
-      (use-package yasnippet-snippets
-        :ensure t)
-
-      (use-package haskell-snippets
-        :ensure t))
-
-#+END_SRC
-
-** Syntax Check
-#+BEGIN_SRC emacs-lisp
-  (use-package flycheck
-    :ensure t
-    :config
-      (global-flycheck-mode 1)
-      (flycheck-add-mode 'typescript-tslint 'web-mode)
-      (flycheck-add-mode 'javascript-eslint 'rjsx-mode))
-
-  (use-package flycheck-pos-tip
-    :ensure t
-    :after flycheck
-    :config (flycheck-pos-tip-mode))
-
-#+END_SRC
-
-** Company
-#+BEGIN_SRC emacs-lisp
-  (use-package company
-    :ensure t
-    :pin melpa
-    :hook (after-init . global-company-mode)
-    :bind ("s-." . company-manual-begin))
-
-  (use-package company-box
-    :hook (company-mode . company-box-mode))
-
-  (use-package company-web
-    :ensure t)
-
-#+END_SRC
-
-** Projetcs
-#+BEGIN_SRC emacs-lisp
-  (use-package quickrun
-    :ensure t
-    :custom
-      (quickrun-timeout-seconds nil))
-
-  (use-package projectile
-    :ensure t
-    :bind ("s-p" . projectile-command-map)
-    :config
-      (projectile-register-project-type
-        'npm '("package.json")
-        :project-file "package.json"
-        :compile "npm install"
-        :test "npm test"
-        :run "npm start"
-        :test-suffix ".spec"))
-
-#+END_SRC
-
-** Comint
-#+BEGIN_SRC emacs-lisp
-  (use-package comint
-    :ensure nil
-    :bind (:map comint-mode-map
-      ("M-l" . comint-clear-buffer)))
-
-#+END_SRC
-
-
-* Languages
-** LSP
-#+BEGIN_SRC emacs-lisp
-  (use-package lsp-mode
-    :ensure t
-    :hook ((haskell-mode   . lsp-mode)
-           ;; (python-mode . lsp-mode)
-           (c++-mode       . lsp-mode))
-    :commands lsp)
-
-  (use-package lsp-ui
-    :custom
-      (lsp-ui-imenu-enable nil)
-      (lsp-ui-peek-enable nil)
-
-      ;; sideline
-      (lsp-ui-sideline-delay 4)
-      (lsp-ui-sideline-update-mode 'line)
-      (lsp-ui-sideline-show-code-actions nil)
-
-      ;; docs
-      (lsp-ui-doc-show-whit-mouse nil)
-      (lsp-ui-doc-show-with-cursors nil)
-      (lsp-ui-doc-show-over-cursors nil)
-      (lsp-ui-doc-position 'at-point)
-      (lsp-ui-doc-delay 2)
-    :bind
-      (:map lsp-ui-mode-map
-         ("s-," . lsp-ui-doc-show)))
-
-#+END_SRC
-
-** DAP
-#+BEGIN_SRC emacs-lisp
-  (use-package dap-mode
-    :ensure t
-    :after lsp-mode
-    :config (progn
-              (dap-mode t)
-              (dap-ui-mode nil)
-              (dap-tooltip-mode 1)
-              (tooltip-mode 1)))
-
-#+END_SRC
-
-
-** C / C++
-** Python
-#+BEGIN_SRC emacs-lisp
-
-(use-package elpy
-  :ensure t
-  :init
-    (elpy-enable)
+;; auto-package-update
+(use-package auto-package-update
   :config
-    (delete 'elpy-module-highlight-indentation elpy-modules)
-    (delete 'elpy-module-flymake elpy-modules)
-  :hook
-    ((python-mode . elpy-mode))
+  (auto-package-update-maybe)
   :custom
-      (python-indent-offset 4)
-      (elpy-rpc-python-command "/usr/local/bin/python3")
-      (python-shell-interpreter "python3")
-      (python-shell-interpreter-args "-i")
-      (python-shell-completion-native-enable         nil)
-      (compilation-ask-about-save                    nil))
+  (auto-package-update-delete-old-versions t))
+#+end_src
+
+
+* Load Settings
+#+begin_src emacs-lisp
+(add-to-list 'load-path (concat user-emacs-directory "init-files-c"))
+
+(require 'org-settings)
+(require 'tools)
+(require 'languages)
+(require 'visuals)
+(require 'extras)
+
+(require 'teste "/users/alkindarferraz/teste.el")
+#+end_src
+
+
+* Emacs VCS
+#+begin_src elisp
+(setq backup-directory-alist `(("." . "~/.emacs.d/saves")))
+(setq delete-old-versions t
+      kept-old-versions 2
+      version-control t)
+#+end_src
+
+
+* Helper Functions
+This first function will tangle all the org files in the emacs
+directory on save. All the files I regularly visit are init files :)
+#+begin_src emacs-lisp
+(defun k/tangle-inits ()
+  "this function is a recurring sntippet online, this is my spin on it
+if the current buffer is '.org', and in '~/.emacs.d the code-blocks are
+tangled. (someday the tangled file will be compiled, but not today)"
+  ;; avoid running hooks when tangling.
+  (-let* ((prog-mode-hook nil)
+          (this-file (buffer-file-name)))
+    ;; (target-file (s-replace ".org" ".el" this-file)))
+    (when (and (string-suffix-p ".org" this-file)
+               (string-prefix-p (expand-file-name user-emacs-directory)
+                                this-file))
+      (org-babel-tangle)
+      )))
+
+(add-hook 'after-save-hook 'k/tangle-inits)
+#+end_src
+
+A nice little function that will prompt for an org init file.
+Files I don't have the habit of editing so much are removed from
+the list containing options in the mini-buffer
+#+begin_src emacs-lisp
+(setq k/remove-from-find-inits-list '("org-async.org"))
+
+(setq k/find-inits-list
+      (-concat '("init.org")
+               (-difference
+                (--filter (string-suffix-p ".org" it)
+                          (directory-files "~/.emacs.d/init-files/" ))
+                k/remove-from-find-inits-list)))
+
+(defun k/find-inits (file)
+  "A lovely trick to learn on emacs. FILE is read with completion,
+it's possibilities are read from the directory with my settings"
+  (interactive
+   (list (completing-read
+          "Init File: "
+          k/find-inits-list)))
+  (if (string-equal file "init.org")
+      (find-file (expand-file-name "~/.emacs.d/init.org"))
+    (find-file (expand-file-name (concat "~/.emacs.d/init-files/"
+                                         file)))))
+
+#+end_src
+
+This is probably the least useful of these, but i enjoy opening emacs
+with this file and a scratch buffer side by side
+#+begin_src emacs-lisp
+(defun k/prepare-init (&rest _)
+  "Just how i like my emacs startup screen."
+  (split-window-right)
+  (find-file (expand-file-name "~/.emacs.d/init.org")))
+
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (message "Emacs ready in %s with %d garbage collections."
+                     (format "%.2f seconds"
+                             (float-time
+                              (time-subtract after-init-time before-init-time)))
+                     gcs-done)))
+
+(add-hook 'after-init-hook 'k/prepare-init)
+#+end_src
+
+
+* Reset GC
+#+begin_src emacs-lisp
+(setq gc-cons-threshold   (* 2 1000 1000))
+#+end_src
+
+
+* General kbds
+#+begin_src emacs-lisp
 
-  (use-package py-autopep8
-    :ensure t
-    :hook (python-mode . py-autopep8-enable-on-save))
+(global-set-key (kbd "s-w")    'widen)
+(global-set-key (kbd "M-i")    'k/find-inits)
+(global-set-key (kbd "M-r")    'eval-region)
+(global-set-key (kbd "M-p")    'list-packages)
+(global-set-key (kbd "M-l")    'eval-last-sexp)
+(global-set-key (kbd "s-n")    'narrow-to-region)
+(global-set-key (kbd "<down>") 'next-logical-line)
+(global-set-key (kbd "<up>")   'previous-logical-line)
+(global-set-key (kbd "M-b")    'switch-to-buffer-other-window)
+(global-set-key (kbd "C-x f")  'find-file)
 
-#+END_SRC
+#+end_src
 
-** JAVA
-#+BEGIN_SRC emacs-lisp
-  (use-package lsp-java
-    :ensure t
-    :hook ((java-mode . lsp))
-    :custom
-      ((lsp-java-save-actions-organize-imports t)
-       (lsp-java-import-maven-enabled t)
-       (c-basic-offset 4))
-    :bind (:map lsp-mode-map
-      ("C-j g" . 'lsp-java-generate-getters-and-setters)))
 
-  (use-package dap-java
-    :ensure nil)
-
-#+END_SRC
-
-** Haskell
-#+BEGIN_SRC emacs-lisp
-  (use-package intero
-    :ensure t
-    :hook (haskell-mode . intero-mode))
-
-  (use-package haskell-mode
-    :ensure t
-    :mode (("\\.hs\\'"    . haskell-mode)
-           ("\\.cabal\\'" . haskell-cabal-mode)
-           ("\\.hcr\\'"   . haskell-core-mode))
-    :interpreter ("haskell" . haskell-mode)
-
-    :config
-      (require 'haskell)
-      (require 'haskell-mode)
-      (require 'haskell-interactive-mode)
-      (require 'autoinsert)
-
-
-      (define-skeleton haskell-skeleton
-        "Default Haskell file initial contents."
-        nil
-        "-- | " _ "\n\n"
-        "module "
-        (haskell-guess-module-name)
-        " where\n\n")
-
-      (define-auto-insert "\\.hs" 'haskell-skeleton)
-)
-#+END_SRC
-
-** WEB
-#+BEGIN_SRC emacs-lisp
-  (use-package web-mode
-    :ensure t
-    :mode (("\\.html?\\'"  . web-mode)
-           ("\\.css\\'"    . web-mode)
-           ("\\.tsx\\'"    . web-mode)
-           ("\\.jsp\\'"    . web-mode))
-    :hook
-      ((web-mode . company-mode)
-       (web-mode . (lambda ()
-            (when (string-equal "tsx" (file-name-extension buffer-file-name))
-              (progn
-                (tide-setup)
-                (add-hook 'before-save 'tide-format-before-save)))))
-       (web-mode . (lambda ()
-            (set (make-local-variable 'company-backends)
-                '(company-web-html company-files)))))
-    :custom
-      (web-mode-markup-indent-offset 2)
-      (web-mode-css-indent-offset 2)
-      (web-mode-code-indent-offset 2)
-
-    :config
-      (nconc web-mode-content-types-alist
-        '(("jsp" . "\\.jsp$"))))
-
-  (use-package emmet-mode
-    :ensure t
-    :hook
-      ((web-mode  . emmet-mode)
-       (rjsx-mode . emmet-mode))
-
-     :custom
-       (emmet-indent-after-insert nil)
-       (emmet-expand-jsx-className? t))
-#+END_SRC
-
-** Node & TypeScrpipt
-#+BEGIN_SRC emacs-lisp
-
-  (use-package rjsx-mode
-    :ensure t
-    :pin melpa
-    :mode
-      (("\\.js\\'"  . rjsx-mode)
-       ("\\.jsx\\'" . rjsx-mode))
-    :hook (rjsx-mode . tide-setup)
-
-    :custom
-      (js-indent-level 2)
-      (sgml-basic-offset 0))
-
-  (use-package tide
-    :ensure t
-    :mode (("\\.ts\\'" . typescript-mode))
-    :after (typescript-mode company flycheck)
-    :hook ((typescript-mode . tide-setup)
-           (typescript-mode . tide-hl-identifier-mode)
-           (before-save     . tide-format-before-save))
-
-    :config
-      (bind-key "C-c t s" #'tide-rename-symbol tide-mode-map)
-      (setq typescript-indent-level 2)
-      (setq tide-format-options
-        '(:indentSize 2
-          :indentStyle "Block"
-          :convertTabsToSpaces nil
-          :placeOpenBraceOnNewLineForFunctions nil
-          :insertSpaceAfterSemicolonInForStatements nil
-          :insertSpaceAfterFunctionKeywordForAnonymousFunctions t))
-      (setq tide-user-preferences
-        '(:includeCompletionsForModuleExports t
-          :includeCompletionsWithInsertText t
-          :allowTextChangesInNewFiles t
-          :quotePreference "single")))
-
-#+END_SRC
-
-** SQL
-#+BEGIN_SRC emacs-lisp
-  (use-package sql
-    :ensure nil
-    :custom
-      (sql-user "root")
-      (sql-password nil)
-    :hook (sql-mode . (lambda ()
-       (company-box-mode -1)))
-    :config
-      ;; configuração teste, base de dados usada numa aula
-      ;; no terminal:
-      ;; psql -h "lallah.db.elephantsql.com" skcpwxys skcpwxys
-      (setq sql-postgres-login-params
-        '((user     :default "skcpwxys")
-          (database :default "skcpwxys")
-          (server   :default "lallah.db.elephantsql.com")
-          (port     :default 5432)))
-      (setq sql-mysql-login-params
-        '((user     :default "root")
-          (password)
-          (database :default "imobiliaria")
-          (server   :default "localhost"))))
-
-  (use-package sqlformat
-    :ensure t
-    :hook (sql-mode . sqlformat-on-save)
-    :custom
-      (sqlformat-command 'pgformatter)
-      (sqlformat-args '("-s" "2" "-u" "1")))
-
-  ;;(use-package sql-indent
-  ;;  :ensure t
-  ;;  :hook (sql-mode . sqlind-minor-mode)
-  ;;  :config
-  ;;    (defvar my-sql-indentation-offsets-alist
-  ;;     `((select-clause 0)
-  ;;       (insert-clause 0)
-  ;;       (delete-clause 0)
-  ;;       (update-clause 0)
-  ;;       (nested-statement-open 0)
-  ;;       ,@sqlind-default-indentation-offsets-alist))
-
-  ;;   (add-hook 'sqlind-minor-mode-hook
-  ;;    (lambda ()
-  ;;       (setq sqlind-indentation-offsets-alist
-  ;;             my-sql-indentation-offsets-alist))))
-
-#+END_SRC
-
-
-* Testing
-** Mocha (js)
-#+BEGIN_SRC emacs-lisp
-  (use-package mocha
-    :ensure t)
-
-#+END_SRC
-
-
-** NPM
-#+BEGIN_SRC emacs-lisp
-  (use-package npm-mode
-    :pin melpa
-    :ensure t
-    :hook ((rjsx-mode       . npm-mode)
-           (typescript-mode . npm-mode)
-           (web-mode        . npm-mode)))
-
-#+END_SRC
-
-
-* Uml
-#+BEGIN_SRC emacs-lisp
-  (use-package plantuml-mode
-    :ensure t
-    :custom
-      (plantuml-jat-path "~/.plantuml"))
-
-  ;; print code
-  (use-package carbon-now-sh
-    :ensure t
-    :bind ("M-c" . 'carbon-now-sh))
-
-#+END_SRC
-
-
-* LaTeX
-** AUCTeX
-#+BEGIN_SRC emacs-lisp
-
-  (defun TeX-highlight-region (beg end)
-  "Insert highlight macro at BEG of region and closing bracket at END."
-    (interactive
-      (if mark-active
-        (list (region-beginning) (region-end))))
-    (when (and beg end)
-      (save-excursion
-        (let ((hl-beg "\\hl{")
-              (hl-end "}"))
-          (goto-char end)
-          (insert hl-end)
-          (goto-char beg)
-          (insert hl-beg)))
-      (goto-char (+ 6 end))))
-
-  (use-package auctex
-    :ensure t
-    :mode ("\\.tex\\'" . LaTeX-mode)
-
-    :hook
-      (TeX-mode  . TeX-fold-mode)
-      (TeX-mode  . prettify-symbols-mode)
-      (TeX-mode  . auto-fill-mode)
-
-    :init
-      (add-hook 'TeX-after-compilation-finished-functions
-               #'TeX-revert-document-buffer)
-
-    :custom
-      (TeX-save-query          nil)
-      (TeX-auto-save             t)
-      (TeX-parse-self            t)
-      (TeX-master              nil)
-      (TeX-PDF-mode              t)
-      (TeX-engine          'luatex)
-
-      (prettify-symbols-unprettify-at-point t)
-      (LaTeX-default-style 'abntex2)
-
-      (TeX-view-program-selection '((output-pdf "PDF Tools")))
-      (TeX-view-program-list      '(("PDF Tools" TeX-pdf-tools-sync-view)))
-      (TeX-source-correlate-start-server t)
-
-    :bind
-      (:map TeX-mode-map
-        ("s-a"   . TeX-command-run-all)
-        ("s-e"   . LaTeX-environment)
-        ("s-p"   . LaTeX-section)
-        ("s-h"   . TeX-highlight-region)))
-
-
-#+END_SRC
-
-** DOC-VIEW
-#+BEGIN_SRC emacs-lisp
-
-  (setq doc-view-ghostscript-program "/usr/local/Cellar/ghostscript/9.52/bin/gs")
-
-#+END_SRC
-
-
-* GIT
-#+BEGIN_SRC emacs-lisp
-  (use-package magit
-    :ensure t
-    :bind (:map global-map ("C-x g" . 'magit-status))
-    :custom
-      (magit-git-executable "/usr/local/bin/git")
-      (magit-auto-revert-mode t)
-    :custom-face
-      (magit-diff-removed           ((t (:background "#352830"))))
-      (magit-diff-removed-highlight ((t (:background "#562745"))))
-    :config
-      (remove-hook 'server-switch-hook 'magit-commit-diff))
-
-#+END_SRC
-
-
-* Interface
-
-** Misc
-#+BEGIN_SRC emacs-lisp
-
-  (when (display-graphic-p)
-    (setq default-frame-alist
-      '((tool-bar-lines .  0)
-        (cursor-type    . bar)
-        (cursor-color   . "#fc1969")
-        (fullscreen     . maximized)
-        (font           . "Fira Code Retina-11")
-        (vertical-scroll-bars    . nil)
-        (ns-transparent-titlebar .   t))))
-
-  (unless (display-graphic-p)
-    (menu-bar-mode -1))
-
-  (setq-default frame-title-format
-                (concat  "%b -- emacs@" (system-name)))
-  (setq inhibit-startup-screen t)
-
-  (setq-default indent-tabs-mode nil)
-  (global-set-key (kbd "TAB") 'tab-to-tab-stop)
-  (global-set-key (kbd "S-<backspace>") 'delete-trailing-whitespace)
-  (setq-default tab-width 2)
-  (setq-default default-input-method 'portuguese-prefix)
-
-  (add-hook 'text-mode-hook 'visual-line-mode)
-  (add-hook 'prog-mode-hook 'visual-line-mode)
-
-  (global-unset-key (kbd "C-j"))
-  (global-unset-key (kbd "C-z"))
-  (global-set-key (kbd "s-\\") 'suspend-frame)
-  (global-set-key (kbd "C-<right>")'forward-word)
-  (global-set-key (kbd "C-<left>") 'backward-word)
-
-  (put 'narrow-to-region   'disabled nil)
-  (setq ring-bell-function 'ignore)
-
-#+END_SRC
-
-** Windows
-Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/questions/20492/how-can-i-get-a-sensible-split-window-policy][this stack exchange answer]]
-
-#+BEGIN_SRC emacs-lisp
-  ;; janelas -- buffer
-  (use-package buffer-move
-    :ensure t
-    :bind (:map global-map
-      ("C-x <up>"    . 'buf-move-up)
-      ("C-x <left>"  . 'buf-move-left)
-      ("C-x <down>"  . 'buf-move-down)
-      ("C-x <right>" . 'buf-move-right)))
-
-  (use-package ace-window
-    :ensure t
-    :bind ("M-o" . 'ace-window))
-
-  (setq split-height-threshold 120
-        split-width-threshold 160)
-
-  (defun my-split-window-sensibly (&optional window)
-    "replacement `split-window-sensibly' function which prefers vertical splits"
-    (interactive)
-    (let ((window (or window (selected-window))))
-         (or (and (window-splittable-p window t)
-                  (with-selected-window window
-                    (split-window-right)))
-             (and (window-splittable-p window)
-                  (with-selected-window window
-                    (split-window-below))))))
-
-  (setq split-window-preferred-function #'my-split-window-sensibly)
-
-#+END_SRC
-
-** Ligatures
-
-#+BEGIN_SRC emacs-lisp
-  (use-package fira-code-mode
-    :ensure t
-    :config (global-fira-code-mode)
-    :custom
-      (fira-code-mode-disabled-ligatures '("[]" "#{" "#("
-                                           "#_" "#_(" "x")))
-
-#+END_SRC
-
-** Cursors
-#+BEGIN_SRC emacs-lisp
-  ;; (setq-default cursor-type '(bar . 2))
-
-  (global-hl-line-mode)
-
-  (use-package multiple-cursors
-    :ensure t
-    :bind
-      ((:map global-map)
-         ("C-c e"    . 'mc/edit-lines)
-         ("C-."      . 'mc/mark-next-like-this)
-         ("C-,"      . 'mc/mark-previous-like-this)
-         ("C-c C-."  . 'mc/mark-all-like-this)
-         ("C-c >"    . 'mc/edit-ends-of-lines)
-         ("C-c <"    . 'mc/edit-beginnings-of-lines)))
-
-  (defun move-line-up ()
-    (interactive)
-    (transpose-lines 1)
-    (forward-line -2))
-
-  (defun move-line-down ()
-    (interactive)
-    (forward-line 1)
-    (transpose-lines 1)
-    (forward-line -1))
-
-#+END_SRC
-
-** Delimiters
-#+BEGIN_SRC emacs-lisp
-  (use-package rainbow-delimiters
-    :ensure t
-    :hook ((prog-mode LaTeX-mode). rainbow-delimiters-mode)
-    :custom-face
-      (rainbow-delimiters-depth-1-face ((t (:foreground "#A901DB"))))
-      (rainbow-delimiters-depth-2-face ((t (:foreground "#FE2E2E"))))
-      (rainbow-delimiters-depth-3-face ((t (:foreground "#d75f00"))))
-      (rainbow-delimiters-depth-4-face ((t (:foreground "#aeb404"))))
-      (rainbow-delimiters-depth-5-face ((t (:foreground "#088A08"))))
-      (rainbow-delimiters-depth-6-face ((t (:foreground "#008787"))))
-      (rainbow-delimiters-depth-8-face ((t (:foreground "#2ECCFA"))))
-      (rainbow-delimiters-depth-9-face ((t (:foreground "#CC2EFA")))))
-
-  ;; TODO: fix this
-  (use-package smartparens
-    :ensure t
-    :hook ((prog-mode text-mode org-mode) . smartparens-mode)
-          ((emacs-lisp-mode) . smartparens-strict-mode)
-    :bind ("C-c s u" . sp-unwrap-sexp)
-          ("C-c s n" . sp-up-sexp)
-
-    :config
-      (sp-local-pair '(emacs-lisp-mode) "`" nil :actions nil)
-      (sp-local-pair '(emacs-lisp-mode) "'" nil :actions nil)
-      (sp-local-pair '(scheme-mode)     "'" nil :actions nil)
-      (sp-local-pair '(latex-mode)      "`" nil :actions nil)
-      (sp-local-pair '(lisp-mode)       "'" nil :actions nil)
-      (sp-local-pair '(org-mode)        "'" nil :actions nil))
-
-
-#+END_SRC
-
-** Folding
-#+BEGIN_SRC emacs-lisp
-  (use-package hideshow
-    :ensure nil
-    :hook ((prog-mode     . hs-minor-mode)
-           (c-mode-common . set-c-regexp))
-    :custom (hs-allow-nesting t)
-    :bind
-     (("C-f" . hs-toggle-hiding)
-      ("C-t" . hs-hide-all)
-      ("C-a" . hs-show-all))
-    :init
-     (defun set-c-regexp ()
-       (setq hs-block-start-regexp "\\s(")
-       (setq hs-block-end-regexp   "\\s)")))
-
-#+END_SRC
-
-** Icons
-#+BEGIN_SRC emacs-lisp
-  (use-package all-the-icons
-    :ensure t
-    :pin melpa
-    :config (nconc all-the-icons-icon-alist
-             '(("\\.jsp$" all-the-icons-fileicon "ejs"
-                 :height 1.0
-                 :face all-the-icons-red)
-               ("^routes.ts$" all-the-icons-faicon "map-signs"
-                 :height 1.0
-                 :face all-the-icons-blue)
-               ("^\\.ts$" all-the-icons-fileicon "tsx"
-                 :height 0.75
-                 :v-adjust -0.2
-                 :face all-the-icons-blue))))
-#+END_SRC
-
-** Treemacs
-#+BEGIN_SRC emacs-lisp
-
-  (use-package treemacs
-    :ensure t
-    :custom
-      (treemacs-python-executable "/usr/local/bin/python3")
-      (treemacs-collapse-dirs
-        (if (executable-find "python") 3 0))
-      (treemacs-display-in-side-window      t)
-      (treemacs-indentation                 2)
-      (treemacs-indentation-string        " ")
-      (treemacs-width                      25)
-      (treemacs-filewatch-mode              t)
-      (treemacs-fringe-indicator-mode       t)
-      (treemacs-follow-mode                 t)
-      (treemacs-workspace-switch-cleanup 'all)
-      (treemacs-silent-refresh              t)
-
-    :bind (:map global-map
-            ("M-t" . treemacs)))
-
-  (use-package treemacs-magit
-    :ensure t
-    :after magit treemacs)
-
-
-#+END_SRC
-
-** Faces
-#+BEGIN_SRC emacs-lisp
-  (use-package linum-relative
-    :ensure t
-    :hook
-      ((prog-mode . linum-relative-mode)
-       (org-mode  . linum-relative-mode)
-       (TeX-mode  . linum-mode))
-    :custom-face
-      (hl-line ((t (:background "#27212d")))))
-
-  (setq-default show-trailing-whitespace t)
-
-  ;; (defun on-frame-open (&optional frame)
-  ;;  "If the FRAME created in terminal don't load background color."
-  ;;    (set-face-background 'default   "#282828" frame)
-  ;;    (set-face-background 'mode-line "#282828" frame)
-  ;;    (set-face-background 'minibuffer-prompt "#282828" frame)
-  ;;    ;; (set-face-background 'linum     "#282828" frame)
-  ;;    ;; (set-face-background 'linum-relative-current-face  "#282828" frame)
-  ;;    )
-
-  ;; (add-hook 'window-setup-hook 'on-frame-open)
-#+END_SRC
-
-** Theme
-#+BEGIN_SRC emacs-lisp
-
-  (use-package doom-themes
-    :ensure t
-    :pin melpa
-    :custom
-      (doom-themes-enable-bold   t)
-      (doom-themes-enable-italic t)
-      (doom-themes-treemacs-theme "doom-colors")
-
-    :config
-      ;; (load-theme 'doom-snazzy           t)
-      ;; (load-theme 'doom-horizon          t)
-      (load-theme 'doom-laserwave           t)
-      ;; (load-theme 'doom-acario-dark      t)
-      ;; (load-theme 'doom-challenger-deep  t)
-      (doom-themes-treemacs-config)
-      (doom-themes-org-config))
-
-#+END_SRC
-
-** Modeline
-#+BEGIN_SRC emacs-lisp
-
-  (use-package doom-modeline
-    :ensure t
-    :init
-      (doom-modeline-mode 1)
-      (column-number-mode 1)
-
-    :custom
-      (doom-modeline-major-mode t)
-      (doom-modeline-buffer-encoding t)
-      (doom-modeline-buffer-state-icon t)
-      (doom-modeline-major-mode-color-icon t)
-      (doom-modeline-icon (display-graphic-p))
-      (doom-modeline-project-detection 'projectile)
-      (doom-modeline-buffer-file-name-style 'buffer-name)
-      (doom-modeline-indent-info t)
-      (doom-modeline-height 20))
-
-
-#+END_SRC
-
-
-
-* Init
-#+BEGIN_SRC emacs-lisp
-  ;; edit this file
-  (defun find-init ()
-    (interactive)
-    (find-file (expand-file-name "~/.emacs.d/init.org")))
-
-  (defun prepare-init (&rest _)
-    (split-window-right)
-    (find-init))
-
-  (setenv "LANG" "pt_BR.UTF-8")
-
-  (global-set-key (kbd "s-w")    'widen)
-  (global-set-key (kbd "M-i")    'find-init)
-  (global-set-key (kbd "M-r")    'eval-region)
-  (global-set-key (kbd "M-p")    'list-packages)
-  (global-set-key (kbd "M-l")    'eval-last-sexp)
-  (global-set-key (kbd "M-n")    'narrow-to-region)
-  (global-set-key (kbd "<down>") 'next-logical-line)
-  (global-set-key (kbd "<up>")   'previous-logical-line)
-  (global-set-key (kbd "M-b")    'switch-to-buffer-other-window)
-  (global-set-key (kbd "C-x f")  'find-file)
-  (add-hook 'after-init-hook     'prepare-init)
-
-#+END_SRC

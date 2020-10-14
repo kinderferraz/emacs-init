@@ -1,0 +1,314 @@
+#+title: Emacs Programing.el
+#+author: Kinder Rodrigues
+#+startup: overview
+#+property: header-args :comments yes :results silent :tangle "../init-files-c/languages.el"
+#+reveal_theme: night
+
+* Servers
+** LSP
+#+begin_src emacs-lisp
+  (use-package lsp-mode
+    :ensure t
+    :hook ((haskell-mode   . lsp-mode)
+           ;; (python-mode . lsp-mode)
+           (c++-mode       . lsp-mode))
+    :commands lsp)
+
+  (use-package lsp-ui
+    :custom
+      (lsp-ui-imenu-enable nil)
+      (lsp-ui-peek-enable nil)
+
+      ;; sideline
+      (lsp-ui-sideline-delay 4)
+      (lsp-ui-sideline-update-mode 'line)
+      (lsp-ui-sideline-show-code-actions nil)
+
+      ;; docs
+      (lsp-ui-doc-show-whit-mouse nil)
+      (lsp-ui-doc-show-with-cursors nil)
+      (lsp-ui-doc-show-over-cursors nil)
+      (lsp-ui-doc-position 'at-point)
+      (lsp-ui-doc-delay 2)
+    :bind
+      (:map lsp-ui-mode-map
+         ("s-," . lsp-ui-doc-show)))
+
+#+end_src
+
+** DAP
+#+begin_src emacs-lisp
+  (use-package dap-mode
+    :ensure t
+    :after lsp-mode
+    :config (progn
+              (dap-mode t)
+              (dap-ui-mode nil)
+              (dap-tooltip-mode 1)
+              (tooltip-mode 1)))
+
+#+end_src
+
+
+* Languages
+** Python
+#+begin_src emacs-lisp
+(use-package elpy
+  :ensure t
+  :defer t
+  :config
+    (delete 'elpy-module-highlight-indentation elpy-modules)
+    (delete 'elpy-module-flymake elpy-modules)
+  :hook
+    ((python-mode . elpy-mode))
+  :custom
+      (python-indent-offset 4)
+      (elpy-rpc-python-command "/usr/local/bin/python3")
+      (python-shell-interpreter "python3")
+      (python-shell-interpreter-args "-i")
+      (python-shell-completion-native-enable         nil)
+      (compilation-ask-about-save                    nil))
+
+  (use-package py-autopep8
+    :ensure t
+    :hook (python-mode . py-autopep8-enable-on-save))
+
+#+end_src
+
+** JAVA
+#+begin_src emacs-lisp
+  (use-package lsp-java
+    :ensure t
+    :hook ((java-mode . lsp))
+    :custom
+      ((lsp-java-save-actions-organize-imports t)
+       (lsp-java-import-maven-enabled t)
+       (c-basic-offset 4))
+    :bind (:map lsp-mode-map
+      ("C-j g" . 'lsp-java-generate-getters-and-setters)
+      ("C-j d" . 'dap-java-debug)))
+
+  (use-package dap-java
+    :ensure nil
+    :defer t)
+
+#+end_src
+
+** Haskell
+#+begin_src emacs-lisp :tangle no
+  (use-package intero
+    :ensure t
+    :hook (haskell-mode . intero-mode))
+
+  (use-package haskell-mode
+    :ensure t
+    :mode (("\\.hs\\'"    . haskell-mode)
+           ("\\.cabal\\'" . haskell-cabal-mode)
+           ("\\.hcr\\'"   . haskell-core-mode))
+    :interpreter ("haskell" . haskell-mode)
+
+    :config
+      (require 'haskell)
+      (require 'haskell-mode)
+      (require 'haskell-interactive-mode)
+      (require 'autoinsert)
+
+
+      (define-skeleton haskell-skeleton
+        "Default Haskell file initial contents."
+        nil
+        "-- | " _ "\n\n"
+        "module "
+        (haskell-guess-module-name)
+        " where\n\n")
+
+      (define-auto-insert "\\.hs" 'haskell-skeleton)
+)
+#+end_src
+
+** WEB
+#+begin_src emacs-lisp
+  (use-package web-mode
+    :ensure t
+    :mode (("\\.html?\\'"  . web-mode)
+           ("\\.css\\'"    . web-mode)
+           ("\\.tsx\\'"    . web-mode)
+           ("\\.jsp\\'"    . web-mode))
+    :hook
+      ((web-mode . company-mode)
+       (web-mode . (lambda ()
+            (when (string-equal "tsx" (file-name-extension buffer-file-name))
+              (progn
+                (tide-setup)
+                (add-hook 'before-save 'tide-format-before-save)))))
+       (web-mode . (lambda ()
+            (set (make-local-variable 'company-backends)
+                '(company-web-html company-files)))))
+    :custom
+      (web-mode-markup-indent-offset 2)
+      (web-mode-css-indent-offset 2)
+      (web-mode-code-indent-offset 2)
+
+    :config
+      (nconc web-mode-content-types-alist
+        '(("jsp" . "\\.jsp$"))))
+
+  (use-package emmet-mode
+    :ensure t
+    :hook
+      ((web-mode  . emmet-mode)
+       (rjsx-mode . emmet-mode))
+
+     :custom
+       (emmet-indent-after-insert nil)
+       (emmet-expand-jsx-className? t))
+#+end_src
+
+** Node & TS
+#+begin_src emacs-lisp
+
+  (use-package rjsx-mode
+    :ensure t
+    :pin melpa
+    :mode
+      (("\\.js\\'"  . rjsx-mode)
+       ("\\.jsx\\'" . rjsx-mode))
+    :hook (rjsx-mode . tide-setup)
+
+    :custom
+      (js-indent-level 2)
+      (sgml-basic-offset 0))
+
+  (use-package tide
+    :ensure t
+    :mode (("\\.ts\\'" . typescript-mode))
+    :after (typescript-mode company flycheck)
+    :hook ((typescript-mode . tide-setup)
+           (typescript-mode . tide-hl-identifier-mode)
+           (before-save     . tide-format-before-save))
+
+    :config
+      (bind-key "C-c t s" #'tide-rename-symbol tide-mode-map)
+      (setq typescript-indent-level 2)
+      (setq tide-format-options
+        '(:indentSize 2
+          :indentStyle "Block"
+          :convertTabsToSpaces nil
+          :placeOpenBraceOnNewLineForFunctions nil
+          :insertSpaceAfterSemicolonInForStatements nil
+          :insertSpaceAfterFunctionKeywordForAnonymousFunctions t))
+      (setq tide-user-preferences
+        '(:includeCompletionsForModuleExports t
+          :includeCompletionsWithInsertText t
+          :allowTextChangesInNewFiles t
+          :quotePreference "single")))
+
+
+  (use-package npm-mode
+    :pin melpa
+    :ensure t
+    :hook ((rjsx-mode       . npm-mode)
+           (typescript-mode . npm-mode)
+           (web-mode        . npm-mode)))
+
+#+end_src
+
+** SQL
+#+begin_src emacs-lisp
+  (use-package sql
+    :ensure nil
+    :custom
+      (sql-user "root")
+      (sql-password nil)
+    :hook (sql-mode . (lambda ()
+       (company-box-mode -1)))
+    :config
+      ;; configuração teste, base de dados usada numa aula
+      ;; no terminal:
+      ;; psql -h "lallah.db.elephantsql.com" skcpwxys skcpwxys
+      (setq sql-postgres-login-params
+        '((user     :default "skcpwxys")
+          (database :default "skcpwxys")
+          (server   :default "lallah.db.elephantsql.com")
+          (port     :default 5432)))
+      (setq sql-mysql-login-params
+        '((user     :default "root")
+          (password)
+          (database :default "imobiliaria")
+          (server   :default "localhost"))))
+
+    (use-package sqlformat
+      :ensure t
+      :hook (sql-mode . sqlformat-on-save)
+      :custom
+        (sqlformat-command 'pgformatter)
+        (sqlformat-args '("-s" "2" "-u" "1")))
+#+end_src
+
+** LaTeX
+   A primeira função que eu escrevi em elisp, adiciona uma tag de highlight
+   no texto dofigo em LaTeX.
+#+begin_src emacs-lisp
+  (defun TeX-highlight-region (beg end)
+  "Insert highlight macro at BEG of region and closing bracket at END."
+    (interactive
+      (if mark-active
+        (list (region-beginning) (region-end))))
+    (when (and beg end)
+      (save-excursion
+        (let ((hl-beg "\\hl{")
+              (hl-end "}"))
+          (goto-char end)
+          (insert hl-end)
+          (goto-char beg)
+          (insert hl-beg)))
+      (goto-char (+ 6 end))))
+#+end_src
+
+Configurações do pacote auctex. Não tenho ideia se ainda funciona...
+
+#+begin_src emacs-lisp
+  (use-package auctex
+    :ensure t
+    :mode ("\\.tex\\'" . LaTeX-mode)
+
+    :hook
+      (TeX-mode  . TeX-fold-mode)
+      (TeX-mode  . prettify-symbols-mode)
+      (TeX-mode  . auto-fill-mode)
+
+    :init
+      (add-hook 'TeX-after-compilation-finished-functions
+               #'TeX-revert-document-buffer)
+
+    :custom
+      (TeX-save-query          nil)
+      (TeX-auto-save             t)
+      (TeX-parse-self            t)
+      (TeX-master              nil)
+      (TeX-PDF-mode              t)
+      (TeX-engine          'luatex)
+
+      (prettify-symbols-unprettify-at-point t)
+      (LaTeX-default-style 'abntex2)
+
+      (TeX-view-program-selection '((output-pdf "PDF Tools")))
+      (TeX-view-program-list      '(("PDF Tools" TeX-pdf-tools-sync-view)))
+      (TeX-source-correlate-start-server t)
+
+    :bind
+      (:map TeX-mode-map
+        ("s-a"   . TeX-command-run-all)
+        ("s-e"   . LaTeX-environment)
+        ("s-p"   . LaTeX-section)
+        ("s-h"   . TeX-highlight-region)))
+#+end_src
+*** verificar confs auctex
+*** verificar integração com bibLatex
+
+
+* Package Info
+#+begin_src emacs-lisp
+  (provide 'languages)
+#+end_src
+

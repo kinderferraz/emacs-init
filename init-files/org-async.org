@@ -1,0 +1,17 @@
+#+title: org settings.el
+#+author: kinder rodrigues
+#+property: header-args :comments yes :results silent :tangle "../init-files-c/org-async.el"
+#+options: tex:t toc:nil num:nil
+#+startup: overview
+#+reveal_theme: night
+
+* Org async
+#+begin_src emacs-lisp
+  (setq user-full-name "Kinder Rodrigues")
+  (setq user-mail-address "ferraz.alkindar@gmail.com")
+  (require 'org) ;; loads from site lisp
+  (require 'ox)
+  (setq org-export-async-debug nil)
+
+#+end_src
+
