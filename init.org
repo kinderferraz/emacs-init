@@ -52,12 +52,12 @@ First things first, this is Brasil <3
 (add-to-list 'load-path (concat user-emacs-directory "init-files-c"))
 
 (require 'org-settings)
+(require 'org-pretty)
 (require 'tools)
 (require 'languages)
 (require 'visuals)
 (require 'extras)
 
-(require 'teste "/users/alkindarferraz/teste.el")
 #+end_src
 
 

@@ -215,34 +215,35 @@
 
 ** SQL
 #+begin_src emacs-lisp
-  (use-package sql
-    :ensure nil
-    :custom
-      (sql-user "root")
-      (sql-password nil)
-    :hook (sql-mode . (lambda ()
-       (company-box-mode -1)))
-    :config
-      ;; configuração teste, base de dados usada numa aula
-      ;; no terminal:
-      ;; psql -h "lallah.db.elephantsql.com" skcpwxys skcpwxys
-      (setq sql-postgres-login-params
+(use-package sql
+  :ensure nil
+  :custom
+  (sql-user "root")
+  (sql-password nil)
+  :hook (sql-mode . (lambda ()
+                      (company-box-mode -1)))
+  :config
+  ;; configuração teste, base de dados usada numa aula
+  ;; no terminal:
+  ;; psql -h "lallah.db.elephantsql.com" skcpwxys skcpwxys
+  (setq sql-postgres-login-params
         '((user     :default "skcpwxys")
           (database :default "skcpwxys")
           (server   :default "lallah.db.elephantsql.com")
           (port     :default 5432)))
-      (setq sql-mysql-login-params
+  (setq sql-mysql-login-params
         '((user     :default "root")
           (password)
           (database :default "imobiliaria")
           (server   :default "localhost"))))
 
-    (use-package sqlformat
-      :ensure t
-      :hook (sql-mode . sqlformat-on-save)
-      :custom
-        (sqlformat-command 'pgformatter)
-        (sqlformat-args '("-s" "2" "-u" "1")))
+(use-package sqlformat
+  :ensure t
+  :hook (sql-mode . sqlformat-on-save-mode)
+  :custom
+  (sqlformat-command 'pgformatter)
+  (sqlformat-args '("-s" "2" "-u" "1")))
+
 #+end_src
 
 ** LaTeX

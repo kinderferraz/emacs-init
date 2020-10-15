@@ -262,45 +262,44 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
 * DOOM
 ** Theme
 #+begin_src emacs-lisp
-  (use-package doom-themes
-    :ensure t
-    :defer t
-    :pin melpa
-    :custom
-      (doom-themes-enable-bold   t)
-      (doom-themes-enable-italic t)
-      (doom-themes-treemacs-theme "doom-colors")
+(use-package doom-themes
+  :ensure t
+  :defer t
+  :pin melpa
+  :custom
+  (doom-themes-enable-bold   t)
+  (doom-themes-enable-italic t)
+  (doom-themes-treemacs-theme "doom-colors")
 
-    :config
-      (doom-themes-treemacs-config)
-      (doom-themes-org-config))
+  :config
+  (doom-themes-treemacs-config)
+  (doom-themes-org-config))
 
-  ;; (load-theme 'doom-snazzy           t)
-  ;; (load-theme 'doom-laserwave        t)
-  ;; (load-theme 'doom-acario-dark      t)
-  ;; (load-theme 'doom-challenger-deep  t)
-  (load-theme 'doom-horizon          t)
+;; (load-theme 'doom-snazzy           t)
+;; (load-theme 'doom-laserwave        t)
+;; (load-theme 'doom-acario-dark      t)
+(load-theme 'doom-challenger-deep  t)
+;; (load-theme 'doom-horizon          t)
 #+end_src
 
 ** Modeline
 #+begin_src emacs-lisp
-  (use-package doom-modeline
-    :ensure t
-    :config
-      (doom-modeline-mode 1)
-      (column-number-mode 1)
+(use-package doom-modeline
+  :ensure t
+  :config
+  (doom-modeline-mode 1)
+  (column-number-mode 1)
 
-    :custom
-      (doom-modeline-major-mode t)
-      (doom-modeline-buffer-encoding t)
-      (doom-modeline-buffer-state-icon t)
-      (doom-modeline-major-mode-color-icon t)
-      (doom-modeline-icon (display-graphic-p))
-      (doom-modeline-project-detection 'projectile)
-      (doom-modeline-buffer-file-name-style 'buffer-name)
-      (doom-modeline-indent-info t)
-      (doom-modeline-height 20))
-
+  :custom
+  (doom-modeline-major-mode t)
+  (doom-modeline-buffer-encoding t)
+  (doom-modeline-buffer-state-icon t)
+  (doom-modeline-major-mode-color-icon t)
+  (doom-modeline-icon (display-graphic-p))
+  (doom-modeline-project-detection 'projectile)
+  (doom-modeline-buffer-file-name-style 'buffer-name)
+  (doom-modeline-indent-info t)
+  (doom-modeline-height 20))
 
 #+end_src
 
