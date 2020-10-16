@@ -241,8 +241,11 @@
   :ensure t
   :hook (sql-mode . sqlformat-on-save-mode)
   :custom
-  (sqlformat-command 'pgformatter)
-  (sqlformat-args '("-s" "2" "-u" "1")))
+  ;; (sqlformat-command 'pgformatter)
+  ;; (sqlformat-args '("-s" "2" "-u" "1")))
+  (sqlformat-command 'sqlparse)
+  (sqlformat-args '("-k" "lower" "-i" "lower"
+                    "--indent-width" "2" "--indent_columns")))
 
 #+end_src
 
