@@ -197,7 +197,7 @@ Marks all replacements with beginning and end positions."
           (when (eq k/org-fontification-level 'full)
               (let* ((rest (list (match-beginning 4) (match-end 4))))
                 (add-text-properties (car rest) (cadr rest)
-                                     `(display k/ob-header-symbol
+                                     `(display ,k/ob-header-symbol
                                        k/org-pretty-s ,(car rest)
                                        k/org-pretty-e ,(cadr rest)))))
           (when (eq k/org-fontification-level 'keywords)
@@ -228,9 +228,10 @@ reapply fontification to region and unset region"
 		             (> (point) (cadr k/current-symbol-bounds))
 		             (and (not (eq prettify-symbols-unprettify-at-point 'right-edge))
 			                (= (point) (cadr k/current-symbol-bounds)))))
-    (font-lock-flush (car k/current-symbol-bounds)
-                     (cadr k/current-symbol-bounds))
-    (setq k/current-symbol-bounds nil)))
+    (with-silent-modifications
+      (font-lock-flush (car k/current-symbol-bounds)
+                       (cadr k/current-symbol-bounds))
+      (setq k/current-symbol-bounds nil))))
 
 #+end_src
 
