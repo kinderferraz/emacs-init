@@ -1,0 +1,257 @@
+#+title: org prettify meta lines
+#+author: kinder rodrigues
+#+email: ferraz.alkindar@gmail.com
+#+property: header-args :comments yes :results silent :tangle "../init-files-c/org-pretty.el"
+#+startup: overview
+#+reveal_theme: night
+
+* Objetivos
+Depois de ver a solução de Reasmus, que adiciona as palavras chaves de
+uma linha que se incia com ~#+begin_src~ à lista de simbolos
+(~prettify-symbols-alist~), decidi tentar eu mesmo.  Ao invés de
+~prettify-symbols~, preferi usar o prórpio ~font-lock~ para cumprir o objetivo.
+
+Criei uma regra de font-lock que lê todo o arquivo, procurando linhas
+que comecem com "#+". Baseado no conteudo da linha troca o conteúdo da
+linha por símbolos. Os detalhes das trocas serão distribuídos por algumas
+variáveis e funções.
+
+- vars:
+  - data: alist com palavras chaves e simbolos para troca
+  - my/current-line: para remover o font-lock na linha em que o
+    cursor está
+  - level: simbolo com o tipo de troca [3/3]
+    - [X] simple   -> apenas a palavra chave "#+...:"
+    - [X] keywords -> simple + palavras chaves que começam com ":"
+    - [X] full     -> todas as palaras com ":" são comprimidas em um único simbolo
+- funções:
+  - k/get-string   -> retorna o simbolo que deve ser colocado
+  - k/get-string-1 -> auxilia a função acima. para mais de um
+    argumento, retorna os simbolos na ordem desejada: se for começo ou
+    fim de bloco, são invertidos. Também, se o dado na alist for uma
+    cons cell o primeiro elemento é para a linha /begin/, o segundo para /end/.
+
+
+* Preps
+Iniciar variáveis, garantir que font-lock veja a propriedade display.
+#+begin_src elisp
+(add-to-list 'font-lock-extra-managed-props 'display)
+(defvar-local k/current-symbol-bounds nil)
+
+(defvar k/org-fontification-level 'simple)
+(setq k/org-fontification-level 'keywords)
+
+
+(setq k/org-font-lock-symbols-alist
+      '(("title"     . "")
+        ("author"    . "")
+        ("block"     . "")
+        ("header"    . "")
+        ("sql"       . "")
+        ("tex"       . "")
+        ("name"      . "")
+        ("property"  . "")
+        ("email"     . "")
+        ("startup"   . "")
+        ("setupfile" . "")
+        ("reveal"    . "")
+        ("date"      . "")
+        ("caption"   . "")
+        ("options"   . "" )
+
+        ("src"       . "✎")
+        ("quote"     . ("" ""))
+        ("example"   . "")
+        ("center"    . "")
+        ("comment"   . "")
+        ("export"    . "")
+        ("verse"     . "")
+
+        ("tangle"    . "")
+        ("results"   . "")
+        ("comments"  . "")
+        ("label"     . "")
+
+        ("engine"    . "")
+        ("session"   . "")
+        ("dbuser"    . "")
+        ("dbhost"    . "")
+        ("database"   . "")
+        ("dbpassword" . "")
+
+        ("latex" . "")
+        ("sutitle" . "")
+        ("class" . "")
+        ("extra" . "")))
+
+
+(defvar k/ob-header-symbol "☰")
+
+(setq re "^[ \t]*\\(#\\+\\w*:?\\)\\(_\\w*:?\\)* ?\\([ \t[:alnum:]\"@,.-]*\\)\\(.*\\)$")
+
+
+;; o \usepackage esta certo, tex:t nao
+;; "^[:blank:]*\\(#\\+[[:alnum:]_:]+\\)+\\([ [:alnum:]@.\"-]*\\)\\([-\\\\{}.,/\":[[:alnum:] ]*]*\\)$"
+
+;; tudo que vem dps da palavra chave #+\w: é colocado num grupo, de la eu tento
+;; separar?
+;; TODO: refatorar a funcao de pegar simbolos:
+;; aceitar apenas uma string, #+...: , sem os sinais, com _ no meio.
+;; dar split nas keywords e
+;; encontrar os simbolos com base na lista
+;; "^[:blank:]*#\\+\\(\\w*_?\\w*\\):? ?\\([\t [:alnum:]\"@.-]*\\)\\([-.:,/{}\\\"[[:alnum:] ]*]*\\)$"
+#+end_src
+
+
+* Helpers
+#+begin_src elisp
+(define-inline chops (str)
+  (->> str
+      (downcase)
+      (s-chop-prefixes '("#" "+" ":" "_"))
+      (s-chop-suffixes '(":"))))
+
+(defun get-prop-as-list (prop)
+  "Helper: identify if char at point has PROP"
+  (remove nil
+          (list (get-text-property (point) prop)
+                (when (and (eq prettify-symbols-unprettify-at-point 'right-edge)
+                           (not (bobp)))
+                  (get-text-property (1- (point)) prop)))))
+
+(defun k/get-string-1 (first sec)
+  "Procura os símbolos associados às stirngs FIRST e SEC.
+Retorna-os na ordem apropriada"
+  (let ((kw first) (sw sec) f-sym s-sym)
+    (when (or (string= kw "begin")
+              (string= kw "end"))
+      (setq kw "block"))
+    (setq f-sym (alist-get kw k/org-font-lock-symbols-alist
+                           t nil #'string-equal ))
+    (setq s-sym (alist-get sw k/org-font-lock-symbols-alist
+                           t nil #'string-equal ))
+    (when (listp s-sym)
+      (if (string-equal first "begin")
+          (setq s-sym (car s-sym))
+        (setq s-sym (cadr s-sym))))
+    (cond ((string-equal first "end")
+           (concat s-sym f-sym))
+          (t (concat f-sym s-sym)))))
+
+(defun k/get-string (first &optional sec)
+  "Nem sempre SEC é usado, neste caso, retorna apenas o simbolo para FIRST"
+  (setq first (chops first))
+  (cond ((string= "reveal" first)
+         (alist-get first k/org-font-lock-symbols-alist
+                    t nil #'string-equal ))
+        ((> (length sec) 0)
+         (k/get-string-1 first (chops sec)))
+        (t
+         (alist-get first k/org-font-lock-symbols-alist
+                    t nil #'string-equal ))))
+#+end_src
+
+
+* Fontificar
+#+begin_src emacs-lisp
+(defun k/fontify-keywords (line-beg limit)
+  "Fontificar palavras chaves qeu começam em : ao fim da linha"
+  (save-excursion
+    (goto-char line-beg)
+    (while (re-search-forward ":\\w+" limit t)
+      (let ((s (match-beginning 0))
+            (e (match-end 0))
+            (str (match-string 0)))
+        (add-text-properties s e
+                             `(display ,(k/get-string str)
+                                       k/org-pretty-s ,s
+                                       k/org-pretty-e ,e))))))
+
+(defun k/fontify-symbols (limit)
+  "docstring"
+  (save-excursion
+    (while (re-search-forward re limit t)
+      (let* (pos)
+        (if (match-end 2)
+            (setq pos (cons (match-beginning 1) (match-end 2)))
+          (setq pos (cons (match-beginning 1) (match-end 1))))
+        (add-text-properties (car pos) (cdr pos)
+                             `(display ,(k/get-string (match-string 1)
+                                                      (match-string 2))
+                               k/org-pretty-s ,(car pos)
+                               k/org-pretty-e ,(cdr pos)))
+        (when (match-string 4)
+          (when (eq k/org-fontification-level 'full)
+              (let* ((rest (list (match-beginning 4) (match-end 4))))
+                (add-text-properties (car rest) (cadr rest)
+                                     `(display k/ob-header-symbol
+                                       k/org-pretty-s ,(car rest)
+                                       k/org-pretty-e ,(cadr rest)))))
+          (when (eq k/org-fontification-level 'keywords)
+            (k/fontify-keywords (match-beginning 0)
+                                (match-end 4))))))))
+#+end_src
+
+
+* Desesconder
+- [X] Refactor unfontify line!
+  statetgy used by prettify-symbols-mode:
+  - [X] mark symbols with start end props (while fontifying),
+  - [X] check if char at point has this prop
+  - [X] use these as a means to unfontify
+  - [X] use prettify-simbols-unprettify-at-point to achieve same effect
+
+#+begin_src emacs-lisp
+(defun k/unfontify-current-symbol (&optional limit)
+  (when-let* ((d (get-prop-as-list 'display))
+              (s (get-prop-as-list 'k/org-pretty-s))
+              (e (get-prop-as-list 'k/org-pretty-e))
+              (s (apply #'min s))
+              (e (apply #'max e)))
+    (with-silent-modifications
+      (setq k/current-symbol-bounds (list s e))
+      (remove-text-properties s e '(display nil)))))
+
+(defun k/refontify-current-symbol ()
+  (when (and k/current-symbol-bounds
+	       (or (< (point) (car k/current-symbol-bounds))
+		             (> (point) (cadr k/current-symbol-bounds))
+		             (and (not (eq prettify-symbols-unprettify-at-point 'right-edge))
+			                (= (point) (cadr k/current-symbol-bounds)))))
+    (font-lock-flush (car k/current-symbol-bounds)
+                     (cadr k/current-symbol-bounds))
+    (setq k/current-symbol-bounds nil)))
+
+#+end_src
+
+
+* Finalizando
+#+begin_src emacs-lisp
+(font-lock-add-keywords
+ 'org-mode
+ '((k/fontify-symbols))
+ t)
+
+(add-hook 'org-mode-hook
+          '(lambda ()
+             (add-hook 'post-command-hook #'k/unfontify-current-symbol nil t)
+             (add-hook 'post-command-hook #'k/refontify-current-symbol nil t)))
+
+(provide 'org-pretty)
+#+end_src
+
+
+* Scratch
+In case of errors:
+#+begin_src elisp :tangle no
+(font-lock-remove-keywords
+ nil
+ '((k/fontify-symbols)
+   (k/unfontify-current-line)))
+
+(remove-hook 'post-command-hook #'k/unfontify-current-symbol t)
+(remove-hook 'post-command-hook #'k/refontify-current-symbol t)
+
+#+end_src
+
+
