@@ -6,34 +6,44 @@
 #+reveal_theme: night
 
 * Objetivos
-Depois de ver a solução de Reasmus, que adiciona as palavras chaves de
-uma linha que se incia com ~#+begin_src~ à lista de simbolos
-(~prettify-symbols-alist~), decidi tentar eu mesmo.  Ao invés de
-~prettify-symbols~, preferi usar o prórpio ~font-lock~ para cumprir o objetivo.
+After seeing Rasmus' solution, which adds lines beginning with
+~#+begin_src~ to ~prettify-symbols-alist~, I've decided to write my own.
+Instead of ~prettify-symbols~, I've chosen ~font-lock~ itself for the job.
 
-Criei uma regra de font-lock que lê todo o arquivo, procurando linhas
-que comecem com "#+". Baseado no conteudo da linha troca o conteúdo da
-linha por símbolos. Os detalhes das trocas serão distribuídos por algumas
-variáveis e funções.
+First a few variables and helper functions are defined, including a
+list mapping org keywords to symbols. Then a font-lock rule, which
+searches for lines starting with "#+". Based on the line contents, it
+replaces the keywords for symbols. The details for finding the
+replacement symbol are scattered across a few functions.
 
-- vars:
-  - data: alist com palavras chaves e simbolos para troca
-  - my/current-line: para remover o font-lock na linha em que o
-    cursor está
-  - level: simbolo com o tipo de troca [3/3]
-    - [X] simple   -> apenas a palavra chave "#+...:"
-    - [X] keywords -> simple + palavras chaves que começam com ":"
-    - [X] full     -> todas as palaras com ":" são comprimidas em um único simbolo
-- funções:
-  - k/get-string   -> retorna o simbolo que deve ser colocado
-  - k/get-string-1 -> auxilia a função acima. para mais de um
-    argumento, retorna os simbolos na ordem desejada: se for começo ou
-    fim de bloco, são invertidos. Também, se o dado na alist for uma
-    cons cell o primeiro elemento é para a linha /begin/, o segundo para /end/.
+Next, to unprettify when point is at a replaced symbol, I've used the
+same strategy as ~prettify-symbols-mode~:
+- replaced symbols are marked with the start and end of the rplaced region
+- when point is at symbol, check if it's display property
+- if so, get start and end of region
+- save these for later
+- remove display prop
+- when point leaves region, mark ir for refontification with ~font-lock-flush~
+
+The level of fontification is given by ~k/org-fontify-level~
+- simple: just ~#+~ keywords
+- keywords: keywords in the rest of the line, starting with ~:~
+- full: the entirety of the rest of the line.
+
+There is a bug regarding this last one: The regex assumes there is a
+word between ~#+ ... :~ keyword and the rest ~:keyords~, but a few
+lines, such as
+#+begin_example
+#+options: tex:t toc:nil num:nil
+#+end_example
+
+
+will break ~tex~ and ~:t~, and replace just the later with the
+appropriate symbol.
 
 
 * Preps
-Iniciar variáveis, garantir que font-lock veja a propriedade display.
+These are for a prototype version, and I should rewrite the alist
 #+begin_src elisp
 (add-to-list 'font-lock-extra-managed-props 'display)
 (defvar-local k/current-symbol-bounds nil)
@@ -90,9 +100,6 @@ Iniciar variáveis, garantir que font-lock veja a propriedade display.
 (setq re "^[ \t]*\\(#\\+\\w*:?\\)\\(_\\w*:?\\)* ?\\([ \t[:alnum:]\"@,.-]*\\)\\(.*\\)$")
 
 
-;; o \usepackage esta certo, tex:t nao
-;; "^[:blank:]*\\(#\\+[[:alnum:]_:]+\\)+\\([ [:alnum:]@.\"-]*\\)\\([-\\\\{}.,/\":[[:alnum:] ]*]*\\)$"
-
 ;; tudo que vem dps da palavra chave #+\w: é colocado num grupo, de la eu tento
 ;; separar?
 ;; TODO: refatorar a funcao de pegar simbolos:
@@ -112,7 +119,7 @@ Iniciar variáveis, garantir que font-lock veja a propriedade display.
       (s-chop-suffixes '(":"))))
 
 (defun get-prop-as-list (prop)
-  "Helper: identify if char at point has PROP"
+  "Helper: identify if char at point has PROP."
   (remove nil
           (list (get-text-property (point) prop)
                 (when (and (eq prettify-symbols-unprettify-at-point 'right-edge)
@@ -120,8 +127,8 @@ Iniciar variáveis, garantir que font-lock veja a propriedade display.
                   (get-text-property (1- (point)) prop)))))
 
 (defun k/get-string-1 (first sec)
-  "Procura os símbolos associados às stirngs FIRST e SEC.
-Retorna-os na ordem apropriada"
+  "Find symbols associated with strings FIRST and SEC.
+Returns them in approprate other."
   (let ((kw first) (sw sec) f-sym s-sym)
     (when (or (string= kw "begin")
               (string= kw "end"))
@@ -139,7 +146,8 @@ Retorna-os na ordem apropriada"
           (t (concat f-sym s-sym)))))
 
 (defun k/get-string (first &optional sec)
-  "Nem sempre SEC é usado, neste caso, retorna apenas o simbolo para FIRST"
+  "SEC is not always present. If so, return the symbol for FIRST.
+Some other rules are defined here as well."
   (setq first (chops first))
   (cond ((string= "reveal" first)
          (alist-get first k/org-font-lock-symbols-alist
@@ -155,7 +163,8 @@ Retorna-os na ordem apropriada"
 * Fontificar
 #+begin_src emacs-lisp
 (defun k/fontify-keywords (line-beg limit)
-  "Fontificar palavras chaves qeu começam em : ao fim da linha"
+  "Fontify keywords starting with :, from LINE_BEG to LIMIT.
+LIMIT should be the end of line."
   (save-excursion
     (goto-char line-beg)
     (while (re-search-forward ":\\w+" limit t)
@@ -168,7 +177,11 @@ Retorna-os na ordem apropriada"
                                        k/org-pretty-e ,e))))))
 
 (defun k/fontify-symbols (limit)
-  "docstring"
+  "Search for #+ lines, and replace them whit appropriated symbols.
+If k/org-fontification-level is 'full, replace rest of line with symbol,
+if it is 'keywords, pass rest of line to k/fontify-keywords.
+
+Marks all replacements with beginning and end positions."
   (save-excursion
     (while (re-search-forward re limit t)
       (let* (pos)
@@ -194,15 +207,10 @@ Retorna-os na ordem apropriada"
 
 
 * Desesconder
-- [X] Refactor unfontify line!
-  statetgy used by prettify-symbols-mode:
-  - [X] mark symbols with start end props (while fontifying),
-  - [X] check if char at point has this prop
-  - [X] use these as a means to unfontify
-  - [X] use prettify-simbols-unprettify-at-point to achieve same effect
-
 #+begin_src emacs-lisp
-(defun k/unfontify-current-symbol (&optional limit)
+(defun k/unfontify-current-symbol ()
+  "When point is at a replaced symbols, remove display prop and save
+bounds of symbol."
   (when-let* ((d (get-prop-as-list 'display))
               (s (get-prop-as-list 'k/org-pretty-s))
               (e (get-prop-as-list 'k/org-pretty-e))
@@ -213,6 +221,8 @@ Retorna-os na ordem apropriada"
       (remove-text-properties s e '(display nil)))))
 
 (defun k/refontify-current-symbol ()
+  "When point is outside of region in k/current-symbol-bounds,
+reapply fontification to region and unset region"
   (when (and k/current-symbol-bounds
 	       (or (< (point) (car k/current-symbol-bounds))
 		             (> (point) (cadr k/current-symbol-bounds))
@@ -227,11 +237,13 @@ Retorna-os na ordem apropriada"
 
 * Finalizando
 #+begin_src emacs-lisp
+;; use fontify rules
 (font-lock-add-keywords
  'org-mode
  '((k/fontify-symbols))
  t)
 
+;; use hook to unfontify and refontify symbols
 (add-hook 'org-mode-hook
           '(lambda ()
              (add-hook 'post-command-hook #'k/unfontify-current-symbol nil t)
@@ -244,6 +256,8 @@ Retorna-os na ordem apropriada"
 * Scratch
 In case of errors:
 #+begin_src elisp :tangle no
+;; Remove rules from alist and remove hook. In short, stop useing
+;; everything in this file
 (font-lock-remove-keywords
  nil
  '((k/fontify-symbols)
@@ -253,5 +267,3 @@ In case of errors:
 (remove-hook 'post-command-hook #'k/refontify-current-symbol t)
 
 #+end_src
-
-
