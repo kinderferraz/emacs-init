@@ -102,46 +102,57 @@
 
 ** Font Ligatures
 #+begin_src emacs-lisp
-  (when (display-graphic-p)
-    (use-package fira-code-mode
-      :ensure t
-      :config (global-fira-code-mode)
-      :hook prog-mode
-      :custom
-        (fira-code-mode-disabled-ligatures '("[]" "#{" "#("
-                                            "#_" "#_(" "x"))))
+(use-package ligature
+  :load-path "./ligatures/"
+  :config
+  (ligature-set-ligatures
+   't
+   '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
+     ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
+     "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
+     "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
+     "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
+     "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
+     "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
+     "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
+     ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
+     "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
+     "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
+     "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
+     "\\" "://" "www"))
+  (global-ligature-mode t))
 
 #+end_src
 
 
 * Frame Management
 #+begin_src emacs-lisp
-  (setq k/font-to-use
-        (if (and (find-font (font-spec :name "fira code"))
-                 (display-graphic-p))
-            "fira code retina-11"
-          "andale mono 11"))
+(setq k/font-to-use
+      (if (and (find-font (font-spec :name "JetBains Mono"))
+               (display-graphic-p))
+          "JetBrains Mono-11"
+        "andale mono 11"))
 
-  (when (display-graphic-p)
-    (setq default-frame-alist
-          `((tool-bar-lines .  0)
-            (cursor-type    . bar)
-            (fullscreen     . maximized)
-            (font           . ,k/font-to-use)
-            (vertical-scroll-bars    . nil)
-            (ns-transparent-titlebar .   t))))
+(when (display-graphic-p)
+  (setq default-frame-alist
+        `((tool-bar-lines .  0)
+          (cursor-type    . bar)
+          (fullscreen     . maximized)
+          (font           . ,k/font-to-use)
+          (vertical-scroll-bars    . nil)
+          (ns-transparent-titlebar .   t))))
 
-  (unless (display-graphic-p)
-    (menu-bar-mode -1))
+(unless (display-graphic-p)
+  (menu-bar-mode -1))
 
-  (setq-default frame-title-format
-                (concat  "%b -- emacs@" (system-name)))
+(setq-default frame-title-format
+              (concat  "%b -- emacs@" (system-name)))
 
-  (global-unset-key (kbd "C-j"))
-  (global-unset-key (kbd "C-z"))
-  (global-set-key   (kbd "s-\\") 'suspend-frame)
+(global-unset-key (kbd "C-j"))
+(global-unset-key (kbd "C-z"))
+(global-set-key   (kbd "s-\\") 'suspend-frame)
 
-  (setq ring-bell-function 'ignore)
+(setq ring-bell-function 'ignore)
 
 #+end_src
 
