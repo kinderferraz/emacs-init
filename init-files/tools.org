@@ -44,9 +44,9 @@
     (ansi-color-apply-on-region (point-min) (point-max))))
 (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
-(setenv "PATH"
-        (concat "/usr/local/bin:/Library/TeX/texbin:"
-                (getenv "PATH")))
+(setq exec-path
+        (append exec-path
+                '("/usr/local/bin" "/usr/local/bin/node" "/Library/TeX/texbin")))
 
 #+end_src
 

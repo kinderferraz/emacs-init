@@ -128,88 +128,86 @@
 
 ** WEB
 #+begin_src emacs-lisp
-  (use-package web-mode
-    :ensure t
-    :mode (("\\.html?\\'"  . web-mode)
-           ("\\.css\\'"    . web-mode)
-           ("\\.tsx\\'"    . web-mode)
-           ("\\.jsp\\'"    . web-mode))
-    :hook
-      ((web-mode . company-mode)
-       (web-mode . (lambda ()
-            (when (string-equal "tsx" (file-name-extension buffer-file-name))
-              (progn
-                (tide-setup)
-                (add-hook 'before-save 'tide-format-before-save)))))
-       (web-mode . (lambda ()
-            (set (make-local-variable 'company-backends)
-                '(company-web-html company-files)))))
-    :custom
-      (web-mode-markup-indent-offset 2)
-      (web-mode-css-indent-offset 2)
-      (web-mode-code-indent-offset 2)
+(use-package web-mode
+  :ensure t
+  :mode (("\\.html?\\'"  . web-mode)
+         ("\\.css\\'"    . web-mode)
+         ("\\.tsx\\'"    . web-mode)
+         ("\\.jsp\\'"    . web-mode))
+  :hook
+  ((web-mode . company-mode)
+   (web-mode . (lambda ()
+                 (when (string-equal "tsx" (file-name-extension buffer-file-name))
+                   (progn
+                     (tide-setup)
+                     (add-hook 'before-save 'tide-format-before-save)))))
+   (web-mode . (lambda ()
+                 (set (make-local-variable 'company-backends)
+                      '(company-web-html company-files)))))
+  :custom
+  (web-mode-markup-indent-offset 2)
+  (web-mode-css-indent-offset 2)
+  (web-mode-code-indent-offset 2)
 
-    :config
-      (nconc web-mode-content-types-alist
-        '(("jsp" . "\\.jsp$"))))
+  :config
+  (nconc web-mode-content-types-alist
+         '(("jsp" . "\\.jsp$"))))
 
-  (use-package emmet-mode
-    :ensure t
-    :hook
-      ((web-mode  . emmet-mode)
-       (rjsx-mode . emmet-mode))
+(use-package emmet-mode
+  :ensure t
+  :hook
+  ((web-mode   . emmet-mode)
+   (rjsx-mode  . emmet-mode))
+  :custom
+  (emmet-indent-after-insert nil))
 
-     :custom
-       (emmet-indent-after-insert nil)
-       (emmet-expand-jsx-className? t))
 #+end_src
 
 ** Node & TS
 #+begin_src emacs-lisp
+(use-package rjsx-mode
+  :ensure t
+  :pin melpa
+  :mode
+  (("\\.js\\'"  . rjsx-mode)
+   ("\\.jsx\\'" . rjsx-mode))
+  :hook (rjsx-mode . tide-setup)
 
-  (use-package rjsx-mode
-    :ensure t
-    :pin melpa
-    :mode
-      (("\\.js\\'"  . rjsx-mode)
-       ("\\.jsx\\'" . rjsx-mode))
-    :hook (rjsx-mode . tide-setup)
+  :custom
+  (js-indent-level 2)
+  (sgml-basic-offset 0))
 
-    :custom
-      (js-indent-level 2)
-      (sgml-basic-offset 0))
+(use-package tide
+  :ensure t
+  :mode (("\\.ts\\'" . typescript-mode))
+  :after (typescript-mode company flycheck)
+  :hook ((typescript-mode . tide-setup)
+         (typescript-mode . tide-hl-identifier-mode)
+         (before-save     . tide-format-before-save))
 
-  (use-package tide
-    :ensure t
-    :mode (("\\.ts\\'" . typescript-mode))
-    :after (typescript-mode company flycheck)
-    :hook ((typescript-mode . tide-setup)
-           (typescript-mode . tide-hl-identifier-mode)
-           (before-save     . tide-format-before-save))
-
-    :config
-      (bind-key "C-c t s" #'tide-rename-symbol tide-mode-map)
-      (setq typescript-indent-level 2)
-      (setq tide-format-options
+  :config
+  (bind-key "C-c t s" #'tide-rename-symbol tide-mode-map)
+  (setq typescript-indent-level 2)
+  (setq tide-format-options
         '(:indentSize 2
           :indentStyle "Block"
           :convertTabsToSpaces nil
           :placeOpenBraceOnNewLineForFunctions nil
           :insertSpaceAfterSemicolonInForStatements nil
           :insertSpaceAfterFunctionKeywordForAnonymousFunctions t))
-      (setq tide-user-preferences
+  (setq tide-user-preferences
         '(:includeCompletionsForModuleExports t
           :includeCompletionsWithInsertText t
           :allowTextChangesInNewFiles t
           :quotePreference "single")))
 
 
-  (use-package npm-mode
-    :pin melpa
-    :ensure t
-    :hook ((rjsx-mode       . npm-mode)
-           (typescript-mode . npm-mode)
-           (web-mode        . npm-mode)))
+(use-package npm-mode
+  :pin melpa
+  :ensure t
+  :hook ((rjsx-mode       . npm-mode)
+         (typescript-mode . npm-mode)
+         (web-mode        . npm-mode)))
 
 #+end_src
 
@@ -315,4 +313,3 @@ Configurações do pacote auctex. Não tenho ideia se ainda funciona...
 #+begin_src emacs-lisp
   (provide 'languages)
 #+end_src
-
