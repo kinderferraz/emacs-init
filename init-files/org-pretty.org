@@ -96,7 +96,15 @@ These are for a prototype version, and I should rewrite the alist
 
 (defvar k/ob-header-symbol "☰")
 
-(setq re "^[ \t]*\\(#\\+\\w*:?\\)\\(_\\w*:?\\)* ?\\([ \t[:alnum:]\"@,.-]*\\)\\(.*\\)$")
+;; (setq re "^[ \t]*\\(#\\+\\w*:?\\)\\(_\\w*:?\\)* ?\\([ \t[:alnum:]\"@,.-]*\\)\\(.*\\)$")
+(setq re (rx line-start
+             (zero-or-more space)
+             (group "#+" (one-or-more (or letter "_"))
+                    (zero-or-one ":"))
+             (zero-or-more space)
+             (group (zero-or-more (any alnum "\"" ?@ ?. ?, " " "-")))
+             (group (zero-or-more (category base)))
+             line-end))
 
 
 ;; tudo que vem dps da palavra chave #+\w: é colocado num grupo, de la eu tento
@@ -214,24 +222,24 @@ Marks all replacements with beginning and end positions."
   (save-excursion
     (while (re-search-forward re limit t)
       (let* ((s (match-beginning 1))
-             (e (remove nil (list (match-end 1) (match-end 2))))
-             (e (apply #'max e)))
-        (compose-region s e (k/get-string (match-string 1)
-                                          (match-string 2)))
+             (e (match-end 1))
+             (symbol (k/get-string (match-string 1))))
+        (compose-region s e symbol)
         (add-text-properties s e `(k/org-pretty-s ,s k/org-pretty-e ,e))
 
-        (when (match-string 4)
+        (when (match-string 3)
           (when (eq k/org-fontification-level 'full)
-            (when-let* ((s (match-beginning 4))
-                        (e (match-end 4)))
+            (when-let* ((s (match-beginning 3))
+                        (e (match-end 3)))
               (compose-region s e k/ob-header-symbol)
               (add-text-properties s e
                                    `(k/org-pretty-s ,s
                                      k/org-pretty-e ,e))))
 
           (when (eq k/org-fontification-level 'keywords)
-            (k/fontify-keywords (match-beginning 0)
-                                (match-end 4))))))))
+            (k/fontify-keywords (match-beginning 3)
+                                (match-end 3))))))))
+
 #+end_src
 
 
