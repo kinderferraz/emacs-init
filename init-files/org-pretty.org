@@ -51,7 +51,6 @@ These are for a prototype version, and I should rewrite the alist
 (defvar k/org-fontification-level 'simple)
 (setq k/org-fontification-level 'keywords)
 
-
 (setq k/org-font-lock-symbols-alist
       '(("title"     . "")
         ("author"    . "")
@@ -118,6 +117,14 @@ These are for a prototype version, and I should rewrite the alist
       (s-chop-prefixes '("#" "+" ":" "_"))
       (s-chop-suffixes '(":"))))
 
+(defun yant/str-to-glyph (str)
+  "Transform string into glyph, displayed correctly."
+  (let ((composition nil))
+    (dolist (char (string-to-list str)
+                  (nreverse (cdr composition)))
+      (push char composition)
+      (push '(Br . Bl) composition))))
+
 (defun get-prop-as-list (prop)
   "Helper: identify if char at point has PROP."
   (remove nil
@@ -169,12 +176,11 @@ LIMIT should be the end of line."
     (goto-char line-beg)
     (while (re-search-forward ":\\w+" limit t)
       (let ((s (match-beginning 0))
-            (e (match-end 0))
-            (str (match-string 0)))
+            (e (match-end 0)))
+        (compose-region s e (k/get-string (match-string 0)))
         (add-text-properties s e
-                             `(display ,(k/get-string str)
-                                       k/org-pretty-s ,s
-                                       k/org-pretty-e ,e))))))
+                             `(k/org-pretty-s ,s
+                               k/org-pretty-e ,e))))))
 
 (defun k/fontify-symbols (limit)
   "Search for #+ lines, and replace them whit appropriated symbols.
@@ -184,22 +190,22 @@ if it is 'keywords, pass rest of line to k/fontify-keywords.
 Marks all replacements with beginning and end positions."
   (save-excursion
     (while (re-search-forward re limit t)
-      (let* (pos)
-        (if (match-end 2)
-            (setq pos (cons (match-beginning 1) (match-end 2)))
-          (setq pos (cons (match-beginning 1) (match-end 1))))
-        (add-text-properties (car pos) (cdr pos)
-                             `(display ,(k/get-string (match-string 1)
-                                                      (match-string 2))
-                               k/org-pretty-s ,(car pos)
-                               k/org-pretty-e ,(cdr pos)))
+      (let* ((s (match-beginning 1))
+             (e (remove nil (list (match-end 1) (match-end 2))))
+             (e (apply #'max e)))
+        (compose-region s e (k/get-string (match-string 1)
+                                          (match-string 2)))
+        (add-text-properties s e `(k/org-pretty-s ,s k/org-pretty-e ,e))
+
         (when (match-string 4)
           (when (eq k/org-fontification-level 'full)
-              (let* ((rest (list (match-beginning 4) (match-end 4))))
-                (add-text-properties (car rest) (cadr rest)
-                                     `(display ,k/ob-header-symbol
-                                       k/org-pretty-s ,(car rest)
-                                       k/org-pretty-e ,(cadr rest)))))
+            (when-let* ((s (match-beginning 4))
+                        (e (match-end 4)))
+              (compose-region s e k/ob-header-symbol)
+              (add-text-properties s e
+                                   `(k/org-pretty-s ,s
+                                     k/org-pretty-e ,e))))
+
           (when (eq k/org-fontification-level 'keywords)
             (k/fontify-keywords (match-beginning 0)
                                 (match-end 4))))))))
