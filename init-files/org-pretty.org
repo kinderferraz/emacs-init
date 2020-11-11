@@ -110,12 +110,20 @@ These are for a prototype version, and I should rewrite the alist
 
 
 * Helpers
+#+name: requires
 #+begin_src elisp
-(define-inline chops (str)
-  (->> str
-      (downcase)
-      (s-chop-prefixes '("#" "+" ":" "_"))
-      (s-chop-suffixes '(":"))))
+(require 's)
+(require 'dash)
+#+end_src
+
+#+name: string manipultion
+#+begin_src elisp
+(defsubst chops (str)
+  (unless (null str)
+    (->> str
+         s-downcase
+         (s-chop-prefixes '("#" "+" ":" "_"))
+         (s-chop-suffixes '(":")))))
 
 (defun yant/str-to-glyph (str)
   "Transform string into glyph, displayed correctly."
@@ -124,7 +132,54 @@ These are for a prototype version, and I should rewrite the alist
                   (nreverse (cdr composition)))
       (push char composition)
       (push '(Br . Bl) composition))))
+#+end_src
 
+#+name: keyword manipulation
+#+begin_src emacs-lisp
+(defun k/normalize-keywords (kw &optional sw)
+  "Rules for getting keyword symbols.
+Returns the keys for the symbols in the alist, in the correct order."
+  (let ((sw (chops sw)))
+    (-as-> (list kw sw) kws
+           ;; verifica se é begin || end
+           (if (string= (car kws) "end")
+               (list (cadr kws) (car kws))
+             kws)
+           (-replace "begin" "block" kws)
+           (-replace "end" "block" kws)
+
+           ;; map kws to symbol alist
+           (--map (alist-get it k/org-font-lock-symbols-alist
+                         nil nil #'string-equal )
+                  kws)
+
+           ;; in case begin and end symbols are different
+           ;; begin case
+           (if (consp (cadr kws))
+               (list (car kws) (caadr kws))
+             kws)
+
+           ;; end case
+           (if (consp (car kws))
+               (list (cadar kws) (cadr kws))
+             kws)
+
+           ;; ;TODO: concat strs to give the last function
+           (remove nil kws)
+           (-reduce 'concat kws)
+           )))
+
+
+(defun k/get-string (first &optional sec)
+  "SEC is not always present, it usually is used in blocks, so..."
+  (-some-> first
+    chops
+    (k/normalize-keywords sec)
+    yant/str-to-glyph))
+#+end_src
+
+#+name: buffer manipulation:
+#+begin_src emacs-lisp
 (defun get-prop-as-list (prop)
   "Helper: identify if char at point has PROP."
   (remove nil
@@ -132,38 +187,6 @@ These are for a prototype version, and I should rewrite the alist
                 (when (and (eq prettify-symbols-unprettify-at-point 'right-edge)
                            (not (bobp)))
                   (get-text-property (1- (point)) prop)))))
-
-(defun k/get-string-1 (first sec)
-  "Find symbols associated with strings FIRST and SEC.
-Returns them in approprate other."
-  (let ((kw first) (sw sec) f-sym s-sym)
-    (when (or (string= kw "begin")
-              (string= kw "end"))
-      (setq kw "block"))
-    (setq f-sym (alist-get kw k/org-font-lock-symbols-alist
-                           t nil #'string-equal ))
-    (setq s-sym (alist-get sw k/org-font-lock-symbols-alist
-                           t nil #'string-equal ))
-    (when (listp s-sym)
-      (if (string-equal first "begin")
-          (setq s-sym (car s-sym))
-        (setq s-sym (cadr s-sym))))
-    (cond ((string-equal first "end")
-           (concat s-sym f-sym))
-          (t (concat f-sym s-sym)))))
-
-(defun k/get-string (first &optional sec)
-  "SEC is not always present. If so, return the symbol for FIRST.
-Some other rules are defined here as well."
-  (setq first (chops first))
-  (cond ((string= "reveal" first)
-         (alist-get first k/org-font-lock-symbols-alist
-                    t nil #'string-equal ))
-        ((> (length sec) 0)
-         (k/get-string-1 first (chops sec)))
-        (t
-         (alist-get first k/org-font-lock-symbols-alist
-                    t nil #'string-equal ))))
 #+end_src
 
 
