@@ -130,7 +130,7 @@ These are for a prototype version, and I should rewrite the alist
   (unless (null str)
     (->> str
          s-downcase
-         (s-chop-prefixes '("#" "+" ":" "_"))
+         (s-chop-prefixes '("#+" ":" "_"))
          (s-chop-suffixes '(":")))))
 
 (defun yant/str-to-glyph (str)
@@ -144,45 +144,44 @@ These are for a prototype version, and I should rewrite the alist
 
 #+name: keyword manipulation
 #+begin_src emacs-lisp
-(defun k/normalize-keywords (kw &optional sw)
-  "Rules for getting keyword symbols.
-Returns the keys for the symbols in the alist, in the correct order."
-  (let ((sw (chops sw)))
-    (-as-> (list kw sw) kws
-           ;; verifica se é begin || end
-           (if (string= (car kws) "end")
-               (list (cadr kws) (car kws))
-             kws)
-           (-replace "begin" "block" kws)
-           (-replace "end" "block" kws)
+(defun k/normalize-keywords (kws)
+  "Rules for getting keyword symbols from the alist.
+KWS input is a list of the words used.
+Returns the values for the symbols in the alist, in the correct order."
+  ;; since kws will be placed as the last argument of each sexp,
+  ;; they will always serve as an implicit else expression in ifs
+  ;; (if used when, the value of kws would be returned unchanged)
+  (->> kws
+       ;; verifica se é begin || end
+       (if (string= (car kws) "end")
+           (list (cadr kws) (car kws)))
+       (-replace "begin" "block")
+       (-replace "end" "block")
 
-           ;; map kws to symbol alist
-           (--map (alist-get it k/org-font-lock-symbols-alist
-                         nil nil #'string-equal )
-                  kws)
+       ;; map kws to symbol alist
+       (--map (alist-get it k/org-font-lock-symbols-alist
+                         nil nil #'string-equal ))
 
-           ;; in case begin and end symbols are different
-           ;; begin case
-           (if (consp (cadr kws))
-               (list (car kws) (caadr kws))
-             kws)
+       ;; in case begin and end symbols are different
+       ;; begin case
+       (if (consp (cadr kws))
+           (list (car kws) (caadr kws)))
 
-           ;; end case
-           (if (consp (car kws))
-               (list (cadar kws) (cadr kws))
-             kws)
+       ;; end case
+       (if (consp (car kws))
+           (list (cadar kws) (cadr kws)))
 
-           ;; ;TODO: concat strs to give the last function
-           (remove nil kws)
-           (-reduce 'concat kws)
-           )))
+       ;; ;TODO: concat strs to give the last function
+       (remove nil)
+       (-reduce 'concat)))
 
 
-(defun k/get-string (first &optional sec)
+(defun k/get-string (keyword)
   "SEC is not always present, it usually is used in blocks, so..."
-  (-some-> first
+  (-some->> keyword
     chops
-    (k/normalize-keywords sec)
+    (s-split "_")
+    k/normalize-keywords
     yant/str-to-glyph))
 #+end_src
 
