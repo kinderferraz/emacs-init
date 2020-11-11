@@ -65,17 +65,18 @@
   (use-package smartparens
     :ensure t
     :hook ((prog-mode text-mode org-mode) . smartparens-mode)
-          ((emacs-lisp-mode) . smartparens-strict-mode)
+          ((emacs-lisp-mode lisp-interaction-mode) . smartparens-strict-mode)
     :bind ("C-c s u" . sp-unwrap-sexp)
           ("C-c s n" . sp-up-sexp)
 
     :config
       (sp-local-pair '(org-mode latex-mode) "\\[" "\\]" :actions '(insert wrap))
+      (sp-local-pair '(org-mode latex-mode) "``" "''" :actions '(insert wrap))
+      (sp-local-pair '(org-mode latex-mode) "\"" "\"" :actions '(insert wrap))
 
       (sp-local-pair '(emacs-lisp-mode) "`" nil :actions nil)
       (sp-local-pair '(emacs-lisp-mode) "'" nil :actions nil)
       (sp-local-pair '(scheme-mode)     "'" nil :actions nil)
-      (sp-local-pair '(latex-mode)      "`" nil :actions nil)
       (sp-local-pair '(lisp-mode)       "'" nil :actions nil)
       (sp-local-pair '(org-mode)        "'" nil :actions nil))
 
