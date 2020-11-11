@@ -217,14 +217,14 @@ Marks all replacements with beginning and end positions."
 (defun k/unfontify-current-symbol ()
   "When point is at a replaced symbols, remove display prop and save
 bounds of symbol."
-  (when-let* ((d (get-prop-as-list 'display))
+  (when-let* ((d (get-prop-as-list 'composition))
               (s (get-prop-as-list 'k/org-pretty-s))
               (e (get-prop-as-list 'k/org-pretty-e))
               (s (apply #'min s))
               (e (apply #'max e)))
     (with-silent-modifications
       (setq k/current-symbol-bounds (list s e))
-      (remove-text-properties s e '(display nil)))))
+      (remove-text-properties s e '(composition nil)))))
 
 (defun k/refontify-current-symbol ()
   "When point is outside of region in k/current-symbol-bounds,
