@@ -128,7 +128,7 @@
 * Frame Management
 #+begin_src emacs-lisp
 (setq k/font-to-use
-      (if (and (find-font (font-spec :name "JetBains Mono"))
+      (if (and (find-font (font-spec :name "JetBrains Mono"))
                (display-graphic-p))
           "JetBrains Mono-11"
         "andale mono 11"))
@@ -153,7 +153,7 @@
 (global-set-key   (kbd "s-\\") 'suspend-frame)
 
 (setq ring-bell-function 'ignore)
-
+(setq prettify-symbols-unprettify-at-point 'right-edge)
 #+end_src
 
 
@@ -289,8 +289,12 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
 ;; (load-theme 'doom-snazzy           t)
 ;; (load-theme 'doom-laserwave        t)
 ;; (load-theme 'doom-acario-dark      t)
-(load-theme 'doom-challenger-deep  t)
-;; (load-theme 'doom-horizon          t)
+;; (load-theme 'doom-challenger-deep  t)
+(load-theme 'doom-horizon          t)
+;; (load-theme 'doom-nord             t)
+
+(set-face-attribute 'font-lock-keyword-face nil :slant 'italic)
+(set-face-attribute 'font-lock-constant-face nil :weight 'bold :slant 'italic)
 #+end_src
 
 ** Modeline
@@ -317,12 +321,12 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
 
 * Org-visuals
 #+begin_src emacs-lisp
-  (use-package org-bullets
-    :ensure t
-    :after (org)
-    :custom (org-bullets-bullet-list
+(use-package org-bullets
+  :ensure t
+  :after (org)
+  :custom (org-bullets-bullet-list
            '("◉" "☯" "○" "✸" "✿" "✜" "◆" "▶"))
-    :hook (org-mode . org-bullets-mode))
+  :hook (org-mode . org-bullets-mode))
 #+end_src
 
 
