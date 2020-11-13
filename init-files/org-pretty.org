@@ -106,14 +106,6 @@ These are for a prototype version, and I should rewrite the alist
              (group (zero-or-more (category base)))
              line-end))
 
-
-;; tudo que vem dps da palavra chave #+\w: é colocado num grupo, de la eu tento
-;; separar?
-;; TODO: refatorar a funcao de pegar simbolos:
-;; aceitar apenas uma string, #+...: , sem os sinais, com _ no meio.
-;; dar split nas keywords e
-;; encontrar os simbolos com base na lista
-;; "^[:blank:]*#\\+\\(\\w*_?\\w*\\):? ?\\([\t [:alnum:]\"@.-]*\\)\\([-.:,/{}\\\"[[:alnum:] ]*]*\\)$"
 #+end_src
 
 
@@ -124,7 +116,7 @@ These are for a prototype version, and I should rewrite the alist
 (require 'dash)
 #+end_src
 
-#+name: string manipultion
+#+name: string manipulation
 #+begin_src elisp
 (defsubst chops (str)
   (unless (null str)
@@ -181,7 +173,6 @@ Returns the values for the symbols in the alist, in the correct order."
 
 
 (defun k/get-string (keyword)
-  "SEC is not always present, it usually is used in blocks, so..."
   (-some->> keyword
     chops
     (s-split "_")
@@ -209,9 +200,10 @@ LIMIT should be the end of line."
   (save-excursion
     (goto-char line-beg)
     (while (re-search-forward ":\\w+" limit t)
-      (let ((s (match-beginning 0))
-            (e (match-end 0)))
-        (compose-region s e (k/get-string (match-string 0)))
+      (when-let ((s (match-beginning 0))
+                 (e (match-end 0))
+                 (symbol (k/get-string (match-string 0))))
+        (compose-region s e symbol)
         (add-text-properties s e
                              `(k/org-pretty-s ,s
                                k/org-pretty-e ,e))))))
