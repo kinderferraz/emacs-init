@@ -77,9 +77,9 @@ Pure regexps
 
   :bind
   (:map org-mode-map
-        ("s-n" . org-narrow-to-subtree)
-        ("s-<down>" . org-babel-next-src-block)
-        ("s-<up>" . org-babel-previous-src-block)))
+        ("s-n"       . org-narrow-to-subtree)
+        ("s-<down>"  . org-babel-next-src-block)
+        ("s-<up>"    . org-babel-previous-src-block)))
 
 (use-package ox
   :ensure nil
@@ -96,22 +96,22 @@ Pure regexps
 
 * Org babels
 #+begin_src emacs-lisp :tangle no
-  (use-package ob-python
-    :defer t
-    :ensure org-plus-contrib
-    :commands (org-babel-execute:python))
+(use-package ob-python
+  :defer t
+  :ensure org-plus-contrib
+  :commands (org-babel-execute:python))
 
-  (use-package ob-sql
-    :defer t
-    :ensure org-plus-contrib
-    :commands (org-babel-execute:sql
-               org-babel-expand-body:sql))
+(use-package ob-sql
+  :defer t
+  :ensure org-plus-contrib
+  :commands (org-babel-execute:sql
+             org-babel-expand-body:sql))
 
-  (use-package ob-emacs-lisp
-    :defer t
-    :ensure org-plus-contrib
-    :commands (org-babel-execute:emacs-lisp
-               org-babel-expand-body:emacs-lisp))
+(use-package ob-emacs-lisp
+  :defer t
+  :ensure org-plus-contrib
+  :commands (org-babel-execute:emacs-lisp
+             org-babel-expand-body:emacs-lisp))
 
 #+end_src
 

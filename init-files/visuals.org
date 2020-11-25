@@ -48,37 +48,37 @@
 
 ** Delimiters
 #+begin_src emacs-lisp
-  (use-package rainbow-delimiters
-    :ensure t
-    :hook ((prog-mode LaTeX-mode). rainbow-delimiters-mode)
-    :custom-face
-      (rainbow-delimiters-depth-1-face ((t (:foreground "#A901DB"))))
-      (rainbow-delimiters-depth-2-face ((t (:foreground "#FE2E2E"))))
-      (rainbow-delimiters-depth-3-face ((t (:foreground "#d75f00"))))
-      (rainbow-delimiters-depth-4-face ((t (:foreground "#aeb404"))))
-      (rainbow-delimiters-depth-5-face ((t (:foreground "#088A08"))))
-      (rainbow-delimiters-depth-6-face ((t (:foreground "#008787"))))
-      (rainbow-delimiters-depth-8-face ((t (:foreground "#2ECCFA"))))
-      (rainbow-delimiters-depth-9-face ((t (:foreground "#CC2EFA")))))
+(use-package rainbow-delimiters
+  :ensure t
+  :hook ((prog-mode LaTeX-mode comint-mode) . rainbow-delimiters-mode)
+  :custom-face
+  (rainbow-delimiters-depth-1-face ((t (:foreground "#A901DB"))))
+  (rainbow-delimiters-depth-2-face ((t (:foreground "#FE2E2E"))))
+  (rainbow-delimiters-depth-3-face ((t (:foreground "#d75f00"))))
+  (rainbow-delimiters-depth-4-face ((t (:foreground "#aeb404"))))
+  (rainbow-delimiters-depth-5-face ((t (:foreground "#088A08"))))
+  (rainbow-delimiters-depth-6-face ((t (:foreground "#008787"))))
+  (rainbow-delimiters-depth-8-face ((t (:foreground "#2ECCFA"))))
+  (rainbow-delimiters-depth-9-face ((t (:foreground "#CC2EFA")))))
 
-    ;; TODO: fix this
-  (use-package smartparens
-    :ensure t
-    :hook ((prog-mode text-mode org-mode) . smartparens-mode)
-          ((emacs-lisp-mode lisp-interaction-mode) . smartparens-strict-mode)
-    :bind ("C-c s u" . sp-unwrap-sexp)
-          ("C-c s n" . sp-up-sexp)
+;; TODO: fix this
+(use-package smartparens
+  :ensure t
+  :hook ((prog-mode text-mode org-mode comint-mode) . smartparens-mode)
+  ((emacs-lisp-mode lisp-interaction-mode) . smartparens-strict-mode)
+  :bind (:map sp-keymap
+              ("C-<backspace>" . sp-backward-unwrap-sexp))
 
-    :config
-      (sp-local-pair '(org-mode latex-mode) "\\[" "\\]" :actions '(insert wrap))
-      (sp-local-pair '(org-mode latex-mode) "``" "''" :actions '(insert wrap))
-      (sp-local-pair '(org-mode latex-mode) "\"" "\"" :actions '(insert wrap))
+  :config
+  (sp-local-pair '(org-mode latex-mode) "\\[" "\\]" :actions '(insert wrap))
+  (sp-local-pair '(org-mode latex-mode) "``" "''" :actions '(insert wrap))
+  (sp-local-pair '(org-mode latex-mode) "\"" "\"" :actions '(insert wrap))
 
-      (sp-local-pair '(emacs-lisp-mode) "`" nil :actions nil)
-      (sp-local-pair '(emacs-lisp-mode) "'" nil :actions nil)
-      (sp-local-pair '(scheme-mode)     "'" nil :actions nil)
-      (sp-local-pair '(lisp-mode)       "'" nil :actions nil)
-      (sp-local-pair '(org-mode)        "'" nil :actions nil))
+  (sp-local-pair '(emacs-lisp-mode) "`" nil :actions nil)
+  (sp-local-pair '(emacs-lisp-mode) "'" nil :actions nil)
+  (sp-local-pair '(scheme-mode)     "'" nil :actions nil)
+  (sp-local-pair '(lisp-mode)       "'" nil :actions nil)
+  (sp-local-pair '(org-mode)        "'" nil :actions nil))
 
 #+end_src
 
@@ -122,7 +122,7 @@
      "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
      "\\" "://" "www"))
   (global-ligature-mode t))
-
+(global-prettify-symbols-mode 1)
 #+end_src
 
 
