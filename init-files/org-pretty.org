@@ -125,6 +125,12 @@ These are for a prototype version, and I should rewrite the alist
          (s-chop-prefixes '("#+" ":" "_"))
          (s-chop-suffixes '(":")))))
 
+(defsubst k/maybe-drop (list)
+  "if any item is nil, return nil, else return LIST"
+  (if (-any? 'null list)
+      nil
+    list))
+
 (defun yant/str-to-glyph (str)
   "Transform string into glyph, displayed correctly."
   (let ((composition nil))
@@ -150,6 +156,10 @@ Returns the values for the symbols in the alist, in the correct order."
            (list (cadr kws) (car kws)))
        (-replace "begin" "block")
        (-replace "end" "block")
+       ((lambda (x)
+          (if (string= (car x) "reveal")
+              (list (car x))
+            x)))
 
        ;; map kws to symbol alist
        (--map (alist-get it k/org-font-lock-symbols-alist
@@ -166,10 +176,10 @@ Returns the values for the symbols in the alist, in the correct order."
           (if (consp (car x))
               (list (cadar x) (cadr x))
            x)))
-       ;; ;TODO: concat strs to give the last function
-       (remove nil)
 
-       (-reduce 'concat)))
+       k/maybe-drop
+       (-reduce 'concat)
+       ))
 
 
 (defun k/get-string (keyword)
@@ -216,7 +226,7 @@ if it is 'keywords, pass rest of line to k/fontify-keywords.
 Marks all replacements with beginning and end positions."
   (save-excursion
     (while (re-search-forward re limit t)
-      (let* ((s (match-beginning 1))
+      (when-let* ((s (match-beginning 1))
              (e (match-end 1))
              (symbol (k/get-string (match-string 1))))
         (compose-region s e symbol)
