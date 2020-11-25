@@ -88,10 +88,10 @@ These are for a prototype version, and I should rewrite the alist
         ("database"   . "")
         ("dbpassword" . "")
 
-        ("latex" . "")
+        ("latex"   . "")
         ("sutitle" . "")
-        ("class" . "")
-        ("extra" . "")))
+        ("class"   . "")
+        ("extra"   . "")))
 
 
 (defvar k/ob-header-symbol "☰")
@@ -116,7 +116,7 @@ These are for a prototype version, and I should rewrite the alist
 (require 'dash)
 #+end_src
 
-#+name: string manipulation
+#+name: string and manipulation
 #+begin_src elisp
 (defsubst chops (str)
   (unless (null str)
@@ -309,4 +309,5 @@ In case of errors:
 (remove-hook 'post-command-hook #'k/unfontify-current-symbol t)
 (remove-hook 'post-command-hook #'k/refontify-current-symbol t)
 
+(k/get-string "reveal:")
 #+end_src
