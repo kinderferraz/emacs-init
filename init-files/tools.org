@@ -153,11 +153,15 @@ Usado apenas para app java console -- disabled
 
 ** Comint
 #+begin_src emacs-lisp
-;; (bind-key (kbd "M-l") 'commint-clear-budder 'comint-mode-map)
+(use-package comint
+  :ensure nil
+  :bind
+  (:map comint-mode-map
+	("M-l" . comint-clear-buffer)))
 #+end_src
 
 
-* Profile
+* Profile and testing
 Ferramentas para conferir o tempo de inicialização!
 redução de 10s para 1.84
 #+begin_src emacs-lisp :tangle no

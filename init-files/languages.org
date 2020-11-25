@@ -308,6 +308,31 @@ Configurações do pacote auctex. Não tenho ideia se ainda funciona...
 *** verificar confs auctex
 *** verificar integração com bibLatex
 
+** R
+#+begin_src emacs-lisp
+(defun open-r-file ()
+  "Adjust widows when opening a R file"
+  (if (not (one-window-p))
+      (save-window-excursion
+        (R)
+        (split-window-below)
+        (other-window)
+        (switch-to-buffer buff)
+        ())))
+
+(use-package ess
+  :ensure t
+  :defer t
+  :bind-keymap ("C-r" . ess-mode-map)
+  :bind
+  (:map ess-mode-map
+        ("C-r r" . R))
+  ;; (:map inferior-ess-r-mode-map
+  ;;       ("C-l"   . comint-clear-buffer))
+  ;; :hook ("ess-r-mode-hook" . open-r-file)
+  )
+#+end_src
+
 
 * Package Info
 #+begin_src emacs-lisp

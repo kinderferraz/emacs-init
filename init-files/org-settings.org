@@ -45,6 +45,7 @@ Pure regexps
   (setf (alist-get "\\.pdf\\'" org-file-apps nil nil #'equal) 'emacs)
   (add-to-list 'org-src-lang-modes '("\\.js?\\'" . rjsx))
   (add-to-list 'org-src-lang-modes '("\\.ts?\\'" . typescript))
+  (add-to-list 'org-src-lang-modes '("\\.r?\\'"  . ess))
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((latex     . t)
