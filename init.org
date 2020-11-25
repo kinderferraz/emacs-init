@@ -136,6 +136,15 @@ with this file and a scratch buffer side by side
 (add-hook 'after-init-hook 'k/prepare-init)
 #+end_src
 
+Go to college semester folder
+#+begin_src emacs-lisp
+(defun find-semester ()
+  "Go to college semester folder"
+  (interactive)
+  (find-file "/Users/alkindarferraz/Documents/ifsp/2s20/master.org"))
+
+#+end_src
+
 
 * Reset GC
 #+begin_src emacs-lisp
@@ -145,7 +154,6 @@ with this file and a scratch buffer side by side
 
 * General kbds
 #+begin_src emacs-lisp
-
 (global-set-key (kbd "s-w")    'widen)
 (global-set-key (kbd "M-i")    'k/find-inits)
 (global-set-key (kbd "M-r")    'eval-region)
@@ -156,9 +164,5 @@ with this file and a scratch buffer side by side
 (global-set-key (kbd "<up>")   'previous-logical-line)
 (global-set-key (kbd "M-b")    'switch-to-buffer-other-window)
 (global-set-key (kbd "C-x f")  'find-file)
-
+(global-set-key (kbd "C-c s")  'find-semester)
 #+end_src
-
-
-
-

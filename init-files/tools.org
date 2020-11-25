@@ -176,6 +176,13 @@ redução de 10s para 1.84
     :disabled t)
 #+end_src
 
+#+begin_src emacs-lisp
+(use-package ert
+  :ensure nil
+  :config
+  (defalias 'deftest #'ert-deftest ))
+#+end_src
+
 
 * Package
 #+begin_src emacs-lisp
