@@ -252,7 +252,15 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
                     :height 1
                     :v-adjust -0.1
                     :face 'doom-themes-treemacs-file-face))
-   :extensions ("pom.xml")))
+   :extensions ("pom.xml"))
+  (treemacs-create-icon
+   :icon (format "  %s\t"
+                 (all-the-icons-icon-for-file
+                  "a.r"
+                    :height 1
+                    :v-adjust -0.1
+                    :face 'all-the-icons-purple-alt))
+   :extensions ("r")))
 
 (use-package treemacs-magit
   :ensure t
