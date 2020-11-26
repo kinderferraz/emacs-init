@@ -41,7 +41,6 @@ lines, such as
 will break ~tex~ and ~:t~, and replace just the later with the
 appropriate symbol.
 
-
 * Preps
 These are for a prototype version, and I should rewrite the alist
 #+begin_src elisp
@@ -107,7 +106,6 @@ These are for a prototype version, and I should rewrite the alist
              line-end))
 
 #+end_src
-
 
 * Helpers
 #+name: requires
@@ -201,7 +199,6 @@ Returns the values for the symbols in the alist, in the correct order."
                   (get-text-property (1- (point)) prop)))))
 #+end_src
 
-
 * Fontificar
 #+begin_src emacs-lisp
 (defun k/fontify-keywords (line-beg limit)
@@ -247,7 +244,6 @@ Marks all replacements with beginning and end positions."
 
 #+end_src
 
-
 * Desesconder
 #+begin_src emacs-lisp
 (defun k/unfontify-current-symbol ()
@@ -277,7 +273,6 @@ reapply fontification to region and unset region"
 
 #+end_src
 
-
 * Finalizando
 #+begin_src emacs-lisp
 ;; use fontify rules
@@ -294,7 +289,6 @@ reapply fontification to region and unset region"
 
 (provide 'org-pretty)
 #+end_src
-
 
 * Scratch
 In case of errors:

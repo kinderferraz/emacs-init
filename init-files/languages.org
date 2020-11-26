@@ -49,9 +49,7 @@
 
 #+end_src
 
-
-* Languages
-** Python
+* Python
 #+begin_src emacs-lisp
 (use-package elpy
   :ensure t
@@ -75,7 +73,7 @@
 
 #+end_src
 
-** JAVA
+* JAVA
 #+begin_src emacs-lisp
   (use-package lsp-java
     :ensure t
@@ -94,7 +92,7 @@
 
 #+end_src
 
-** Haskell
+* Haskell
 #+begin_src emacs-lisp :tangle no
   (use-package intero
     :ensure t
@@ -126,7 +124,7 @@
 )
 #+end_src
 
-** WEB
+* WEB
 #+begin_src emacs-lisp
 (use-package web-mode
   :ensure t
@@ -163,7 +161,7 @@
 
 #+end_src
 
-** Node & TS
+* Node & TS
 #+begin_src emacs-lisp
 (use-package rjsx-mode
   :ensure t
@@ -211,7 +209,7 @@
 
 #+end_src
 
-** SQL
+* SQL
 #+begin_src emacs-lisp
 (use-package sql
   :ensure nil
@@ -247,7 +245,7 @@
 
 #+end_src
 
-** LaTeX
+* LaTeX
    A primeira função que eu escrevi em elisp, adiciona uma tag de highlight
    no texto dofigo em LaTeX.
 #+begin_src emacs-lisp
@@ -308,7 +306,7 @@ Configurações do pacote auctex. Não tenho ideia se ainda funciona...
 *** verificar confs auctex
 *** verificar integração com bibLatex
 
-** R
+* R
 #+begin_src emacs-lisp
 (defun open-r-file ()
   "Adjust widows when opening a R file"
@@ -332,7 +330,6 @@ Configurações do pacote auctex. Não tenho ideia se ainda funciona...
   ;; :hook ("ess-r-mode-hook" . open-r-file)
   )
 #+end_src
-
 
 * Package Info
 #+begin_src emacs-lisp

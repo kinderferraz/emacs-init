@@ -33,7 +33,6 @@ Pure regexps
 
 #+end_src
 
-
 * Plain Org
 - [ ] await abntex2 to configure latex export (with lualatex)
 #+begin_src emacs-lisp
@@ -62,6 +61,7 @@ Pure regexps
 
   :custom
   ;; (org-latex-compiler "lualatex")
+  (org-cycle-separator-lines   -1)
   (org-src-preserve-indentation t)
   (org-src-tab-acts-natively    t)
 
@@ -79,8 +79,8 @@ Pure regexps
   :bind
   (:map org-mode-map
         ("s-n"       . org-narrow-to-subtree)
-        ("s-<down>"  . org-babel-next-src-block)
-        ("s-<up>"    . org-babel-previous-src-block)))
+        ("s-S-<down>"  . org-babel-next-src-block)
+        ("s-S-<up>"    . org-babel-previous-src-block)))
 
 (use-package ox
   :ensure nil
@@ -93,7 +93,6 @@ Pure regexps
   (org-export-dispatch-use-expert-ui t))
 
 #+end_src
-
 
 * Org babels
 #+begin_src emacs-lisp :tangle no
@@ -116,7 +115,6 @@ Pure regexps
 
 #+end_src
 
-
 * org-journal
 #+begin_src elisp
   (use-package org-journal
@@ -137,7 +135,6 @@ Pure regexps
     '(("j" "journal entry" entry (function org-journal-find-location)
        "* %(format-time-string org-journal-time-format)%^{title}\n%i%?")))
 #+end_src
-
 
 * ox-latex
 #+begin_src elisp :tangle no
@@ -188,7 +185,6 @@ Pure regexps
 
 #+end_src
 
-
 * org-reveal
 #+begin_src emacs-lisp :tangle no
   (use-package ox-reveal
@@ -199,30 +195,7 @@ Pure regexps
 
 #+end_src
 
-
 * package
 #+begin_src emacs-lisp
-  (provide 'org-settings)
-#+end_src
-
-
-
-
-* Scratch
-#+begin_src emacs-lisp :tangle no
-  ;;comment string
-  "^\\*+\\(?: +%s\\)?\\(?: +\\[#[A-Z0-9]\\]\\)? +\\(?9:%s\\)\\(?: \\|$\\)"
-
-  (add-to-list 'font-lock-extra-managed-props 'display)
-  (font-lock-add-keywords 'org-mode
-                          '(("^#\\+\\(begin_\\|end_\\)\\(src\\|example\\|quote\\):"
-                             (if (string-equal (match-string 1) "begin_")
-                                 (cond ((string-equal (match-string 2) "src")
-                                        'k/face-begin-src)))
-                             '(face nil display ""))))
-
-    ;;all strings i want
-  (re-search-backward "^\\(#\\+\\|:\\)\\(\\w\\|_\\)*:?" nil nil 4)
-  (match-string 2)
-
+(provide 'org-settings)
 #+end_src

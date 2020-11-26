@@ -6,9 +6,8 @@
 
 * Prettify simbols
 #+begin_src elisp :tangle no
-  (require 'prettify-utils)
+(require 'prettify-utils)
 #+end_src
-
 
 * Uml
 #+begin_src emacs-lisp
@@ -26,7 +25,6 @@
 
 #+end_src
 
-
 * DOC-VIEW
 #+begin_src emacs-lisp
 (setq doc-view-ghostscript-program
@@ -35,7 +33,6 @@
 (add-hook 'doc-view-mode-hook #'auto-revert-mode )
 (add-to-list 'revert-without-query ".+\\.pdf$")
 #+end_src
-
 
 * Shell Ops
 #+begin_src emacs-lisp
@@ -49,7 +46,6 @@
                 '("/usr/local/bin" "/usr/local/bin/node" "/Library/TeX/texbin")))
 
 #+end_src
-
 
 * GIT
 #+begin_src emacs-lisp
@@ -67,7 +63,6 @@
   (remove-hook 'server-switch-hook 'magit-commit-diff))
 
 #+end_src
-
 
 * Prog tools
 ** Yasnippets
@@ -88,7 +83,6 @@
     :disabled))
 
 #+end_src
-
 ** Syntax Check
 #+begin_src emacs-lisp
 (use-package flycheck
@@ -105,21 +99,19 @@
   :config (flycheck-pos-tip-mode))
 
 #+end_src
-
 ** Company
 #+begin_src emacs-lisp
-  (use-package company
-    :ensure t
-    :pin melpa
-    :hook (after-init . global-company-mode)
-    :bind ("s-." . company-manual-begin))
+(use-package company
+  :ensure t
+  :pin melpa
+  :hook (after-init . global-company-mode)
+  :bind ("s-." . company-manual-begin))
 
-  (use-package company-web
-    :ensure t
-    :after company)
+(use-package company-web
+  :ensure t
+  :after company)
 
 #+end_src
-
 
 * Projetcs
 #+begin_src emacs-lisp
@@ -138,19 +130,17 @@
 
 #+end_src
 
-
 * Run code
 ** Quick run
 Usado apenas para app java console -- disabled
 #+begin_src emacs-lisp
-  (use-package quickrun
-    :ensure t
-    :disabled
-    :custom
-      (quickrun-timeout-seconds nil))
+(use-package quickrun
+  :ensure t
+  :disabled
+  :custom
+  (quickrun-timeout-seconds nil))
 
 #+end_src
-
 ** Comint
 #+begin_src emacs-lisp
 (use-package comint
@@ -160,20 +150,19 @@ Usado apenas para app java console -- disabled
 	("M-l" . comint-clear-buffer)))
 #+end_src
 
-
 * Profile and testing
 Ferramentas para conferir o tempo de inicialização!
 redução de 10s para 1.84
 #+begin_src emacs-lisp :tangle no
-  (use-package benchmark-init
-    :ensure t
-    :config
-      ;; To disable collection of benchmark data after init is done.
-      (add-hook 'after-init-hook 'benchmark-init/deactivate))
+(use-package benchmark-init
+  :ensure t
+  :config
+  ;; To disable collection of benchmark data after init is done.
+  (add-hook 'after-init-hook 'benchmark-init/deactivate))
 
-  (use-package esup
-    :ensure t
-    :disabled t)
+(use-package esup
+  :ensure t
+  :disabled t)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -186,5 +175,5 @@ redução de 10s para 1.84
 
 * Package
 #+begin_src emacs-lisp
-  (provide 'tools)
+(provide 'tools)
 #+end_src

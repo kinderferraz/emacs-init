@@ -7,43 +7,45 @@
 * Editing
 ** Cursor Behaviour
 #+begin_src emacs-lisp
-  (use-package multiple-cursors
-    :ensure t
-    :defer t
-    :bind
-    ((:map global-map)
-     ("C-c e"    . 'mc/edit-lines)
-     ("C-,"      . 'mc/mark-previous-like-this)
-     ("C-."      . 'mc/mark-next-like-this)
-     ("C-c C-."  . 'mc/mark-all-like-this)
-     ("C-c ."    . 'mc/edit-ends-of-lines)
-     ("C-c ,"    . 'mc/edit-beginnings-of-lines)))
+(use-package multiple-cursors
+  :ensure t
+  :defer t
+  :bind
+  ((:map global-map)
+   ("C-c e"    . 'mc/edit-lines)
+   ("C-,"      . 'mc/mark-previous-like-this)
+   ("C-."      . 'mc/mark-next-like-this)
+   ("C-c C-."  . 'mc/mark-all-like-this)
+   ("C-c ."    . 'mc/edit-ends-of-lines)
+   ("C-c ,"    . 'mc/edit-beginnings-of-lines)))
 
-  (defun move-line-up ()
-    (interactive)
-    (transpose-lines 1)
-    (forward-line -2))
+(defun move-line-up ()
+  (interactive)
+  (transpose-lines 1)
+  (forward-line -2))
 
-  (defun move-line-down ()
-    (interactive)
-    (forward-line 1)
-    (transpose-lines 1)
-    (forward-line -1))
+(defun move-line-down ()
+  (interactive)
+  (forward-line 1)
+  (transpose-lines 1)
+  (forward-line -1))
 
-  (setq-default indent-tabs-mode nil)
-  (setq-default tab-width 2)
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 2)
 
-  (setq-default default-input-method 'portuguese-prefix)
+(setq-default default-input-method 'portuguese-prefix)
 
-  (global-hl-line-mode)
-  (global-subword-mode 1)
+(global-hl-line-mode)
+(global-subword-mode 1)
 
-  (global-set-key (kbd "S-<backspace>") 'delete-trailing-whitespace)
-  (global-set-key (kbd "s-<up>")        'move-line-up)
-  (global-set-key (kbd "s-<down>")      'move-line-down)
-  (global-set-key (kbd "C-<left>")      'backward-word)
-  (global-set-key (kbd "C-<right>")     'forward-word)
-
+(global-set-key (kbd "S-<backspace>") 'delete-trailing-whitespace)
+(global-set-key (kbd "s-<up>")        'move-line-up)
+(global-set-key (kbd "s-<down>")      'move-line-down)
+(global-set-key (kbd "C-<left>")      'backward-word)
+(global-set-key (kbd "C-<right>")     'forward-word)
+(global-set-key (kbd "M-u") 'upcase-dwim)
+(global-set-key (kbd "M-l") 'downcase-dwim)
+(global-set-key (kbd "M-c") 'capitalize-dwim)
 #+end_src
 
 ** Delimiters
@@ -84,21 +86,21 @@
 
 ** Folding
 #+begin_src emacs-lisp
-  (use-package hideshow
-    :ensure nil
-    :hook ((prog-mode     . hs-minor-mode)
-           (c-mode-common . set-c-regexp))
-    :custom (hs-allow-nesting t)
-    :bind
-     (("C-f" . hs-toggle-hiding)
-      ("C-t" . hs-hide-all)
-      ("C-a" . hs-show-all))
-    :config
-     (defun set-c-regexp ()
-       (setq hs-block-start-regexp "\\s(")
-       (setq hs-block-end-regexp   "\\s)")))
+(use-package hideshow
+  :ensure nil
+  :hook ((prog-mode     . hs-minor-mode)
+         (c-mode-common . set-c-regexp))
+  :custom (hs-allow-nesting t)
+  :bind
+  (("C-f" . hs-toggle-hiding)
+   ("C-t" . hs-hide-all)
+   ("C-a" . hs-show-all))
+  :config
+  (defun set-c-regexp ()
+    (setq hs-block-start-regexp "\\s(")
+    (setq hs-block-end-regexp   "\\s)")))
 
-  (setq-default show-trailing-whitespace t)
+(setq-default show-trailing-whitespace t)
 #+end_src
 
 ** Font Ligatures
@@ -124,7 +126,6 @@
   (global-ligature-mode t))
 (global-prettify-symbols-mode 1)
 #+end_src
-
 
 * Frame Management
 #+begin_src emacs-lisp
@@ -157,119 +158,116 @@
 (setq prettify-symbols-unprettify-at-point 'right-edge)
 #+end_src
 
-
 * Window Management
 Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/questions/20492/how-can-i-get-a-sensible-split-window-policy][this stack exchange answer]]
 #+begin_src emacs-lisp
-  ;; janelas -- buffer
-  (use-package buffer-move
-    :ensure t
-    :bind (:map global-map
-      ("C-x <up>"    . 'buf-move-up)
-      ("C-x <left>"  . 'buf-move-left)
-      ("C-x <down>"  . 'buf-move-down)
-      ("C-x <right>" . 'buf-move-right)))
+;; janelas -- buffer
+(use-package buffer-move
+  :ensure t
+  :bind
+  (:map global-map
+        ("C-x <up>"    . 'buf-move-up)
+        ("C-x <left>"  . 'buf-move-left)
+        ("C-x <down>"  . 'buf-move-down)
+        ("C-x <right>" . 'buf-move-right)))
 
-  (use-package ace-window
-    :ensure t
-    :bind ("M-o" . 'ace-window))
+(use-package ace-window
+  :ensure t
+  :bind ("M-o" . 'ace-window))
 
-  (setq split-height-threshold 120
-        split-width-threshold 160)
+(setq split-height-threshold 120
+      split-width-threshold 160)
 
-  (defun my-split-window-sensibly (&optional window)
-    "replacement `split-window-sensibly' function which prefers vertical splits"
-    (interactive)
-    (let ((window (or window (selected-window))))
-      (or (and (window-splittable-p window t)
-               (with-selected-window window
-                 (split-window-right)))
-          (and (window-splittable-p window)
-               (with-selected-window window
-                 (split-window-below))))))
+(defun my-split-window-sensibly (&optional window)
+  "replacement `split-window-sensibly' function which prefers vertical splits"
+  (interactive)
+  (let ((window (or window (selected-window))))
+    (or (and (window-splittable-p window t)
+             (with-selected-window window
+               (split-window-right)))
+        (and (window-splittable-p window)
+             (with-selected-window window
+               (split-window-below))))))
 
-  (setq split-window-preferred-function #'my-split-window-sensibly)
+(setq split-window-preferred-function #'my-split-window-sensibly)
 
-  (add-hook 'text-mode-hook 'visual-line-mode)
-  (add-hook 'prog-mode-hook 'visual-line-mode)
+(add-hook 'text-mode-hook 'visual-line-mode)
+(add-hook 'prog-mode-hook 'visual-line-mode)
 #+end_src
-
 
 * Icons
 #+begin_src emacs-lisp
-  (use-package all-the-icons
-    :ensure t
-    :pin melpa
-    :config (nconc all-the-icons-icon-alist
-                   '(("\\.jsp$" all-the-icons-fileicon "ejs"
-                      :height 1.0
-                      :face all-the-icons-red)
-                     ("^routes.ts$" all-the-icons-faicon "map-signs"
-                      :height 1.0
-                      :face all-the-icons-blue)
-                     ("^\\.ts$" all-the-icons-fileicon "tsx"
-                      :height 0.75
-                      :v-adjust -0.2
-                      :face all-the-icons-blue))))
+(use-package all-the-icons
+  :ensure t
+  :pin melpa
+  :config (nconc all-the-icons-icon-alist
+                 '(("\\.jsp$" all-the-icons-fileicon "ejs"
+                    :height 1.0
+                    :face all-the-icons-red)
+                   ("^routes.ts$" all-the-icons-faicon "map-signs"
+                    :height 1.0
+                    :face all-the-icons-blue)
+                   ("^\\.ts$" all-the-icons-fileicon "tsx"
+                    :height 0.75
+                    :v-adjust -0.2
+                    :face all-the-icons-blue))))
 #+end_src
-
 
 * Treemacs
 #+begin_src emacs-lisp
-  (use-package treemacs
-    :ensure t
-    :custom
-      (treemacs-python-executable "/usr/local/bin/python3")
-      (treemacs-collapse-dirs
-        (if (executable-find "python") 3 0))
-      (treemacs-display-in-side-window      t)
-      (treemacs-indentation                 2)
-      (treemacs-indentation-string        " ")
-      (treemacs-width                      25)
-      (treemacs-filewatch-mode              t)
-      (treemacs-fringe-indicator-mode       t)
-      (treemacs-follow-mode                 t)
-      (treemacs-workspace-switch-cleanup 'all)
-      (treemacs-silent-refresh              t)
+(use-package treemacs
+  :ensure t
+  :custom
+  (treemacs-python-executable "/usr/local/bin/python3")
+  (treemacs-collapse-dirs
+   (if (executable-find "python") 3 0))
+  (treemacs-display-in-side-window      t)
+  (treemacs-indentation                 2)
+  (treemacs-indentation-string        " ")
+  (treemacs-width                      25)
+  (treemacs-filewatch-mode              t)
+  (treemacs-fringe-indicator-mode       t)
+  (treemacs-follow-mode                 t)
+  (treemacs-workspace-switch-cleanup 'all)
+  (treemacs-silent-refresh              t)
 
-    :bind (:map global-map
-            ("M-t" . treemacs))
-    :config
-    (treemacs-create-icon
-     :icon (format "  %s\t"
-                   (all-the-icons-octicon
-                    "file-text"
+  :bind
+  (:map global-map ("M-t" . treemacs))
+
+  :config
+  (treemacs-create-icon
+   :icon (format "  %s\t"
+                 (all-the-icons-octicon
+                  "file-text"
+                  :height 1
+                  :v-adjust -0.1
+                  :face 'doom-themes-treemacs-file-face))
+   :extensions (".project" "gradlew.bat"))
+  (treemacs-create-icon
+   :icon (format "  %s\t"
+                 (all-the-icons-icon-for-file
+                  "a.xml"
                     :height 1
                     :v-adjust -0.1
                     :face 'doom-themes-treemacs-file-face))
-     :extensions (".project" "gradlew.bat"))
-    (treemacs-create-icon
-     :icon (format "  %s\t"
-                   (all-the-icons-icon-for-file
-                    "a.xml"
-                    :height 1
-                    :v-adjust -0.1
-                    :face 'doom-themes-treemacs-file-face))
-     :extensions ("pom.xml")))
+   :extensions ("pom.xml")))
 
-  (use-package treemacs-magit
-    :ensure t
-    :after magit treemacs)
+(use-package treemacs-magit
+  :ensure t
+  :after magit treemacs)
 #+end_src
-
 
 * Line Numbers
 #+begin_src emacs-lisp
-  (use-package linum-relative
-    :ensure t
-    :hook
-      ((prog-mode . linum-relative-mode)
-       (org-mode  . linum-relative-mode)
-       (TeX-mode  . linum-mode))
-    :custom-face
-      (linum-relative-current-face ((t (:inherit 'default)))))
+(use-package linum-relative
+  :ensure t
+  :hook
+  ((prog-mode . linum-relative-mode)
+   (org-mode  . linum-relative-mode)
+   (TeX-mode  . linum-mode))
+  :custom-face
+  (linum-relative-current-face ((t (:inherit 'default)))))
 #+end_src
-
 
 * DOOM
 ** Theme
@@ -319,7 +317,6 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
 
 #+end_src
 
-
 * Org-visuals
 #+begin_src emacs-lisp
 (use-package org-bullets
@@ -330,8 +327,7 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
   :hook (org-mode . org-bullets-mode))
 #+end_src
 
-
 * Package Info
 #+begin_src emacs-lisp
-  (provide 'visuals)
+(provide 'visuals)
 #+end_src
