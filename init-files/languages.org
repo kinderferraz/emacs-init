@@ -322,13 +322,13 @@ Configurações do pacote auctex. Não tenho ideia se ainda funciona...
 
 (use-package ess
   :ensure t
-  :defer t
   :bind-keymap ("C-r" . ess-mode-map)
   :bind
-  (:map ess-mode-map
-        ("C-r r" . R))
-  ;; (:map inferior-ess-r-mode-map
-  ;;       ("C-l"   . comint-clear-buffer))
+  (:map ess-r-mode-map
+        ("C-r r" . R)
+        ("_" . ess-insert-assign))
+  (:map inferior-ess-r-mode-map
+        ("_" . ess-insert-assign))
   ;; :hook ("ess-r-mode-hook" . open-r-file)
   )
 #+end_src
