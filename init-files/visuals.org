@@ -47,7 +47,6 @@
 (global-set-key (kbd "M-l") 'downcase-dwim)
 (global-set-key (kbd "M-c") 'capitalize-dwim)
 #+end_src
-
 ** Delimiters
 #+begin_src emacs-lisp
 (use-package rainbow-delimiters
@@ -83,7 +82,6 @@
   (sp-local-pair '(org-mode)        "'" nil :actions nil))
 
 #+end_src
-
 ** Folding
 #+begin_src emacs-lisp
 (use-package hideshow
@@ -102,7 +100,6 @@
 
 (setq-default show-trailing-whitespace t)
 #+end_src
-
 ** Font Ligatures
 #+begin_src emacs-lisp
 (use-package ligature
@@ -125,6 +122,11 @@
      "\\" "://" "www"))
   (global-ligature-mode t))
 (global-prettify-symbols-mode 1)
+#+end_src
+** View Mode
+#+begin_src emacs-lisp
+(setq view-read-only t)
+(global-set-key (kbd "M-v") 'read-only-mode)
 #+end_src
 
 * Frame Management
@@ -295,7 +297,6 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
 (set-face-attribute 'font-lock-keyword-face nil :slant 'italic)
 (set-face-attribute 'font-lock-constant-face nil :weight 'bold :slant 'italic)
 #+end_src
-
 ** Modeline
 #+begin_src emacs-lisp
 (use-package doom-modeline

@@ -75,7 +75,8 @@ Pure regexps
   (org-todo-keywords '((sequence "todo" "coding"
                                  "|" "done"
                                  "forgotten")))
-
+  :custom-face
+  (org-block-begin-line ((t (:background nil))))
   :bind
   (:map org-mode-map
         ("s-n"       . org-narrow-to-subtree)

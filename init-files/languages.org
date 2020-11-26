@@ -320,6 +320,9 @@ Configurações do pacote auctex. Não tenho ideia se ainda funciona...
 
 (use-package ess
   :ensure t
+  :init (require 'ess-site)
+  :commands (ess-mode r-mode)
+  :mode (("\\.r\\'" . r-mode))
   :bind-keymap ("C-r" . ess-mode-map)
   :bind
   (:map ess-r-mode-map
