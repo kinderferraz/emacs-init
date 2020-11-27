@@ -248,6 +248,14 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
   (treemacs-create-icon
    :icon (format "  %s\t"
                  (all-the-icons-icon-for-file
+                  "foo.java"
+                  :height 1
+                  :v-adjust -0.1
+                  :face 'all-the-icons-dgreen))
+   :extensions ("class"))
+  (treemacs-create-icon
+   :icon (format "  %s\t"
+                 (all-the-icons-icon-for-file
                   "a.xml"
                     :height 1
                     :v-adjust -0.1
@@ -257,9 +265,9 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
    :icon (format "  %s\t"
                  (all-the-icons-icon-for-file
                   "a.r"
-                    :height 1
+                    :height 0.9
                     :v-adjust -0.1
-                    :face 'all-the-icons-purple-alt))
+                    :face 'all-the-icons-lpurple))
    :extensions ("r")))
 
 (use-package treemacs-magit

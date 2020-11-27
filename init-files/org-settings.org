@@ -52,7 +52,8 @@ Pure regexps
      ;;(sh        . t)
      (css       . t)
      (js        . t)
-     (sql       . t)))
+     (sql       . t)
+     (java      . t)))
 
   :hook
   ((org-mode . toggle-truncate-lines)
