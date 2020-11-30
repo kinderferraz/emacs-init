@@ -142,7 +142,6 @@
      "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
      "\\" "://" "www"))
   (global-ligature-mode t))
-(global-prettify-symbols-mode 1)
 #+end_src
 ** View Mode
 #+begin_src emacs-lisp

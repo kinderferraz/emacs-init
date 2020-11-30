@@ -147,7 +147,6 @@
                  (set (make-local-variable 'company-backends)
                       '(company-web-html company-files)))))
   :custom
-  (web-mode-prettify-symbols-alist nil)
   (web-mode-markup-indent-offset     2)
   (web-mode-css-indent-offset        2)
   (web-mode-code-indent-offset       2)
@@ -176,8 +175,6 @@
    ("\\.jsx\\'" . rjsx-mode))
   :hook
   (rjsx-mode . tide-setup)
-  (rjsx-mode . (lambda ()
-                 (kill-local-variable 'prettify-symbols-alist)))
 
   :custom
   (js-indent-level          2)
