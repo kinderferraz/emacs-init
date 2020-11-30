@@ -53,14 +53,14 @@
   :ensure t
   :hook ((prog-mode LaTeX-mode comint-mode) . rainbow-delimiters-mode)
   :custom-face
-  (rainbow-delimiters-depth-1-face ((t (:foreground "#A901DB"))))
-  (rainbow-delimiters-depth-2-face ((t (:foreground "#FE2E2E"))))
+  (rainbow-delimiters-depth-1-face ((t (:foreground "#a901db"))))
+  (rainbow-delimiters-depth-2-face ((t (:foreground "#fe2e2e"))))
   (rainbow-delimiters-depth-3-face ((t (:foreground "#d75f00"))))
   (rainbow-delimiters-depth-4-face ((t (:foreground "#aeb404"))))
-  (rainbow-delimiters-depth-5-face ((t (:foreground "#088A08"))))
+  (rainbow-delimiters-depth-5-face ((t (:foreground "#088a08"))))
   (rainbow-delimiters-depth-6-face ((t (:foreground "#008787"))))
-  (rainbow-delimiters-depth-8-face ((t (:foreground "#2ECCFA"))))
-  (rainbow-delimiters-depth-9-face ((t (:foreground "#CC2EFA")))))
+  (rainbow-delimiters-depth-8-face ((t (:foreground "#2eccfa"))))
+  (rainbow-delimiters-depth-9-face ((t (:foreground "#cc2efa")))))
 
 ;; TODO: fix this
 (use-package smartparens
@@ -81,6 +81,17 @@
   (sp-local-pair '(lisp-mode)       "'" nil :actions nil)
   (sp-local-pair '(org-mode)        "'" nil :actions nil))
 
+(use-package paren
+  :ensure nil
+  :custom
+  (show-paren-delay 0)
+  (show-paren-style 'parenthesis)
+
+  :config (show-paren-mode 1)
+  :custom-face
+  (show-paren-match ((t (:foreground "#b877db"
+                         :background nil)))))
+
 #+end_src
 ** Folding
 #+begin_src emacs-lisp
@@ -99,6 +110,8 @@
     (setq hs-block-end-regexp   "\\s)")))
 
 (setq-default show-trailing-whitespace t)
+(set-display-table-slot standard-display-table 'truncation
+                        (make-glyph-code ?…))
 #+end_src
 ** Font Ligatures
 #+begin_src emacs-lisp
@@ -236,6 +249,10 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
   :bind
   (:map global-map ("M-t" . treemacs))
 
+  :custom-face
+  (treemacs-root-face ((t (:foreground "#21bfc2"
+                           :family "sans serif"))))
+
   :config
   (treemacs-create-icon
    :icon (format "  %s\t"
@@ -298,6 +315,9 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
   (doom-themes-enable-bold   t)
   (doom-themes-enable-italic t)
   (doom-themes-treemacs-theme "doom-colors")
+
+  :custom-face
+  (doom-themes-treemacs-root-face ((t (:foreground "#21bfc2"))))
 
   :config
   (doom-themes-treemacs-config)
