@@ -323,6 +323,9 @@ Configurações do pacote auctex. Não tenho ideia se ainda funciona...
   :init (require 'ess-site)
   :commands (ess-mode r-mode)
   :mode (("\\.r\\'" . r-mode))
+
+  :config (ess-set-style 'RStudio)
+
   :bind-keymap ("C-r" . ess-mode-map)
   :bind
   (:map ess-r-mode-map
