@@ -110,7 +110,14 @@
     (setq hs-block-start-regexp "\\s(")
     (setq hs-block-end-regexp   "\\s)")))
 
+;;show whitespace
 (setq-default show-trailing-whitespace t)
+
+;; but not in buffer-menu
+(add-hook 'buffer-menu-mode-hook
+          (lambda ()
+            (setq show-trailing-whitespace nil)))
+
 (set-display-table-slot standard-display-table 'truncation
                         (make-glyph-code ?…))
 #+end_src
