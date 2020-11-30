@@ -7,45 +7,47 @@
 * Servers
 ** LSP
 #+begin_src emacs-lisp
-  (use-package lsp-mode
-    :ensure t
-    :hook ((haskell-mode   . lsp-mode)
-           ;; (python-mode . lsp-mode)
-           (c++-mode       . lsp-mode))
-    :commands lsp)
+(use-package lsp-mode
+  :ensure t
+  :defer
+  :hook ((haskell-mode   . lsp-mode)
+         ;; (python-mode . lsp-mode)
+         (c++-mode       . lsp-mode))
+  :commands lsp)
 
-  (use-package lsp-ui
-    :custom
-      (lsp-ui-imenu-enable nil)
-      (lsp-ui-peek-enable nil)
+(use-package lsp-ui
+  :after lsp
+  :custom
+  (lsp-ui-imenu-enable nil)
+  (lsp-ui-peek-enable nil)
 
-      ;; sideline
-      (lsp-ui-sideline-delay 4)
-      (lsp-ui-sideline-update-mode 'line)
-      (lsp-ui-sideline-show-code-actions nil)
+  ;; sideline
+  (lsp-ui-sideline-delay 4)
+  (lsp-ui-sideline-update-mode 'line)
+  (lsp-ui-sideline-show-code-actions nil)
 
-      ;; docs
-      (lsp-ui-doc-show-whit-mouse nil)
-      (lsp-ui-doc-show-with-cursors nil)
-      (lsp-ui-doc-show-over-cursors nil)
-      (lsp-ui-doc-position 'at-point)
-      (lsp-ui-doc-delay 2)
-    :bind
-      (:map lsp-ui-mode-map
-         ("s-," . lsp-ui-doc-show)))
+  ;; docs
+  (lsp-ui-doc-show-whit-mouse nil)
+  (lsp-ui-doc-show-with-cursors nil)
+  (lsp-ui-doc-show-over-cursors nil)
+  (lsp-ui-doc-position 'at-point)
+  (lsp-ui-doc-delay 2)
+  :bind
+  (:map lsp-ui-mode-map
+        ("s-," . lsp-ui-doc-show)))
 
 #+end_src
 
 ** DAP
 #+begin_src emacs-lisp
-  (use-package dap-mode
-    :ensure t
-    :after lsp-mode
-    :config (progn
-              (dap-mode t)
-              (dap-ui-mode nil)
-              (dap-tooltip-mode 1)
-              (tooltip-mode 1)))
+(use-package dap-mode
+  :ensure t
+  :after lsp-mode
+  :config (progn
+            (dap-mode t)
+            (dap-ui-mode nil)
+            (dap-tooltip-mode 1)
+            (tooltip-mode 1)))
 
 #+end_src
 
@@ -75,52 +77,54 @@
 
 * JAVA
 #+begin_src emacs-lisp
-  (use-package lsp-java
-    :ensure t
-    :hook ((java-mode . lsp))
-    :custom
-      ((lsp-java-save-actions-organize-imports t)
-       (lsp-java-import-maven-enabled t)
-       (c-basic-offset 4))
-    :bind (:map lsp-mode-map
-      ("C-j g" . 'lsp-java-generate-getters-and-setters)
-      ("C-j d" . 'dap-java-debug)))
+(use-package lsp-java
+  :ensure t
+  :defer t
+  :hook ((java-mode . lsp))
+  :custom
+  ((lsp-java-save-actions-organize-imports t)
+   (lsp-java-import-maven-enabled t)
+   (c-basic-offset 4))
+  :bind
+  (:map lsp-mode-map
+        ("C-j g" . 'lsp-java-generate-getters-and-setters)
+        ("C-j d" . 'dap-java-debug)))
 
-  (use-package dap-java
-    :ensure nil
-    :defer t)
+(use-package dap-java
+  :ensure nil
+  :defer t)
 
 #+end_src
 
 * Haskell
 #+begin_src emacs-lisp :tangle no
-  (use-package intero
-    :ensure t
-    :hook (haskell-mode . intero-mode))
+(use-package intero
+  :ensure t
+  :hook (haskell-mode . intero-mode))
 
-  (use-package haskell-mode
-    :ensure t
-    :mode (("\\.hs\\'"    . haskell-mode)
-           ("\\.cabal\\'" . haskell-cabal-mode)
-           ("\\.hcr\\'"   . haskell-core-mode))
-    :interpreter ("haskell" . haskell-mode)
+(use-package haskell-mode
+  :ensure t
+  :mode (("\\.hs\\'"    . haskell-mode)
+         ("\\.cabal\\'" . haskell-cabal-mode)
+         ("\\.hcr\\'"   . haskell-core-mode))
+  :interpreter ("haskell" . haskell-mode)
 
-    :config
-      (require 'haskell)
-      (require 'haskell-mode)
-      (require 'haskell-interactive-mode)
-      (require 'autoinsert)
+  :config
+  (require 'haskell)
+  (require 'haskell-mode)
+  (require 'haskell-interactive-mode)
+  (require 'autoinsert)
 
 
-      (define-skeleton haskell-skeleton
-        "Default Haskell file initial contents."
-        nil
-        "-- | " _ "\n\n"
-        "module "
-        (haskell-guess-module-name)
-        " where\n\n")
+  (define-skeleton haskell-skeleton
+    "Default Haskell file initial contents."
+    nil
+    "-- | " _ "\n\n"
+    "module "
+    (haskell-guess-module-name)
+    " where\n\n")
 
-      (define-auto-insert "\\.hs" 'haskell-skeleton)
+  (define-auto-insert "\\.hs" 'haskell-skeleton)
 )
 #+end_src
 
@@ -143,9 +147,10 @@
                  (set (make-local-variable 'company-backends)
                       '(company-web-html company-files)))))
   :custom
-  (web-mode-markup-indent-offset 2)
-  (web-mode-css-indent-offset 2)
-  (web-mode-code-indent-offset 2)
+  (web-mode-prettify-symbols-alist nil)
+  (web-mode-markup-indent-offset     2)
+  (web-mode-css-indent-offset        2)
+  (web-mode-code-indent-offset       2)
 
   :config
   (nconc web-mode-content-types-alist
@@ -169,11 +174,14 @@
   :mode
   (("\\.js\\'"  . rjsx-mode)
    ("\\.jsx\\'" . rjsx-mode))
-  :hook (rjsx-mode . tide-setup)
+  :hook
+  (rjsx-mode . tide-setup)
+  (rjsx-mode . (lambda ()
+                 (kill-local-variable 'prettify-symbols-alist)))
 
   :custom
-  (js-indent-level 2)
-  (sgml-basic-offset 0))
+  (js-indent-level          2)
+  (sgml-basic-offset        0))
 
 (use-package tide
   :ensure t
@@ -235,6 +243,7 @@
 
 (use-package sqlformat
   :ensure t
+  :defer t
   :hook (sql-mode . sqlformat-on-save-mode)
   :custom
   ;; (sqlformat-command 'pgformatter)
@@ -246,58 +255,57 @@
 #+end_src
 
 * LaTeX
-   A primeira função que eu escrevi em elisp, adiciona uma tag de highlight
-   no texto dofigo em LaTeX.
+A primeira função que eu escrevi em elisp, adiciona uma tag de highlight
+no texto dofigo em LaTeX.
 #+begin_src emacs-lisp
-  (defun TeX-highlight-region (beg end)
+(defun TeX-highlight-region (beg end)
   "Insert highlight macro at BEG of region and closing bracket at END."
-    (interactive
-      (if mark-active
-        (list (region-beginning) (region-end))))
-    (when (and beg end)
-      (save-excursion
-        (let ((hl-beg "\\hl{")
-              (hl-end "}"))
-          (goto-char end)
-          (insert hl-end)
-          (goto-char beg)
-          (insert hl-beg)))
-      (goto-char (+ 6 end))))
+  (interactive
+   (if mark-active
+       (list (region-beginning) (region-end))))
+  (when (and beg end)
+    (save-excursion
+      (let ((hl-beg "\\hl{")
+            (hl-end "}"))
+        (goto-char end)
+        (insert hl-end)
+        (goto-char beg)
+        (insert hl-beg)))
+    (goto-char (+ 6 end))))
 #+end_src
 
 Configurações do pacote auctex. Não tenho ideia se ainda funciona...
 
 #+begin_src emacs-lisp
-  (use-package auctex
-    :ensure t
-    :mode ("\\.tex\\'" . LaTeX-mode)
+(use-package auctex
+  :ensure t
+  :mode ("\\.tex\\'" . LaTeX-mode)
 
-    :hook
-      (TeX-mode  . TeX-fold-mode)
-      (TeX-mode  . prettify-symbols-mode)
-      (TeX-mode  . auto-fill-mode)
+  :hook
+  (TeX-mode  . TeX-fold-mode)
+  (TeX-mode  . prettify-symbols-mode)
+  (TeX-mode  . auto-fill-mode)
 
-    :init
-      (add-hook 'TeX-after-compilation-finished-functions
-               #'TeX-revert-document-buffer)
+  :init
+  (add-hook 'TeX-after-compilation-finished-functions
+            #'TeX-revert-document-buffer)
 
-    :custom
-      (TeX-save-query          nil)
-      (TeX-auto-save             t)
-      (TeX-parse-self            t)
-      (TeX-master              nil)
-      (TeX-PDF-mode              t)
-      (TeX-engine          'luatex)
+  :custom
+  (TeX-save-query          nil)
+  (TeX-auto-save             t)
+  (TeX-parse-self            t)
+  (TeX-master              nil)
+  (TeX-PDF-mode              t)
+  (TeX-engine          'luatex)
 
-      (prettify-symbols-unprettify-at-point t)
-      (LaTeX-default-style 'abntex2)
+  (LaTeX-default-style 'abntex2)
 
-      (TeX-view-program-selection '((output-pdf "PDF Tools")))
-      (TeX-view-program-list      '(("PDF Tools" TeX-pdf-tools-sync-view)))
-      (TeX-source-correlate-start-server t)
+  (TeX-view-program-selection '((output-pdf "PDF Tools")))
+  (TeX-view-program-list      '(("PDF Tools" TeX-pdf-tools-sync-view)))
+  (TeX-source-correlate-start-server t)
 
-    :bind
-      (:map TeX-mode-map
+  :bind
+  (:map TeX-mode-map
         ("s-a"   . TeX-command-run-all)
         ("s-e"   . LaTeX-environment)
         ("s-p"   . LaTeX-section)
@@ -320,8 +328,8 @@ Configurações do pacote auctex. Não tenho ideia se ainda funciona...
 
 (use-package ess
   :ensure t
+  :defer t
   :init (require 'ess-site)
-  :commands (ess-mode r-mode)
   :mode (("\\.r\\'" . r-mode))
 
   :config (ess-set-style 'RStudio)

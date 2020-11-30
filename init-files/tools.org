@@ -162,7 +162,9 @@ redução de 10s para 1.84
 
 (use-package esup
   :ensure t
-  :disabled t)
+  :custom
+  (esup-depth 0))
+
 #+end_src
 
 #+begin_src emacs-lisp
@@ -171,7 +173,6 @@ redução de 10s para 1.84
   :config
   (defalias 'deftest #'ert-deftest ))
 #+end_src
-
 
 * Package
 #+begin_src emacs-lisp

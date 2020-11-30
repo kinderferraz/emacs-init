@@ -42,9 +42,11 @@ Pure regexps
   :config
   (add-to-list 'org-modules 'org-tempo)
   (setf (alist-get "\\.pdf\\'" org-file-apps nil nil #'equal) 'emacs)
-  (add-to-list 'org-src-lang-modes '("\\.js?\\'" . rjsx))
-  (add-to-list 'org-src-lang-modes '("\\.ts?\\'" . typescript))
-  (add-to-list 'org-src-lang-modes '("\\.r?\\'"  . ess))
+  (add-to-list 'org-src-lang-modes '("js" . rjsx))
+  (add-to-list 'org-src-lang-modes '("jsx" . rjsx))
+  (add-to-list 'org-src-lang-modes '("ts" . typescript))
+  (add-to-list 'org-src-lang-modes '("tsx" . typescript))
+  (add-to-list 'org-src-lang-modes '("r"  . ess))
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((latex     . t)

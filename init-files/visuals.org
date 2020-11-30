@@ -84,8 +84,9 @@
 (use-package paren
   :ensure nil
   :custom
-  (show-paren-delay 0)
-  (show-paren-style 'parenthesis)
+  (show-paren-delay                   0)
+  (show-paren-style        'parenthesis)
+  (show-paren-when-point-inside-paren t)
 
   :config (show-paren-mode 1)
   :custom-face
@@ -327,8 +328,8 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
 ;; (load-theme 'doom-laserwave        t)
 ;; (load-theme 'doom-acario-dark      t)
 ;; (load-theme 'doom-challenger-deep  t)
-(load-theme 'doom-horizon          t)
-;; (load-theme 'doom-nord             t)
+;; (load-theme 'doom-horizon          t)
+(load-theme 'doom-nord             t)
 
 (set-face-attribute 'font-lock-keyword-face nil :slant 'italic)
 (set-face-attribute 'font-lock-constant-face nil :weight 'bold :slant 'italic)
