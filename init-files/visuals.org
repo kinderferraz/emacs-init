@@ -98,7 +98,8 @@
 #+begin_src emacs-lisp
 (use-package hideshow
   :ensure nil
-  :hook ((prog-mode     . hs-minor-mode)
+  :hook ((org-mode      . hs-minor-mode)
+         (prog-mode     . hs-minor-mode)
          (c-mode-common . set-c-regexp))
   :custom (hs-allow-nesting t)
   :bind
@@ -256,10 +257,6 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
   :bind
   (:map global-map ("M-t" . treemacs))
 
-  :custom-face
-  (treemacs-root-face ((t (:foreground "#21bfc2"
-                           :family "sans serif"))))
-
   :config
   (treemacs-create-icon
    :icon (format "  %s\t"
@@ -323,9 +320,6 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
   (doom-themes-enable-italic t)
   (doom-themes-treemacs-theme "doom-colors")
 
-  :custom-face
-  (doom-themes-treemacs-root-face ((t (:foreground "#21bfc2"))))
-
   :config
   (doom-themes-treemacs-config)
   (doom-themes-org-config))
@@ -335,10 +329,15 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
 ;; (load-theme 'doom-acario-dark      t)
 ;; (load-theme 'doom-challenger-deep  t)
 ;; (load-theme 'doom-horizon          t)
+;; (load-theme 'doom-gruvbox          t)
 (load-theme 'doom-nord             t)
 
-(set-face-attribute 'font-lock-keyword-face nil :slant 'italic)
-(set-face-attribute 'font-lock-constant-face nil :weight 'bold :slant 'italic)
+(set-face-attribute 'font-lock-keyword-face nil
+                    :slant 'italic
+                    :height 110
+                    :weight 'bold
+                    :family "Victor Mono")
+
 #+end_src
 ** Modeline
 #+begin_src emacs-lisp
