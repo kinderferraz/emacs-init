@@ -170,7 +170,8 @@ redução de 10s para 1.84
 (use-package ert
   :ensure nil
   :config
-  (defalias 'deftest #'ert-deftest ))
+  (defalias 'deftest #'ert-deftest )
+  (defalias 'runtest #'ert ))
 #+end_src
 
 * Package

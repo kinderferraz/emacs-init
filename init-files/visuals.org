@@ -144,10 +144,24 @@
      "\\" "://" "www"))
   (global-ligature-mode t))
 #+end_src
-** View Mode
+** Views
 #+begin_src emacs-lisp
 (setq view-read-only t)
 (global-set-key (kbd "M-v") 'read-only-mode)
+
+;; view HEX colors
+(use-package rainbow-mode
+  :ensure
+  :diminish
+  :commands rainbow-mode
+
+  :custom
+  (rainbow-ansi-colors nil)
+  (rainbow-x-colors nil)
+
+  :config
+  (--each '(web-mode rjsx-mode)
+    (add-to-list 'rainbow-html-colors-major-mode-list it)))
 #+end_src
 
 * Frame Management
@@ -305,7 +319,7 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
    (org-mode  . linum-relative-mode)
    (TeX-mode  . linum-mode))
   :custom-face
-  (linum-relative-current-face ((t (:inherit 'default)))))
+  (linum-relative-current-face ((t (:background nil)))))
 #+end_src
 
 * DOOM

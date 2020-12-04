@@ -157,7 +157,7 @@ Go to college semester folder
 (global-set-key (kbd "s-w")    'widen)
 (global-set-key (kbd "M-i")    'k/find-inits)
 (global-set-key (kbd "M-r")    'eval-region)
-(global-set-key (kbd "M-e")    'eval-last-sexp)
+(global-set-key (kbd "M-?")    'eval-last-sexp)
 (global-set-key (kbd "s-n")    'narrow-to-region)
 (global-set-key (kbd "<down>") 'next-logical-line)
 (global-set-key (kbd "<up>")   'previous-logical-line)
