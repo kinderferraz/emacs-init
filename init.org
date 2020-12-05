@@ -56,11 +56,10 @@ First things first, this is Brasil <3
 (require 'languages)
 (require 'visuals)
 
-;; (add-to-list 'load-path "~/Downloads/elegant-emacs-master")
+(add-to-list 'load-path "~/init-files/my-themes")
+(require '-cond->)
 
-;; (require 'sanity)
 ;; (require 'elegance)
-
 #+end_src
 
 * Emacs VCS

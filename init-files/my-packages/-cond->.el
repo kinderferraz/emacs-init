@@ -47,18 +47,18 @@ first true test expression."
            (indent 1))
   (cl-assert (-> clauses length (% 2) (= 0)))
   ;; (message "%s" clauses)
-  (-let* ((g (-> "g" make-symbol symbol-name intern))
+  (-let* ((it (intern "it"))
           (steps (-map
                   (-lambda ((test step))
                     `(if ,test
-                         (-> ,g ,step)
-                       ,g))
+                         (-> it ,step)
+                       it))
                   (-partition 2 clauses))))
-    `(-let* ((,g ,x)
-            ,@(-zip-lists (-cycle '(g))
+    `(-let* ((it ,x)
+            ,@(-zip-lists (-cycle '(it))
                           (butlast steps)))
        ,@(if (null steps)
-             g
+            it
            (last steps)))))
 
 (defmacro -cond->> (x &rest clauses)
@@ -71,18 +71,18 @@ first true test expression."
            (indent 1))
   (cl-assert (-> clauses length (% 2) (= 0)))
   ;; (message "%s" clauses)
-  (-let* ((g (intern "g"))
+  (-let* ((it (intern "it"))
           (steps (-map
                   (-lambda ((test step))
                     `(if ,test
-                         (->> ,g ,step)
-                       ,g))
+                         (->> ,it ,step)
+                       ,it))
                   (-partition 2 clauses))))
-    `(-let* ((,g ,x)
-             ,@(-zip-lists (-cycle '(g))
+    `(-let* ((,it ,x)
+             ,@(-zip-lists (-cycle '(it))
                            (butlast steps)))
        ,@(if (null steps)
-            g
+            it
            (last steps)))))
 
 ;; testes
