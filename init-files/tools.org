@@ -130,6 +130,13 @@
 #+end_src
 
 * Run code
+** Persistent Scratch
+#+begin_src emacs-lisp
+(use-package persistent-scratch
+  :ensure t
+  :config
+  (persistent-scratch-setup-default))
+#+end_src
 ** Quick run
 Usado apenas para app java console -- disabled
 #+begin_src emacs-lisp

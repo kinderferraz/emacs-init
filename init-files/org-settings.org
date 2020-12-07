@@ -191,11 +191,11 @@ Pure regexps
 
 * org-reveal
 #+begin_src emacs-lisp :tangle no
-  (use-package ox-reveal
-    :ensure t
-    :defer t
-    :init
-      (setq org-reveal-root "file:///users/alkindarferraz/reveal.js"))
+(use-package ox-reveal
+  :ensure t
+  :defer t
+  :custom
+  (org-reveal-root "file:///users/alkindarferraz/reveal.js"))
 
 #+end_src
 

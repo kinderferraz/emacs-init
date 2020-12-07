@@ -49,16 +49,14 @@ First things first, this is Brasil <3
 * Load Settings
 #+begin_src emacs-lisp
 (add-to-list 'load-path (concat user-emacs-directory "init-files-c"))
+(add-to-list 'load-path "~/.emacs.d/init-files/my-packages")
+(require '-cond->)
 
 (require 'org-settings)
 (require 'org-pretty)
 (require 'tools)
 (require 'languages)
 (require 'visuals)
-
-(add-to-list 'load-path "~/init-files/my-themes")
-(require '-cond->)
-
 ;; (require 'elegance)
 #+end_src
 
