@@ -4,13 +4,12 @@
 #+property: header-args :comments yes :results silent :tangle "../init-files-c/tools.el"
 #+reveal_theme: night
 
-* Prettify simbols
-#+begin_src elisp :tangle no
-(require 'prettify-utils)
-#+end_src
-
 * Uml
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
+(use-package htmlize
+  :ensure t
+  :defer t)
+
 (use-package plantuml-mode
   :ensure t
   :disabled t
@@ -132,8 +131,18 @@
 * Run code
 ** Persistent Scratch
 #+begin_src emacs-lisp
+(defun clear-scratch ()
+  "Clears BUF if it is *scratch*"
+  (interactive)
+  (when (string= (buffer-name) "*scratch*")
+    (delete-region 1 (point-max))
+    (insert initial-scratch-message)))
+
+(bind-key (kbd "M-l") 'clear-scratch 'lisp-interaction-mode-map)
+
 (use-package persistent-scratch
   :ensure t
+  :defer t
   :config
   (persistent-scratch-setup-default))
 #+end_src
