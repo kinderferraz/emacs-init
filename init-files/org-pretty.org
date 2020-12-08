@@ -68,13 +68,14 @@ These are for a prototype version, and I should rewrite the alist
         ("caption"   . "")
         ("options"   . "" )
 
-        ("src"       . "✎")
+        ("src"       . "")
         ("quote"     . ("" ""))
         ("example"   . "")
         ("center"    . "")
         ("comment"   . "")
         ("export"    . "")
         ("verse"     . "")
+        ("notes"     . "✎")
 
         ("tangle"    . "")
         ("results"   . "")
@@ -92,7 +93,10 @@ These are for a prototype version, and I should rewrite the alist
         ("latex"   . "")
         ("sutitle" . "")
         ("class"   . "")
-        ("extra"   . "")))
+        ("extra"   . "")
+
+        ("nil"     . " ")
+        ("t"       . " ")))
 
 
 (defvar k/ob-header-symbol "☰")
