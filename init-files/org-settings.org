@@ -90,7 +90,7 @@ Pure regexps
   :ensure nil
   :after org
   :custom
-  (org-export-in-background t)
+  (org-export-in-background nil)
   (org-export-async-init-file
    (concat (expand-file-name user-emacs-directory)
            "init-files-c/org-async.el"))
@@ -193,9 +193,9 @@ Pure regexps
 #+begin_src emacs-lisp :tangle no
 (use-package ox-reveal
   :ensure t
-  :defer t
-  :custom
-  (org-reveal-root "file:///users/alkindarferraz/reveal.js"))
+  :config
+  (load-library "ox-reveal")
+  :custom (org-reveal-root "file:///usr/local/lib/node_modules/reveal.js"))
 
 #+end_src
 
