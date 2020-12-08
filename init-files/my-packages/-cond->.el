@@ -38,15 +38,17 @@
 ;; se rodar sem expandir apenas o ultimo teste é executado
 ;; steps possui ->
 (defmacro -cond-> (x &rest clauses)
-  "Takes an expression as X and a set of test/form pairs as CLAUSES.
-Threads expr (via ->) through each form for which the
+  "Conditionally thread X through CLAUSES.
+Threads x (via `->') through each form for which the
 corresponding test expression is true.  Note that, unlike cond
-branching, cond-> threading does not short circuit after the
-first true test expression."
+branching, `-cond->' threading does not short circuit after the
+first true test expression.
+Given some elisp details, current value being threaded is exposed
+as symbol `it'."
   (declare (debug (form body))
            (indent 1))
-  (cl-assert (-> clauses length (% 2) (= 0)))
-  ;; (message "%s" clauses)
+  (when (-> clauses length (% 2) (= 1))
+    (error "Wrong number of arguments"))
   (-let* ((it (intern "it"))
           (steps (-map
                   (-lambda ((test step))
@@ -55,31 +57,33 @@ first true test expression."
                        it))
                   (-partition 2 clauses))))
     `(-let* ((it ,x)
-            ,@(-zip-lists (-cycle '(it))
+            ,@(-zip-lists (-cycle (list it))
                           (butlast steps)))
        ,@(if (null steps)
             it
            (last steps)))))
 
 (defmacro -cond->> (x &rest clauses)
-  "Takes an expression as X and a set of test/form pairs as CLAUSES.
-Threads expr (via ->) through each form for which the
+  "Conditionally thread X through CLAUSES.
+Threads x (via `->>') through each form for which the
 corresponding test expression is true.  Note that, unlike cond
-branching, cond-> threading does not short circuit after the
-first true test expression."
+branching, `-cond->>' threading does not short circuit after the
+first true test expression.
+Given some elisp details, current value being threaded is exposed
+as symbol `it'."
   (declare (debug (form body))
            (indent 1))
-  (cl-assert (-> clauses length (% 2) (= 0)))
-  ;; (message "%s" clauses)
+  (when (-> clauses length (% 2) (= 1))
+    (error "Wrong number of arguments"))
   (-let* ((it (intern "it"))
           (steps (-map
                   (-lambda ((test step))
                     `(if ,test
-                         (->> ,it ,step)
-                       ,it))
+                         (->> it ,step)
+                       it))
                   (-partition 2 clauses))))
-    `(-let* ((,it ,x)
-             ,@(-zip-lists (-cycle '(it))
+    `(-let* ((it ,x)
+             ,@(-zip-lists (-cycle (list it))
                            (butlast steps)))
        ,@(if (null steps)
             it
@@ -87,8 +91,8 @@ first true test expression."
 
 ;; testes
 ;; (ert-deftest -cond->test ()
-;;   (should (string= "ac"
-;;                    (-cond-> ""
+;;   (should (string= "ca"
+;;                    (-cond->> ""
 ;;                      (= 1 1) (concat "a")
 ;;                      (= 2 1) (concat "b")
 ;;                      (= 2 2) (concat "c"))))
@@ -96,8 +100,6 @@ first true test expression."
 ;;              (-cond-> 0
 ;;                nil (- 10)
 ;;                t (+ 10)))))
-
-
 
 (provide '-cond->)
 ;;; -cond->.el ends here
