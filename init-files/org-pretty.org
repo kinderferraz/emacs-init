@@ -66,7 +66,7 @@ These are for a prototype version, and I should rewrite the alist
         ("reveal"    . "")
         ("date"      . "")
         ("caption"   . "")
-        ("options"   . "" )
+        ("options"   . "")
 
         ("src"       . "")
         ("quote"     . ("" ""))
@@ -81,6 +81,7 @@ These are for a prototype version, and I should rewrite the alist
         ("results"   . "")
         ("comments"  . "")
         ("label"     . "")
+        ("file"      . "")
         ("classname" . "")
 
         ("engine"    . "")
@@ -116,6 +117,7 @@ These are for a prototype version, and I should rewrite the alist
 #+name: requires
 #+begin_src elisp
 (require 's)
+(require '-cond->)
 (require 'dash)
 #+end_src
 
