@@ -13,23 +13,23 @@ Pure regexps
 :end:
 
 #+begin_src emacs-lisp
-  ;; format sql buffer after tangle
-  (defun k/format-sql-after-tangle ()
-    (when (string-equal (major-mode) "sql")
-      (sqlformat-buffer)))
+;; format sql buffer after tangle
+(defun k/format-sql-after-tangle ()
+  (when (string-equal (major-mode) "sql")
+    (sqlformat-buffer)))
 
-  (defun k/downcase-org-key-words ()
-    (interactive)
-    (setq case-replace nil)
-    (save-excursion
-      (goto-char (point-min))
-      (while (< (point) (point-max))
-        (when (looking-at "#\\+\\(\\w\\|_\\)*:?")
-          (progn
-            (downcase-word 1)
-            (when (looking-at "_\\w*:?")
-              (downcase-word 1))))
-        (forward-line 1))))
+(defun k/downcase-org-key-words ()
+  (interactive)
+  (setq case-replace nil)
+  (save-excursion
+    (goto-char (point-min))
+    (while (< (point) (point-max))
+      (when (looking-at "#\\+\\(\\w\\|_\\)*:?")
+        (progn
+          (downcase-word 1)
+          (when (looking-at "_\\w*:?")
+            (downcase-word 1))))
+      (forward-line 1))))
 
 #+end_src
 
@@ -42,11 +42,7 @@ Pure regexps
   :config
   (add-to-list 'org-modules 'org-tempo)
   (setf (alist-get "\\.pdf\\'" org-file-apps nil nil #'equal) 'emacs)
-  (add-to-list 'org-src-lang-modes '("js" . rjsx))
-  (add-to-list 'org-src-lang-modes '("jsx" . rjsx))
-  (add-to-list 'org-src-lang-modes '("ts" . typescript))
-  (add-to-list 'org-src-lang-modes '("tsx" . typescript))
-  (add-to-list 'org-src-lang-modes '("r"  . ess))
+
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((latex     . t)
@@ -55,7 +51,15 @@ Pure regexps
      (css       . t)
      (js        . t)
      (sql       . t)
-     (java      . t)))
+     (java      . t)
+     (plantuml  . t)))
+
+  (add-to-list 'org-src-lang-modes '("js" . rjsx))
+  (add-to-list 'org-src-lang-modes '("jsx" . rjsx))
+  (add-to-list 'org-src-lang-modes '("ts" . typescript))
+  (add-to-list 'org-src-lang-modes '("tsx" . typescript))
+  (add-to-list 'org-src-lang-modes '("r"  . ess))
+  (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
 
   :hook
   ((org-mode . toggle-truncate-lines)
@@ -82,7 +86,7 @@ Pure regexps
   (org-block-begin-line ((t (:background nil))))
   :bind
   (:map org-mode-map
-        ("s-n"       . org-narrow-to-subtree)
+        ("s-n"         . org-narrow-to-subtree)
         ("s-S-<down>"  . org-babel-next-src-block)
         ("s-S-<up>"    . org-babel-previous-src-block)))
 
@@ -94,7 +98,8 @@ Pure regexps
   (org-export-async-init-file
    (concat (expand-file-name user-emacs-directory)
            "init-files-c/org-async.el"))
-  (org-export-dispatch-use-expert-ui t))
+  (org-export-dispatch-use-expert-ui t)
+  (org-plantuml-jar-path "~/.plantuml/plantuml.jar"))
 
 #+end_src
 
@@ -190,9 +195,10 @@ Pure regexps
 #+end_src
 
 * org-reveal
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
 (use-package ox-reveal
   :ensure t
+  :defer t
   :config
   (load-library "ox-reveal")
   :custom (org-reveal-root "file:///usr/local/lib/node_modules/reveal.js"))

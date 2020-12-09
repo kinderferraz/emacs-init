@@ -4,17 +4,18 @@
 #+property: header-args :comments yes :results silent :tangle "../init-files-c/tools.el"
 #+reveal_theme: night
 
-* Uml
-#+begin_src emacs-lisp :tangle no
+* Markup
+#+begin_src emacs-lisp
 (use-package htmlize
   :ensure t
   :defer t)
 
 (use-package plantuml-mode
   :ensure t
-  :disabled t
   :custom
-  (plantuml-jat-path "~/.plantuml"))
+  (plantuml-jar-path "~/.plantuml/plantuml.jar")
+  (plantuml-default-exec-mode 'jar)
+  (plantuml-indent-level 2))
 
 ;; print code
 (use-package carbon-now-sh
@@ -194,3 +195,4 @@ redução de 10s para 1.84
 #+begin_src emacs-lisp
 (provide 'tools)
 #+end_src
+
