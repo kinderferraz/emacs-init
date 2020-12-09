@@ -43,8 +43,8 @@ Threads x (via `->') through each form for which the
 corresponding test expression is true.  Note that, unlike cond
 branching, `-cond->' threading does not short circuit after the
 first true test expression.
-Given some elisp details, current value being threaded is exposed
-as symbol `it'."
+Given some elisp details, current value is exposed as the symbol
+`it'."
   (declare (debug (form body))
            (indent 1))
   (when (-> clauses length (% 2) (= 1))
@@ -57,10 +57,10 @@ as symbol `it'."
                        it))
                   (-partition 2 clauses))))
     `(-let* ((it ,x)
-            ,@(-zip-lists (-cycle (list it))
-                          (butlast steps)))
+             ,@(-zip-lists (-cycle (list it))
+                           (butlast steps)))
        ,@(if (null steps)
-            it
+             it
            (last steps)))))
 
 (defmacro -cond->> (x &rest clauses)
@@ -69,12 +69,12 @@ Threads x (via `->>') through each form for which the
 corresponding test expression is true.  Note that, unlike cond
 branching, `-cond->>' threading does not short circuit after the
 first true test expression.
-Given some elisp details, current value being threaded is exposed
-as symbol `it'."
+Given some elisp details, current value is exposed as the symbol
+`it'."
   (declare (debug (form body))
            (indent 1))
   (when (-> clauses length (% 2) (= 1))
-    (error "Wrong number of arguments"))
+    (error "Wrong number of arguments."))
   (-let* ((it (intern "it"))
           (steps (-map
                   (-lambda ((test step))
@@ -86,16 +86,17 @@ as symbol `it'."
              ,@(-zip-lists (-cycle (list it))
                            (butlast steps)))
        ,@(if (null steps)
-            it
+             it
            (last steps)))))
 
 ;; testes
 ;; (ert-deftest -cond->test ()
 ;;   (should (string= "ca"
-;;                    (-cond->> ""
-;;                      (= 1 1) (concat "a")
-;;                      (= 2 1) (concat "b")
-;;                      (= 2 2) (concat "c"))))
+                   (-cond-> ""
+                     (= 1 1) (concat "a")
+                     (= 2 1) (concat "b")
+                     (= 2 2) (concat "c"))
+;;))
 ;;   (should (= 10
 ;;              (-cond-> 0
 ;;                nil (- 10)
