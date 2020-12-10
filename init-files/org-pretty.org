@@ -196,21 +196,38 @@ Returns the values for the symbols in the alist, in the correct order."
 #+end_src
 
 * Fontificar
+#+name: helpers 2
 #+begin_src emacs-lisp
-(defun k/fontify-keywords (line-beg limit)
+(defun k//fontify-keywords (line-beg limit)
   "Fontify keywords starting with :, from LINE_BEG to LIMIT.
 LIMIT should be the end of line."
-  (save-excursion
-    (goto-char line-beg)
-    (while (re-search-forward ":\\w+" limit t)
-      (when-let ((s (match-beginning 0))
-                 (e (match-end 0))
-                 (symbol (k/get-string (match-string 0))))
-        (compose-region s e symbol)
-        (add-text-properties s e
-                             `(k/org-pretty-s ,s
-                               k/org-pretty-e ,e))))))
+  (save-match-data
+    (save-excursion
+      (goto-char line-beg)
+      (while (re-search-forward ":\\w+" limit t)
+        (when-let ((s (match-beginning 0))
+                   (e (match-end 0))
+                   (symbol (k/get-string (match-string 0))))
+          (compose-region s e symbol)
+          (add-text-properties s e
+                               `(k/org-pretty-s ,s
+                                 k/org-pretty-e ,e)))))))
 
+(defun k//compose-line-rest ()
+  (when-let* ((_ (eq k/org-fontification-level 'full))
+              (s (match-beginning 3))
+              (e (match-end 3)))
+    (compose-region s e k/ob-header-symbol)
+    (add-text-properties s e
+                         `(k/org-pretty-s ,s
+                           k/org-pretty-e ,e)))
+
+  (when (eq k/org-fontification-level 'keywords)
+    (k/fontify-keywords (match-beginning 0)
+                        (match-end 0))))
+#+end_src
+
+#+begin_src  emacs-lisp
 (defun k/fontify-symbols (limit)
   "Search for #+ lines, and replace them whit appropriated symbols.
 If k/org-fontification-level is 'full, replace rest of line with symbol,
