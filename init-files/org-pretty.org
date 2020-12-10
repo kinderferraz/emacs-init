@@ -223,7 +223,7 @@ LIMIT should be the end of line."
                            k/org-pretty-e ,e)))
 
   (when (eq k/org-fontification-level 'keywords)
-    (k/fontify-keywords (match-beginning 0)
+    (k//fontify-keywords (match-beginning 0)
                         (match-end 0))))
 #+end_src
 
@@ -237,30 +237,19 @@ Marks all replacements with beginning and end positions."
   (save-excursion
     (while (re-search-forward re limit t)
       (if-let* ((s (match-beginning 1))
-                  (e (match-end 1))
-                  (symbol (k/get-string (match-string 1))))
+                (e (match-end 1))
+                (symbol (k/get-string (match-string 1))))
           ;; found something -- make symbol
           (progn
             (compose-region s e symbol)
             (add-text-properties s e `(k/org-pretty-s ,s k/org-pretty-e ,e))
-
-            (when (match-string 3)
-              (when (eq k/org-fontification-level 'full)
-                (when-let* ((s (match-beginning 3))
-                            (e (match-end 3)))
-                  (compose-region s e k/ob-header-symbol)
-                  (add-text-properties s e
-                                       `(k/org-pretty-s ,s
-                                         k/org-pretty-e ,e))))
-
-              (when (eq k/org-fontification-level 'keywords)
-                (k/fontify-keywords (match-beginning 3)
-                                    (match-end 3)))))
+            (k//compose-line-rest))
         ;; something went wrong
-        (remove-text-properties (match-start 0) (match-end 0)
-                                '(composition nil
-                                  k/org-pretty-s nil
-                                  k/org-pretty-e nil))))))
+        (remove-text-properties
+         (match-start 0) (match-end 0)
+         '(composition nil
+           k/org-pretty-s nil
+           k/org-pretty-e nil))))))
 
 #+end_src
 
@@ -272,8 +261,8 @@ bounds of symbol."
   (when-let* ((d (get-prop-as-list 'composition))
               (s (get-prop-as-list 'k/org-pretty-s))
               (e (get-prop-as-list 'k/org-pretty-e))
-              (s (apply #'min s))
-              (e (apply #'max e)))
+              (s (apply #'max s))
+              (e (apply #'min e)))
     (with-silent-modifications
       (setq k/current-symbol-bounds (list s e))
       (remove-text-properties s e '(composition nil)))))
