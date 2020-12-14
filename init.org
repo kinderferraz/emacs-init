@@ -50,7 +50,7 @@ First things first, this is Brasil <3
 #+begin_src emacs-lisp
 (add-to-list 'load-path (concat user-emacs-directory "init-files-c"))
 (add-to-list 'load-path "~/.emacs.d/init-files/my-packages")
-(require '-cond->)
+(require '~cond~>)
 
 (require 'org-settings)
 (require 'org-pretty)

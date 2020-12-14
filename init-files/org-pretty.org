@@ -117,7 +117,7 @@ These are for a prototype version, and I should rewrite the alist
 #+name: requires
 #+begin_src elisp
 (require 's)
-(require '-cond->)
+(require '~cond~>)
 (require 'dash)
 #+end_src
 
@@ -151,21 +151,19 @@ These are for a prototype version, and I should rewrite the alist
   "Rules for getting keyword symbols from the alist.
 KWS input is a list of the words used.
 Returns the values for the symbols in the alist, in the correct order."
-  ;; WRONG: since kws will be placed as the last argument of each sexp,
-  ;; they will always serve as an implicit else expression in ifs
-  ;; (if used when, the value of kws would be returned unchanged)
-  ;; -- it is only true for the first if-expression
-  (-cond-> kws
-    (string= (car it) "reveal") (-> car list)
+  (~cond~> kws
+    ;; any reveal headers should return the same symbol
+    (-contains? it "reveal") (-> car list)
 
-    ;; verifica se é begin || end
-    (string= (car kws) "end") (-as-> kws (list (cadr kws) (car kws)))
+    ;; begin || end blocks should be reversed in order
+    (-contains? it "end") (-as-> kws (list (cadr kws) (car kws)))
     t (->> (-replace "begin" "block"))
     t (->> (-replace "end" "block"))
 
     ;; map kws to symbol alist
     t (->> (--map (alist-get it k/org-font-lock-symbols-alist
-                             nil nil #'string-equal )))
+                             nil nil #'string-equal)))
+
     ;; in case begin and end symbols are different
     ;; begin case
     (consp (cadr it)) (-as-> kws (list (car kws) (caadr kws)))
