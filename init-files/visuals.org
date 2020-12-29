@@ -61,38 +61,39 @@
   (rainbow-delimiters-depth-6-face ((t (:foreground "#008787"))))
   (rainbow-delimiters-depth-8-face ((t (:foreground "#2eccfa"))))
   (rainbow-delimiters-depth-9-face ((t (:foreground "#cc2efa")))))
-
-;; TODO: fix this
+#+end_src
+#+begin_src emacs-lisp
 (use-package smartparens
   :ensure t
-  :hook ((prog-mode text-mode org-mode comint-mode) . smartparens-mode)
-  ((emacs-lisp-mode lisp-interaction-mode) . smartparens-strict-mode)
-  :bind (:map sp-keymap
-              ("C-<backspace>" . sp-backward-unwrap-sexp))
+  :hook
+  ((prog-mode text-mode org-mode comint-mode) . smartparens-mode)
+  (emacs-lisp-mode    . smartparens-strict-mode)
+  :bind
+  (:map smartparens-mode-map
+        ("C-k"  . sp-kill-sexp)
+        ("C-<"  . sp-forward-barf-sexp)
+        ("C->"  . sp-forward-slurp-sexp)
+        ("M-<"  . sp-backward-slurp-sexp)
+        ("M->"  . sp-backward-barf-sexp)
+        ("C-<backspace>"   . sp-backward-unwrap-sexp))
 
   :config
+  (show-smartparens-global-mode t)
+
   (sp-local-pair '(org-mode latex-mode) "\\[" "\\]" :actions '(insert wrap))
-  (sp-local-pair '(org-mode latex-mode) "``" "''" :actions '(insert wrap))
-  (sp-local-pair '(org-mode latex-mode) "\"" "\"" :actions '(insert wrap))
+  (sp-local-pair '(org-mode latex-mode) "``"  "''"  :actions '(insert wrap))
+  (sp-local-pair '(org-mode latex-mode) "\""  "\""  :actions '(insert wrap))
 
-  (sp-local-pair '(emacs-lisp-mode) "`" nil :actions nil)
-  (sp-local-pair '(emacs-lisp-mode) "'" nil :actions nil)
-  (sp-local-pair '(scheme-mode)     "'" nil :actions nil)
-  (sp-local-pair '(lisp-mode)       "'" nil :actions nil)
-  (sp-local-pair '(org-mode)        "'" nil :actions nil))
+  (sp-local-pair '(lisp-mode emacs-lisp-mode scheme-mode)
+                 "`" nil
+                 :actions nil)
+  (sp-local-pair '(lisp-mode emacs-lisp-mode scheme-mode)
+                 "'" nil
+                 :actions nil)
 
-(use-package paren
-  :ensure nil
-  :custom
-  (show-paren-delay                   0)
-  (show-paren-style        'parenthesis)
-  (show-paren-when-point-inside-paren t)
-
-  :config (show-paren-mode 1)
   :custom-face
-  (show-paren-match ((t (:foreground "#b877db"
-                         :background nil)))))
-
+  (sp-show-pair-match-face ((t (:foreground "#b877db"
+                                            :background nil)))))
 #+end_src
 ** Folding
 #+begin_src emacs-lisp
