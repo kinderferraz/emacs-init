@@ -66,6 +66,7 @@
   :defer t
   :bind (:map global-map ("C-x g" . 'magit-status))
   :custom
+  (magit-commit-show-diff nil)
   (magit-git-executable "/usr/local/bin/git")
   (magit-auto-revert-mode t)
   :custom-face
