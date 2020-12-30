@@ -21,19 +21,14 @@ first true test expression."
            (indent 1))
   (when (-> clauses length (% 2) (= 1))
     (error "Wrong number of arguments"))
-  (-let* ((it (intern "it"))
-          (steps (-map
-                  (-lambda ((test step))
-                    `(if ,test
-                         (-> it ,step)
-                       it))
-                  (-partition 2 clauses))))
-    `(-let* ((it ,x)
-             ,@(-zip-lists (-cycle (list it))
-                           (butlast steps)))
-       ,@(if (null steps)
-             it
-           (last steps)))))
+  (let (steps)
+    (while clauses
+      (let ((test (pop clauses))
+            (form (pop clauses)))
+        (push `(it (if ,test (-> it ,form) it)) steps)))
+    `(let* ((it ,x)
+            ,@(nreverse steps))
+       it)))
 
 (defmacro ~cond~>> (x &rest clauses)
   "Conditionally thread X through CLAUSES.
@@ -45,19 +40,14 @@ first true test expression."
            (indent 1))
   (when (-> clauses length (% 2) (= 1))
     (error "Wrong number of arguments."))
-  (-let* ((it (intern "it"))
-          (steps (-map
-                  (-lambda ((test step))
-                    `(if ,test
-                         (->> it ,step)
-                       it))
-                  (-partition 2 clauses))))
-    `(-let* ((it ,x)
-             ,@(-zip-lists (-cycle (list it))
-                           (butlast steps)))
-       ,@(if (null steps)
-             it
-           (last steps)))))
+  (let (steps)
+    (while clauses
+      (let ((test (pop clauses))
+            (form (pop clauses)))
+        (push `(it (if ,test (->> it ,form) it)) steps)))
+    `(let* ((it ,x)
+            ,@(nreverse steps))
+       it)))
 
 (provide '~cond~>)
 ;;; ~cond~>.el ends here
