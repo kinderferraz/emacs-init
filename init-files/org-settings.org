@@ -47,7 +47,7 @@ Pure regexps
    'org-babel-load-languages
    '((latex     . t)
      (python    . t)
-     ;;(sh        . t)
+     (R         . t)
      (css       . t)
      (js        . t)
      (sql       . t)
@@ -69,26 +69,28 @@ Pure regexps
   :custom
   ;; (org-latex-compiler "lualatex")
   (org-cycle-separator-lines   -1)
-  (org-src-preserve-indentation t)
   (org-src-tab-acts-natively    t)
-
-  (org-adapt-indentation      nil)
   (org-confirm-babel-evaluate nil)
+
+  (org-src-preserve-indentation t)
+  (org-adapt-indentation 'headline-data)
 
   (org-cycle-emulate-tab 'exc-hl-bol)
   (org-support-shift-select 'always)
   (org-hide-block-startup t)
 
+  (org-agenda-files '("~/Documents/ifsp/2s20/master.org"))
   (org-todo-keywords '((sequence "todo" "coding"
-                                 "|" "done"
+                                 "|" "done")
+                       (sequence "waiting" "|"
                                  "forgotten")))
   :custom-face
   (org-block-begin-line ((t (:background nil))))
   :bind
   (:map org-mode-map
-        ("s-n"         . org-narrow-to-subtree)
-        ("s-S-<down>"  . org-babel-next-src-block)
-        ("s-S-<up>"    . org-babel-previous-src-block)))
+        ("M-n"         . org-narrow-to-subtree)
+        ("M-S-<down>"  . org-babel-next-src-block)
+        ("M-S-<up>"    . org-babel-previous-src-block)))
 
 (use-package ox
   :ensure nil

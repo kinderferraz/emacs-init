@@ -151,14 +151,16 @@ Go to college semester folder
 
 * General kbds
 #+begin_src emacs-lisp
-(global-set-key (kbd "s-w")    'widen)
-(global-set-key (kbd "M-i")    'k/find-inits)
+(global-set-key (kbd "M-w")    'widen)
+(global-set-key (kbd "C-d")    'eval-defun)
 (global-set-key (kbd "M-r")    'eval-region)
+(global-set-key (kbd "M-i")    'k/find-inits)
 (global-set-key (kbd "M-?")    'eval-last-sexp)
-(global-set-key (kbd "s-n")    'narrow-to-region)
+(global-set-key (kbd "M-n")    'narrow-to-region)
 (global-set-key (kbd "<down>") 'next-logical-line)
 (global-set-key (kbd "<up>")   'previous-logical-line)
 (global-set-key (kbd "C-c b")  'switch-to-buffer-other-window)
 (global-set-key (kbd "C-x f")  'find-file)
 (global-set-key (kbd "C-c s")  'find-semester)
+(global-set-key (kbd "M-<backspace>")  'backward-kill-word)
 #+end_src

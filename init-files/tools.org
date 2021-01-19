@@ -46,7 +46,7 @@
                 '("/usr/local/bin" "/usr/local/bin/node" "/Library/TeX/texbin")))
 
 #+end_src
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
 (defun set-exec-path-from-shell-PATH ()
   "Sets the exec-path to the same value used by the user shell"
   (let ((path-from-shell
@@ -65,6 +65,8 @@
   :ensure t
   :defer t
   :bind (:map global-map ("C-x g" . 'magit-status))
+  :init
+  (require 'magit-process nil t)
   :custom
   (magit-commit-show-diff nil)
   (magit-git-executable "/usr/local/bin/git")
