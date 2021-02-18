@@ -8,8 +8,6 @@
 ** Cursor Behaviour
 #+begin_src emacs-lisp
 (use-package multiple-cursors
-  :ensure t
-  :defer t
   :bind
   ((:map global-map)
    ("C-c e"    . 'mc/edit-lines)
@@ -30,6 +28,7 @@
   (transpose-lines 1)
   (forward-line -1))
 
+(setq-default tab-always-indent 'complete)
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
 
@@ -50,8 +49,9 @@
 ** Delimiters
 #+begin_src emacs-lisp
 (use-package rainbow-delimiters
-  :ensure t
-  :hook ((prog-mode LaTeX-mode comint-mode) . rainbow-delimiters-mode)
+  :hook ((prog-mode   LaTeX-mode
+          comint-mode slime-repl-mode)
+         . rainbow-delimiters-mode)
   :custom-face
   (rainbow-delimiters-depth-1-face ((t (:foreground "#a901db"))))
   (rainbow-delimiters-depth-2-face ((t (:foreground "#fe2e2e"))))
@@ -64,14 +64,13 @@
 #+end_src
 #+begin_src emacs-lisp
 (use-package smartparens
-  :ensure t
   :hook
   ((prog-mode text-mode org-mode comint-mode) . smartparens-mode)
-  (emacs-lisp-mode    . smartparens-strict-mode)
+  ((emacs-lisp-mode slime-mode)               . smartparens-strict-mode)
   :bind
   (:map smartparens-mode-map
         ("C-k"  . sp-kill-sexp)
-        ("C-<"  . sp-forward-barf-sexp)
+        ("C->"  . sp-forward-barf-sexp)
         ("C->"  . sp-forward-slurp-sexp)
         ("M-<"  . sp-backward-slurp-sexp)
         ("M->"  . sp-backward-barf-sexp)
@@ -105,7 +104,7 @@
   :custom (hs-allow-nesting t)
   :bind
   (("C-f" . hs-toggle-hiding)
-   ("C-t" . hs-hide-all)
+   ("C-t" . hs-hide-level)
    ("C-a" . hs-show-all))
   :config
   (defun set-c-regexp ()
@@ -124,7 +123,7 @@
                         (make-glyph-code ?…))
 #+end_src
 ** Font Ligatures
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (use-package ligature
   :load-path "./ligatures/"
   :config
@@ -144,6 +143,59 @@
      "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
      "\\" "://" "www"))
   (global-ligature-mode t))
+#+end_src
+#+begin_src emacs-lisp :tangle no
+(use-package fira-code-mode
+  :custom (fira-code-mode-disabled-ligatures '("[]" "#{" "#(" "#_" "#_("))
+  :config
+  (global-fira-code-mode))
+
+#+end_src
+#+begin_src emacs-lisp
+(use-package composite
+  :ensure nil
+  :init
+  (defvar composition-ligature-table (make-char-table nil))
+  :hook
+  ((prog-mode text-mode conf-mode nxml-mode
+    markdown-mode help-mode org-mode)
+   . (lambda ()
+       (setq-local composition-function-table
+                   composition-ligature-table)))
+  :config
+  ;; support ligatures, some toned down to prevent hang
+  (when (version<= "27.0" emacs-version)
+    (let ((alist
+           '((33 . ".\\(?:\\(==\\|[!=]\\)[!=]?\\)")
+             (35 . ".\\(?:\\(###?\\|_(\\|[(:=?[_{]\\)[#(:=?[_{]?\\)")
+             (36 . ".\\(?:\\(>\\)>?\\)")
+             (37 . ".\\(?:\\(%\\)%?\\)")
+             (38 . ".\\(?:\\(&\\)&?\\)")
+             (42 . ".\\(?:\\(\\*\\*\\|[*>]\\)[*>]?\\)")
+             (43 . ".\\(?:\\([>]\\)>?\\)")
+             (45 . ".\\(?:\\(-[->]\\|<<\\|>>\\|[-<>|~]\\)[-<>|~]?\\)")
+             (46 . ".\\(?:\\(\\.<\\|[-=]\\)[-<=]?\\)")
+             (47 . ".\\(?:\\(//\\|==\\|[=>]\\)[/=>]?\\)")
+             (48 . ".\\(?:\\(x[a-fA-F0-9]\\).?\\)")
+             (58 . ".\\(?:\\(::\\|[:<=>]\\)[:<=>]?\\)")
+             (59 . ".\\(?:\\(;\\);?\\)")
+             (60 . ".\\(?:\\(!--\\|\\$>\\|\\*>\\|\\+>\\|-[-<>|]\\|/>\\|<[-<=]\\|=[<>|]\\|==>?\\||>\\||||?\\|~[>~]\\|[$*+/:<=>|~-]\\)[$*+/:<=>|~-]?\\)")
+             (61 . ".\\(?:\\(!=\\|/=\\|:=\\|<<\\|=[=>]\\|>>\\|[=>]\\)[=<>]?\\)")
+             (62 . ".\\(?:\\(->\\|=>\\|>[-=>]\\|[-:=>]\\)[-:=>]?\\)")
+             (63 . ".\\(?:\\([.:=?]\\)[.:=?]?\\)")
+             (91 . ".\\(?:\\(|\\)[]|]?\\)")
+             (92 . ".\\(?:\\([\\n]\\)[\\]?\\)")
+             (94 . ".\\(?:\\(=\\)=?\\)")
+             (95 . ".\\(?:\\(|_\\|[_]\\)_?\\)")
+             (119 . ".\\(?:\\(ww\\)w?\\)")
+             (123 . ".\\(?:\\(|\\)[|}]?\\)")
+             (124 . ".\\(?:\\(->\\|=>\\||[-=>]\\||||*>\\|[]=>|}-]\\).?\\)")
+             (126 . ".\\(?:\\(~>\\|[-=>@~]\\)[-=>@~]?\\)"))))
+      (dolist (char-regexp alist)
+        (set-char-table-range composition-ligature-table (car char-regexp)
+                              `([,(cdr char-regexp) 0 font-shape-gstring]))))
+    (set-char-table-parent composition-ligature-table composition-function-table))
+  )
 #+end_src
 ** Views
 #+begin_src emacs-lisp
@@ -201,13 +253,11 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
 #+begin_src emacs-lisp
 ;; janelas -- buffer
 (use-package buffer-move
-  :ensure t
   :bind
-  (:map global-map
-        ("C-x <up>"    . 'buf-move-up)
-        ("C-x <left>"  . 'buf-move-left)
-        ("C-x <down>"  . 'buf-move-down)
-        ("C-x <right>" . 'buf-move-right)))
+  ("C-x <up>"    . 'buf-move-up)
+  ("C-x <left>"  . 'buf-move-left)
+  ("C-x <down>"  . 'buf-move-down)
+  ("C-x <right>" . 'buf-move-right))
 
 (use-package ace-window
   :ensure t
@@ -234,50 +284,71 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
 
 (global-set-key (kbd "C-c <right>") 'other-window)
 (global-set-key (kbd "C-c <left>") '(lambda ()
-                                    (interactive)
-                                    (other-window -1)))
+                                      (interactive)
+                                      (other-window -1)))
 #+end_src
 
 * Icons
 #+begin_src emacs-lisp
 (use-package all-the-icons
-  :ensure t
   :pin melpa
-  :config (nconc all-the-icons-icon-alist
-                 '(("\\.jsp$" all-the-icons-fileicon "ejs"
-                    :height 1.0
-                    :face all-the-icons-red)
-                   ("^routes.ts$" all-the-icons-faicon "map-signs"
-                    :height 1.0
-                    :face all-the-icons-blue)
-                   ("^\\.ts$" all-the-icons-fileicon "tsx"
-                    :height 0.75
-                    :v-adjust -0.2
-                    :face all-the-icons-blue))))
+  :config
+  (nconc all-the-icons-icon-alist
+         '(("\\.jsp$" all-the-icons-fileicon "ejs"
+            :height 1.0
+            :face all-the-icons-red)
+           ("^routes.ts$" all-the-icons-faicon "map-signs"
+            :height 1.0
+            :face all-the-icons-blue)
+           ("\\.tsx?$" all-the-icons-fileicon "typescript"
+            :height 0.75
+            :v-adjust -0.2
+            :face all-the-icons-blue)
+           ("\\.r$" all-the-icons-fileicon "R"
+            :height 0.75
+            :v-adjust -0.2
+            :face all-the-icons-blue)
+           ("\\.class$" all-the-icons-alltheicon "java"
+            :height 0.8
+            :v-adjust -0.1
+            :face all-the-icons-green)
+           ("\\.jar$" all-the-icons-faicon "compress"
+            :height 0.8
+            :v-adjust -0.1
+            :face all-the-icons-green)))
+  (nconc all-the-icons-mode-icon-alist
+         '((ess-r-mode all-the-icons-fileicon "R"
+                       :v-adjust 0.0
+                       :face all-the-icons-blue-alt)
+           (web-mode all-the-icons-fileicon "regex"
+                       :v-adjust 0.0
+                       :face all-the-icons-blue-alt))))
+
 #+end_src
 
 * Treemacs
 #+begin_src emacs-lisp
 (use-package treemacs
-  :ensure t
   :custom
-  (treemacs-python-executable "/usr/local/bin/python3")
-  (treemacs-collapse-dirs
-   (if (executable-find "python") 3 0))
-  (treemacs-display-in-side-window      t)
-  (treemacs-indentation                 2)
-  (treemacs-indentation-string        " ")
-  (treemacs-width                      25)
-  (treemacs-filewatch-mode              t)
-  (treemacs-fringe-indicator-mode       t)
-  (treemacs-follow-mode                 t)
-  (treemacs-workspace-switch-cleanup 'all)
-  (treemacs-silent-refresh              t)
+  (treemacs-python-executable
+   "/usr/local/Cellar/python@3.9/3.9.0_5/bin/python3")
+  (treemacs-indentation-string         " ")
+  (treemacs-collapse-dirs                3)
+  (treemacs-display-in-side-window       t)
+  (treemacs-width                       25)
+  (treemacs-indentation                  2)
+  (treemacs-follow-mode                  t)
+  (treemacs-filewatch-mode               t)
+  (treemacs-silent-refresh               t)
 
-  :bind
-  (:map global-map ("M-t" . treemacs))
+  (treemacs-workspace-switch-cleanup  'all)
+  (treemacs-read-string-input 'from-minibuffer)
 
+  :bind ("M-t" . treemacs)
   :config
+  (treemacs-fringe-indicator-mode  'always)
+  (treemacs-git-mode             'extended)
+
   (treemacs-create-icon
    :icon (format "  %s\t"
                  (all-the-icons-octicon
@@ -285,31 +356,8 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
                   :height 1
                   :v-adjust -0.1
                   :face 'doom-themes-treemacs-file-face))
-   :extensions (".project" "gradlew.bat"))
-  (treemacs-create-icon
-   :icon (format "  %s\t"
-                 (all-the-icons-icon-for-file
-                  "foo.java"
-                  :height 1
-                  :v-adjust -0.1
-                  :face 'all-the-icons-dgreen))
-   :extensions ("class"))
-  (treemacs-create-icon
-   :icon (format "  %s\t"
-                 (all-the-icons-icon-for-file
-                  "a.xml"
-                    :height 1
-                    :v-adjust -0.1
-                    :face 'doom-themes-treemacs-file-face))
-   :extensions ("pom.xml"))
-  (treemacs-create-icon
-   :icon (format "  %s\t"
-                 (all-the-icons-icon-for-file
-                  "a.r"
-                    :height 0.9
-                    :v-adjust -0.1
-                    :face 'all-the-icons-lpurple))
-   :extensions ("r")))
+   :extensions (".project" "gradlew.bat" "pom.xml"))
+  )
 
 (use-package treemacs-magit
   :ensure t
@@ -319,7 +367,6 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
 * Line Numbers
 #+begin_src emacs-lisp
 (use-package linum-relative
-  :ensure t
   :hook
   ((prog-mode . linum-relative-mode)
    (org-mode  . linum-relative-mode)
@@ -332,8 +379,6 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
 ** Theme
 #+begin_src emacs-lisp
 (use-package doom-themes
-  :ensure t
-  :defer t
   :pin melpa
   :custom
   (doom-themes-enable-bold   t)
@@ -344,13 +389,13 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
   (doom-themes-treemacs-config)
   (doom-themes-org-config))
 
+(load-theme 'doom-nord             t)
 ;; (load-theme 'doom-snazzy           t)
 ;; (load-theme 'doom-laserwave        t)
 ;; (load-theme 'doom-acario-dark      t)
 ;; (load-theme 'doom-challenger-deep  t)
 ;; (load-theme 'doom-horizon          t)
 ;; (load-theme 'doom-gruvbox          t)
-(load-theme 'doom-nord             t)
 
 (set-face-attribute 'font-lock-keyword-face nil
                     :slant 'italic
@@ -362,28 +407,27 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
 ** Modeline
 #+begin_src emacs-lisp
 (use-package doom-modeline
-  :ensure t
+  :defer nil
   :config
   (doom-modeline-mode 1)
   (column-number-mode 1)
 
   :custom
-  (doom-modeline-major-mode t)
-  (doom-modeline-buffer-encoding t)
-  (doom-modeline-buffer-state-icon t)
-  (doom-modeline-major-mode-color-icon t)
+  (doom-modeline-height                20)
+  (doom-modeline-indent-info            t)
+  (doom-modeline-major-mode             t)
+  (doom-modeline-buffer-encoding        t)
+  (doom-modeline-buffer-state-icon      t)
+  (doom-modeline-major-mode-color-icon  t)
   (doom-modeline-icon (display-graphic-p))
-  (doom-modeline-project-detection 'projectile)
-  (doom-modeline-buffer-file-name-style 'buffer-name)
-  (doom-modeline-indent-info t)
-  (doom-modeline-height 20))
+  (doom-modeline-project-detection       'projectile)
+  (doom-modeline-buffer-file-name-style 'buffer-name))
 
 #+end_src
 
 * Org-visuals
 #+begin_src emacs-lisp
 (use-package org-bullets
-  :ensure t
   :after (org)
   :custom (org-bullets-bullet-list
            '("◉" "☯" "○" "✸" "✿" "✜" "◆" "▶"))

@@ -8,40 +8,38 @@
 ** LSP
 #+begin_src emacs-lisp
 (use-package lsp-mode
-  :ensure t
-  :defer
   :hook ((haskell-mode   . lsp-mode)
          ;; (python-mode . lsp-mode)
          (c++-mode       . lsp-mode))
+  :config
+  (use-package lsp-ui
+    :custom
+    (lsp-ui-imenu-enable nil)
+    (lsp-ui-peek-enable nil)
+    (lsp-headerline-breadcrumb-enable nil)
+
+    ;; sideline
+    (lsp-ui-sideline-delay 4)
+    (lsp-ui-sideline-update-mode 'line)
+    (lsp-ui-sideline-show-code-actions nil)
+
+    ;; docs
+    (lsp-ui-doc-show-whit-mouse nil)
+    (lsp-ui-doc-show-with-cursors nil)
+    (lsp-ui-doc-show-over-cursors nil)
+    (lsp-ui-doc-position 'at-point)
+    (lsp-ui-doc-delay 2)
+    :bind
+    (:map lsp-ui-mode-map
+          ("s-," . lsp-ui-doc-show)))
   :commands lsp)
 
-(use-package lsp-ui
-  :after lsp
-  :custom
-  (lsp-ui-imenu-enable nil)
-  (lsp-ui-peek-enable nil)
-
-  ;; sideline
-  (lsp-ui-sideline-delay 4)
-  (lsp-ui-sideline-update-mode 'line)
-  (lsp-ui-sideline-show-code-actions nil)
-
-  ;; docs
-  (lsp-ui-doc-show-whit-mouse nil)
-  (lsp-ui-doc-show-with-cursors nil)
-  (lsp-ui-doc-show-over-cursors nil)
-  (lsp-ui-doc-position 'at-point)
-  (lsp-ui-doc-delay 2)
-  :bind
-  (:map lsp-ui-mode-map
-        ("s-," . lsp-ui-doc-show)))
 
 #+end_src
 
 ** DAP
 #+begin_src emacs-lisp
 (use-package dap-mode
-  :ensure t
   :after lsp-mode
   :config (progn
             (dap-mode t)
@@ -54,8 +52,6 @@
 * Python
 #+begin_src emacs-lisp
 (use-package elpy
-  :ensure t
-  :defer t
   :config
     (delete 'elpy-module-highlight-indentation elpy-modules)
     (delete 'elpy-module-flymake elpy-modules)
@@ -78,13 +74,13 @@
 * JAVA
 #+begin_src emacs-lisp
 (use-package lsp-java
-  :ensure t
-  :defer t
-  :hook ((java-mode . lsp))
+  :hook ((java-mode . lsp)
+         (java-mode . (lambda ()
+                        (setq indent-tabs-mode t))))
   :custom
   ((lsp-java-save-actions-organize-imports t)
    (lsp-java-import-maven-enabled t)
-   (c-basic-offset 4))
+   (c-basic-offset 2))
   :bind
   (:map lsp-mode-map
         ("C-j g" . 'lsp-java-generate-getters-and-setters)
@@ -99,11 +95,9 @@
 * Haskell
 #+begin_src emacs-lisp :tangle no
 (use-package intero
-  :ensure t
   :hook (haskell-mode . intero-mode))
 
 (use-package haskell-mode
-  :ensure t
   :mode (("\\.hs\\'"    . haskell-mode)
          ("\\.cabal\\'" . haskell-cabal-mode)
          ("\\.hcr\\'"   . haskell-core-mode))
@@ -131,7 +125,6 @@
 * WEB
 #+begin_src emacs-lisp
 (use-package web-mode
-  :ensure t
   :mode (("\\.html?\\'"  . web-mode)
          ("\\.css\\'"    . web-mode)
          ("\\.tsx\\'"    . web-mode)
@@ -156,7 +149,6 @@
          '(("jsp" . "\\.jsp$"))))
 
 (use-package emmet-mode
-  :ensure t
   :hook
   ((web-mode   . emmet-mode)
    (rjsx-mode  . emmet-mode))
@@ -168,7 +160,6 @@
 * Node & TS
 #+begin_src emacs-lisp
 (use-package rjsx-mode
-  :ensure t
   :pin melpa
   :mode
   (("\\.js\\'"  . rjsx-mode)
@@ -181,7 +172,6 @@
   (sgml-basic-offset        0))
 
 (use-package tide
-  :ensure t
   :mode (("\\.ts\\'" . typescript-mode))
   :after (typescript-mode company flycheck)
   :hook ((typescript-mode . tide-setup)
@@ -207,7 +197,6 @@
 
 (use-package npm-mode
   :pin melpa
-  :ensure t
   :hook ((rjsx-mode       . npm-mode)
          (typescript-mode . npm-mode)
          (web-mode        . npm-mode)))
@@ -239,8 +228,6 @@
           (server   :default "localhost"))))
 
 (use-package sqlformat
-  :ensure t
-  :defer t
   :hook (sql-mode . sqlformat-on-save-mode)
   :custom
   ;; (sqlformat-command 'pgformatter)
@@ -252,8 +239,6 @@
 #+end_src
 
 * LaTeX
-A primeira função que eu escrevi em elisp, adiciona uma tag de highlight
-no texto dofigo em LaTeX.
 #+begin_src emacs-lisp
 (defun TeX-highlight-region (beg end)
   "Insert highlight macro at BEG of region and closing bracket at END."
@@ -270,12 +255,8 @@ no texto dofigo em LaTeX.
         (insert hl-beg)))
     (goto-char (+ 6 end))))
 #+end_src
-
-Configurações do pacote auctex. Não tenho ideia se ainda funciona...
-
 #+begin_src emacs-lisp
 (use-package auctex
-  :ensure t
   :mode ("\\.tex\\'" . LaTeX-mode)
 
   :hook
@@ -314,22 +295,106 @@ Configurações do pacote auctex. Não tenho ideia se ainda funciona...
 * R
 #+begin_src emacs-lisp
 (use-package ess
-  :ensure t
-  :defer t
   :init (require 'ess-site)
   :mode (("\\.r\\'" . r-mode))
 
-  :config (ess-set-style 'RStudio)
+  :config
+  (ess-set-style 'RStudio)
+
+  :custom
+  (ess-ask-for-ess-directory nil) ;; start R on default folder
+  (ess-local-process-name "R")
 
   :bind-keymap ("C-r" . ess-mode-map)
   :bind
   (:map ess-r-mode-map
         ("C-r r" . R)
+        ("_" . ess-insert-assign)
+   :map inferior-ess-r-mode-map
         ("_" . ess-insert-assign))
-  (:map inferior-ess-r-mode-map
-        ("_" . ess-insert-assign))
-  ;; :hook ("ess-r-mode-hook" . open-r-file)
-  )
+  :hook
+  (((ess-mode)  . #'(lambda ()
+                    (flymake-mode-off)
+                    (flycheck-mode 1)))))
+#+end_src
+
+* SLIME
+#+name: quicklisp shortcuts
+#+begin_src emacs-lisp :tangle no
+(defslime-repl-shortcut slime-repl-quicklisp ("ql" "quicklisp")
+  (:handler (lambda (system)
+              (interactive "sSystem: ")
+              (slime-eval-async `(ql:quickload ,system)
+                (lambda (sys)
+                  (message "Quickloaded %s" (first sys))))))
+  (:one-liner "Quickload a system."))
+(defslime-repl-shortcut slime-repl-load-system ("load")
+  (:handler (lambda (system)
+              (interactive "sSystem: ")
+              (setq system (downcase system))
+              (slime-eval-async `(asdf:load-system ,system)
+                (lambda (sys)
+                  (message "ASDF loaded %s" (first sys))))))
+  (:one-liner "ASDF loaded a system."))
+(defslime-repl-shortcut slime-repl-test-system ("test")
+  (:handler (lambda (system)
+              (interactive "sSystem: ")
+              (setq system (downcase system))
+              (slime-eval-async `(ql:quickload ,system)
+                (lambda (sys)
+                  (message "ASDF loaded %s" sys)
+                  (slime-eval-async `(asdf:test-system ,@sys)
+                    (lambda (sys)
+                      (message "ASDF tested %s" (first sys))))))))
+  (:one-liner "ASDF tested a system."))
+(defslime-repl-shortcut slime-repl-set-system ("system")
+  (:handler (lambda (system)
+              (interactive "sSystem: ")
+              (slime-eval-async `(ql:quickload ,system)
+                (lambda (sys)
+                  (message "Quickloaded %s" sys)
+                  (let ((directory (slime-eval `(cl:namestring (asdf:system-source-directory ,@sys)))))
+                    (slime-set-default-directory directory))))))
+  (:one-liner "Quickload a system and move to the root directory."))
+(defslime-repl-shortcut slime-repl-register-local-projects ("register")
+  (:handler (lambda ()
+              (interactive)
+              (slime-eval-async `(ql:register-local-projects)
+                (lambda (sys)
+                  (message "Registered local projects.")))))
+  (:one-liner "Call ql:register-local-projects."))
+#+end_src
+#+begin_src emacs-lisp :noweb yes
+(use-package slime
+  :config
+  (load (expand-file-name "~/quicklisp/slime-helper.el"))
+  (setq inferior-lisp-program "/usr/local/Cellar/clozure-cl/1.12/bin/ccl64")
+  (setq slime-contribs
+        '(slime-repl slime-autodoc slime-banner slime-repl-ansi-color))
+  (require 'slime-autoloads)
+  (unbind-key "M-n" 'slime-mode-indirect-map)
+
+  (use-package slime-repl
+    :ensure nil
+    :bind (:map slime-repl-mode-map
+                ("M-l"      . slime-repl-clear-buffer)
+                ("M-k"      . slime-interrupt)
+                ("M-r"      . slime-restart-inferior-lisp)
+                ("s-<left>" . slime-repl-bol))
+    :config
+    <<quicklisp shortcuts>>
+    )
+
+  (use-package slime-autodoc
+    :ensure nil)
+
+  :bind
+  (:map slime-mode-map
+        ("s-l"     . slime)
+        ("s-."     . completion-at-point)
+        ("C-c C-z" . slime-call-defun)
+        ("C-c C-f" . slime-compile-and-load-file)))
+
 #+end_src
 
 * Package Info

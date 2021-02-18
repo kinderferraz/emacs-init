@@ -7,11 +7,9 @@
 * Markup
 #+begin_src emacs-lisp
 (use-package htmlize
-  :ensure t
-  :defer t)
+  :disabled t)
 
 (use-package plantuml-mode
-  :ensure t
   :custom
   (plantuml-jar-path "~/.plantuml/plantuml.jar")
   (plantuml-default-exec-mode 'jar)
@@ -19,7 +17,6 @@
 
 ;; print code
 (use-package carbon-now-sh
-  :ensure t
   :disabled t
   :bind ("M-c" . 'carbon-now-sh))
 
@@ -28,42 +25,36 @@
 * DOC-VIEW
 #+begin_src emacs-lisp
 (setq doc-view-ghostscript-program
-      "/usr/local/Cellar/ghostscript/9.52/bin/gs")
+      (if (string= system-type "darwin")
+          "/usr/local/Cellar/ghostscript/9.53.3/bin/gs"))
 
 (add-hook 'doc-view-mode-hook #'auto-revert-mode )
 (add-to-list 'revert-without-query ".+\\.pdf$")
 #+end_src
 
 * Shell Ops
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
 (defun colorize-compilation-buffer ()
   (let ((inhibit-read-only t))
     (ansi-color-apply-on-region (point-min) (point-max))))
 (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
-(setq exec-path
-        (append exec-path
-                '("/usr/local/bin" "/usr/local/bin/node" "/Library/TeX/texbin")))
-
-#+end_src
-#+begin_src emacs-lisp
-(defun set-exec-path-from-shell-PATH ()
-  "Sets the exec-path to the same value used by the user shell"
-  (let ((path-from-shell
-         (replace-regexp-in-string
-          "[[:space:]\n]*$" ""
-          (shell-command-to-string "zsh -l -c 'echo $PATH'"))))
-    (setenv "PATH" path-from-shell)
-    (setq exec-path (split-string path-from-shell path-separator))))
-
-(set-exec-path-from-shell-PATH)
+(when (string= system-type "darwin")
+  (setq exec-path
+        (append '("usr/local/opt/openjdk/bin"
+                  "/usr/local/opt/texinfo/bin"
+                  "/usr/local/bin"
+                  "/usr/local/bin/brew"
+                  "/usr/local/bin/node"
+                  "/Library/TeX/texbin")
+                exec-path))
+  (setenv "PATH"
+          (s-join ":" exec-path)))
 #+end_src
 
 * GIT
 #+begin_src emacs-lisp
 (use-package magit
-  :ensure t
-  :defer t
   :bind (:map global-map ("C-x g" . 'magit-status))
   :init
   (require 'magit-process nil t)
@@ -76,40 +67,32 @@
   (magit-diff-removed-highlight ((t (:background "#562745"))))
   :config
   (remove-hook 'server-switch-hook 'magit-commit-diff))
-
 #+end_src
 
 * Prog tools
 ** Yasnippets
 #+begin_src emacs-lisp
 (use-package yasnippet
-  :ensure t
-  :defer t
   :hook (prog-mode . yas-minor-mode)
   :bind (:map yas-minor-mode-map
               ("C-'" . yas-expand)
               ("TAB" . nil))
   :config
-  (use-package yasnippet-snippets
-    :ensure t)
+  (use-package yasnippet-snippets)
 
   (use-package haskell-snippets
-    :ensure t
     :disabled))
 
 #+end_src
 ** Syntax Check
 #+begin_src emacs-lisp
 (use-package flycheck
-  :ensure t
-  :defer t
   :config
   (global-flycheck-mode 1)
   (flycheck-add-mode 'typescript-tslint 'web-mode)
   (flycheck-add-mode 'javascript-eslint 'rjsx-mode))
 
 (use-package flycheck-pos-tip
-  :ensure t
   :after flycheck
   :config (flycheck-pos-tip-mode))
 
@@ -117,13 +100,11 @@
 ** Company
 #+begin_src emacs-lisp
 (use-package company
-  :ensure t
   :pin melpa
   :hook (after-init . global-company-mode)
   :bind ("s-." . company-manual-begin))
 
 (use-package company-web
-  :ensure t
   :after company)
 
 #+end_src
@@ -131,7 +112,6 @@
 * Projetcs
 #+begin_src emacs-lisp
 (use-package projectile
-  :ensure t
   :bind-keymap ("s-p" . projectile-command-map)
   :config
   (projectile-register-project-type
@@ -157,8 +137,6 @@
 (bind-key (kbd "M-l") 'clear-scratch 'lisp-interaction-mode-map)
 
 (use-package persistent-scratch
-  :ensure t
-  :defer t
   :config
   (persistent-scratch-setup-default))
 #+end_src
@@ -166,7 +144,6 @@
 Usado apenas para app java console -- disabled
 #+begin_src emacs-lisp
 (use-package quickrun
-  :ensure t
   :disabled
   :custom
   (quickrun-timeout-seconds nil))
