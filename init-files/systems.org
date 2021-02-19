@@ -1,0 +1,18 @@
+#+title: systems.el
+#+author: kinder rodrigues
+#+email: ferraz.alkindar@gmail.com
+#+startup: overview
+#+property: header-args :comments yes :results silent :tangle "../init-files-c/systems.el"
+#+reveal_theme: night
+
+* MacOs
+
+* Linux
+#+begin_src emacs-lisp
+(setq magit-git-executable "/usr/bin/git")
+#+end_src
+
+* Packaging
+#+begin_src emacs-lisp
+(provide 'systems)
+#+end_src

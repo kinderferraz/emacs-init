@@ -117,9 +117,9 @@ These are for a prototype version, and I should rewrite the alist
 * Helpers
 #+name: requires
 #+begin_src elisp
-(use-package s)
+(use-package 's)
 (require '~cond~>)
-(use-package dash)
+(use-package 'dash)
 #+end_src
 
 #+name: string and manipulation

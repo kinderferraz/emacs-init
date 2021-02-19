@@ -223,7 +223,7 @@
       (if (and (find-font (font-spec :name "JetBrains Mono"))
                (display-graphic-p))
           "JetBrains Mono-11"
-        "andale mono 11"))
+        "Fira Code 11"))
 
 (when (display-graphic-p)
   (setq default-frame-alist
@@ -232,7 +232,8 @@
           (fullscreen     . maximized)
           (font           . ,k/font-to-use)
           (vertical-scroll-bars    . nil)
-          (ns-transparent-titlebar .   t))))
+          ;; (ns-transparent-titlebar .   t)
+)))
 
 (unless (display-graphic-p)
   (menu-bar-mode -1))
