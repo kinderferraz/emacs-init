@@ -80,7 +80,6 @@ Pure regexps
   (org-support-shift-select  'always)
   (org-hide-block-startup          t)
 
-  (org-agenda-files '("~/Documents/ifsp/2s20/master.org"))
   (org-todo-keywords '((sequence "todo" "coding"
                                  "|" "done")
                        (sequence "waiting" "|"

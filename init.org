@@ -62,9 +62,13 @@ First things first, this is Brasil <3
 (require 'tools)
 (require 'languages)
 (require 'visuals)
-(require 'systems)
 
-;; (require 'elegance)
+(if (string= system-type "gnu/linux")
+    (load "linux.el")
+  (load "macos.el"))
+
+(when (file-exists-p "./init-files/secrets.org")
+  (require 'secrets))
 #+end_src
 
 * Emacs VCS

@@ -194,8 +194,7 @@
       (dolist (char-regexp alist)
         (set-char-table-range composition-ligature-table (car char-regexp)
                               `([,(cdr char-regexp) 0 font-shape-gstring]))))
-    (set-char-table-parent composition-ligature-table composition-function-table))
-  )
+    (set-char-table-parent composition-ligature-table composition-function-table)))
 #+end_src
 ** Views
 #+begin_src emacs-lisp
@@ -219,11 +218,11 @@
 
 * Frame Management
 #+begin_src emacs-lisp
+(setq prefered-fonts '("JetBrains Mono-11" "Victor Mono-11" "Fira Code-11" "Courier New-11"))
 (setq k/font-to-use
-      (if (and (find-font (font-spec :name "JetBrains Mono"))
-               (display-graphic-p))
-          "JetBrains Mono-11"
-        "Fira Code 11"))
+      (-first #'(lambda (font-name)
+                  (find-font (font-spec :name font-name)))
+              prefered-fonts))
 
 (when (display-graphic-p)
   (setq default-frame-alist
@@ -231,9 +230,7 @@
           (cursor-type    . bar)
           (fullscreen     . maximized)
           (font           . ,k/font-to-use)
-          (vertical-scroll-bars    . nil)
-          ;; (ns-transparent-titlebar .   t)
-)))
+          (vertical-scroll-bars    . nil))))
 
 (unless (display-graphic-p)
   (menu-bar-mode -1))
@@ -331,10 +328,8 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
 #+begin_src emacs-lisp
 (use-package treemacs
   :custom
-  (treemacs-python-executable
-   "/usr/local/Cellar/python@3.9/3.9.0_5/bin/python3")
   (treemacs-indentation-string         " ")
-  (treemacs-collapse-dirs                3)
+  (treemacs-collapse-dirs                5)
   (treemacs-display-in-side-window       t)
   (treemacs-width                       25)
   (treemacs-indentation                  2)
@@ -357,8 +352,7 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
                   :height 1
                   :v-adjust -0.1
                   :face 'doom-themes-treemacs-file-face))
-   :extensions (".project" "gradlew.bat" "pom.xml"))
-  )
+   :extensions (".project" "gradlew.bat" "pom.xml")))
 
 (use-package treemacs-magit
   :ensure t
@@ -390,12 +384,12 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
   (doom-themes-treemacs-config)
   (doom-themes-org-config))
 
-(load-theme 'doom-nord             t)
+;; (load-theme 'doom-nord             t)
 ;; (load-theme 'doom-snazzy           t)
 ;; (load-theme 'doom-laserwave        t)
 ;; (load-theme 'doom-acario-dark      t)
 ;; (load-theme 'doom-challenger-deep  t)
-;; (load-theme 'doom-horizon          t)
+(load-theme 'doom-horizon          t)
 ;; (load-theme 'doom-gruvbox          t)
 
 (set-face-attribute 'font-lock-keyword-face nil

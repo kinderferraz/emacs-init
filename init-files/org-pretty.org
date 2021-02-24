@@ -53,14 +53,14 @@ These are for a prototype version, and I should rewrite the alist
 (setq k/org-font-lock-symbols-alist
       '(("title"     . "")
         ("author"    . "")
-        ("block"     . "")
+        ("block"     . ""  )
         ("header"    . "")
-        ("headers"    . "")
+        ("headers"   . "")
         ("sql"       . "")
         ("tex"       . "")
         ("name"      . "")
         ("property"  . "")
-        ("email"     . "")
+        ("email"     . "")
         ("startup"   . "")
         ("setupfile" . "")
         ("reveal"    . "")
@@ -88,14 +88,14 @@ These are for a prototype version, and I should rewrite the alist
         ("engine"    . "")
         ("session"   . "")
         ("dbuser"    . "")
-        ("dbhost"    . "")
+        ("dbhost"    . "")
         ("database"   . "")
         ("dbpassword" . "")
 
-        ("latex"   . "")
-        ("sutitle" . "")
-        ("class"   . "")
-        ("extra"   . "")
+        ("latex"    . "")
+        ("subtitle" . "")
+        ("class"    . "")
+        ("extra"    . "")
 
         ("nil"     . " ")
         ("t"       . " ")))
@@ -119,6 +119,7 @@ These are for a prototype version, and I should rewrite the alist
 #+begin_src elisp
 (use-package s)
 (require '~cond~>)
+(require 'font-lock+)
 (use-package dash)
 #+end_src
 

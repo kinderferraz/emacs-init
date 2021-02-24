@@ -10,6 +10,7 @@
   :disabled t)
 
 (use-package plantuml-mode
+  :disabled
   :custom
   (plantuml-jar-path "~/.plantuml/plantuml.jar")
   (plantuml-default-exec-mode 'jar)
@@ -24,10 +25,6 @@
 
 * DOC-VIEW
 #+begin_src emacs-lisp
-(setq doc-view-ghostscript-program
-      (if (string= system-type "darwin")
-          "/usr/local/Cellar/ghostscript/9.53.3/bin/gs"))
-
 (add-hook 'doc-view-mode-hook #'auto-revert-mode )
 (add-to-list 'revert-without-query ".+\\.pdf$")
 #+end_src
@@ -39,17 +36,6 @@
     (ansi-color-apply-on-region (point-min) (point-max))))
 (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
-(when (string= system-type "darwin")
-  (setq exec-path
-        (append '("usr/local/opt/openjdk/bin"
-                  "/usr/local/opt/texinfo/bin"
-                  "/usr/local/bin"
-                  "/usr/local/bin/brew"
-                  "/usr/local/bin/node"
-                  "/Library/TeX/texbin")
-                exec-path))
-  (setenv "PATH"
-          (s-join ":" exec-path)))
 #+end_src
 
 * GIT

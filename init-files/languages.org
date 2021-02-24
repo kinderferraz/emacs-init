@@ -59,7 +59,6 @@
     ((python-mode . elpy-mode))
   :custom
       (python-indent-offset 4)
-      (elpy-rpc-python-command "/usr/local/bin/python3")
       (python-shell-interpreter "python3")
       (python-shell-interpreter-args "-i")
       (python-shell-completion-native-enable         nil)
@@ -74,13 +73,12 @@
 * JAVA
 #+begin_src emacs-lisp
 (use-package lsp-java
-  :hook ((java-mode . lsp)
-         (java-mode . (lambda ()
-                        (setq indent-tabs-mode t))))
+  :hook ((java-mode . lsp))
   :custom
   ((lsp-java-save-actions-organize-imports t)
-   (lsp-java-import-maven-enabled t)
-   (c-basic-offset 2))
+   (lsp-java-import-gradle-enabled t)
+   (lsp-java-import-maven-enabled  t)
+   (c-basic-offset 4))
   :bind
   (:map lsp-mode-map
         ("C-j g" . 'lsp-java-generate-getters-and-setters)
@@ -295,6 +293,7 @@
 * R
 #+begin_src emacs-lisp
 (use-package ess
+  :disabled
   :init (require 'ess-site)
   :mode (("\\.r\\'" . r-mode))
 
@@ -368,7 +367,6 @@
 (use-package slime
   :config
   (load (expand-file-name "~/quicklisp/slime-helper.el"))
-  (setq inferior-lisp-program "/usr/local/Cellar/clozure-cl/1.12/bin/ccl64")
   (setq slime-contribs
         '(slime-repl slime-autodoc slime-banner slime-repl-ansi-color))
   (require 'slime-autoloads)

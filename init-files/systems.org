@@ -2,17 +2,72 @@
 #+author: kinder rodrigues
 #+email: ferraz.alkindar@gmail.com
 #+startup: overview
-#+property: header-args :comments yes :results silent :tangle "../init-files-c/systems.el"
+#+property: header-args :comments yes :results silent
 #+reveal_theme: night
 
 * MacOs
+#+name: macos
+#+begin_src emacs-lisp :tangle "../init-files-c/macos.el"
+(use-package magit
+  :custom
+  (magit-git-executable "/usr/local/bin/git"))
 
-* Linux
-#+begin_src emacs-lisp
-(setq magit-git-executable "/usr/bin/git")
+(use-package treemacs
+  :custom
+  (treemacs-python-executable
+   "/usr/local/Cellar/python@3.9/3.9.0_5/bin/python3"))
+
+(setq doc-view-ghostscript-program
+      "/usr/local/Cellar/ghostscript/9.53.3/bin/gs")
+
+(setq exec-path
+      (append '("usr/local/opt/openjdk/bin"
+                "/usr/local/opt/texinfo/bin"
+                "/usr/local/bin"
+                "/usr/local/bin/brew"
+                "/usr/local/bin/node"
+                "/Library/TeX/texbin")
+              exec-path))
+
+(setenv "PATH"
+        (s-join ":" exec-path))
+
+(use-package elpy
+  :custom
+  (elpy-rpc-python-command "/usr/local/bin/python3"))
+
+(use-package slime
+  :custom
+  (inferior-lisp-program "/usr/local/Cellar/clozure-cl/1.12/bin/ccl64"))
+
+(use-package org
+  :custom
+  (org-agenda-files '("~/Documents/ifsp/2s20/master.org")))
+
+(when (display-graphic-p)
+  (setq default-frame-alist
+        (add-to-list 'default-frame-alist
+                     '(ns-transparent-titlebar .   t))))
 #+end_src
 
-* Packaging
-#+begin_src emacs-lisp
-(provide 'systems)
+* Linux
+#+name: linux
+#+begin_src emacs-lisp :tangle "../init-files-c/linux.el"
+(use-package magit
+  :custom
+  (magit-git-executable "/usr/bin/git"))
+
+(use-package elpy
+  :custom
+  (elpy-rpc-python-command "/usr/bin/python3"))
+
+
+;; (use-package slime
+;;   :custom
+;;   inferior-lisp-program "/usr/local/Cellar/clozure-cl/1.12/bin/ccl64")
+(global-set-key (kbd "s-z") 'undo)
+(global-set-key (kbd "s-x") 'kill-region)
+(global-set-key (kbd "s-c") 'kill-ring-save)
+(global-set-key (kbd "s-v") 'yank)
+
 #+end_src
