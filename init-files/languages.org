@@ -78,7 +78,19 @@
   ((lsp-java-save-actions-organize-imports t)
    (lsp-java-import-gradle-enabled t)
    (lsp-java-import-maven-enabled  t)
-   (c-basic-offset 4))
+   (c-basic-offset 4)
+   (lsp-file-watch-threshold 5000)
+   (lsp-java-jdt-download-url
+    (concat "https://download.eclipse.org/jdtls/milestones/0.57.0/"
+            "jdt-language-server-0.57.0-202006172108.tar.gz"))
+   (lsp-java-imports-gradle-wrapper-checksums
+    '[(:sha256 "830b509d6f466f1222320def2cb04fbeac9c1f033cd1bd3e2f81f4188cea175c"
+       :allowed t)]))
+
+  :hook
+  ((lsp-mode  . lsp-lens-mode)
+   (java-mode . lsp-java-boot-lens-mode))
+
   :bind
   (:map lsp-mode-map
         ("C-j g" . 'lsp-java-generate-getters-and-setters)
