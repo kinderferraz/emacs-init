@@ -97,7 +97,18 @@ tangled. (someday the tangled file will be compiled, but not today)"
       (org-babel-tangle)
       )))
 
+(defun k/tangle-all-inits ()
+  (interactive)
+  (async-start
+   `(lambda ()
+      (require 'org)
+      (dolist (file (--filter (string-suffix-p ".org" it)
+                              (directory-files "~/.emacs.d/init-files/" t)))
+        (find-file file)
+        (org-babel-tangle)))))
+
 (add-hook 'after-save-hook 'k/tangle-inits)
+(add-hook 'kill-emacs-hook 'k/tangle-all-inits)
 #+end_src
 
 A nice little function that will prompt for an org init file.

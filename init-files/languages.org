@@ -55,11 +55,12 @@
   :config
     (delete 'elpy-module-highlight-indentation elpy-modules)
     (delete 'elpy-module-flymake elpy-modules)
+    (elpy-enable)
   :hook
     ((python-mode . elpy-mode))
   :custom
-      (python-indent-offset 4)
-      (python-shell-interpreter "python3")
+      (python-indent-offset             4)
+      (elpy-rpc-virtualenv-path  'current)
       (python-shell-interpreter-args "-i")
       (python-shell-completion-native-enable         nil)
       (compilation-ask-about-save                    nil))
