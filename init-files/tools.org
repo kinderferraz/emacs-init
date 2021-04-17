@@ -148,7 +148,7 @@ Usado apenas para app java console -- disabled
   :ensure nil
   :bind
   (:map comint-mode-map
-	("M-l" . comint-clear-buffer)))
+	      ("C-l" . comint-clear-buffer)))
 #+end_src
 
 * Profile and testing

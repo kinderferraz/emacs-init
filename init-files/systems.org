@@ -58,15 +58,26 @@
   :custom
   (magit-git-executable "/usr/bin/git"))
 
+(global-set-key (kbd "C-<backspace>") 'backward-kill-word)
+(bind-key (kbd "M-<backspace>") 'sp-backward-unwrap-sexp)
+
 (use-package elpy
   :custom
   (python-shell-interpreter "python3")
   (elpy-rpc-python-command "/usr/bin/python3"))
 
+(use-package lsp-java
+  :custom
+  (lsp-java-java-path "/usr/lib/jvm/java-11-openjdk-amd64/bin/java")
+  (lsp-java-configuration-runtimes
+   '[(:name "JavaSE-8"
+      :path "/usr/lib/jvm/jdk1.8.0_281"
+      :default t)]))
 
-;; (use-package slime
-;;   :custom
-;;   inferior-lisp-program "/usr/local/Cellar/clozure-cl/1.12/bin/ccl64")
+(use-package slime
+  :custom
+  (inferior-lisp-program "sbcl"))
+
 (global-set-key (kbd "s-z") 'undo)
 (global-set-key (kbd "s-x") 'kill-region)
 (global-set-key (kbd "s-c") 'kill-ring-save)
