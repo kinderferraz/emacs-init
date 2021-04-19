@@ -70,11 +70,12 @@
   :bind
   (:map smartparens-mode-map
         ("C-k"  . sp-kill-sexp)
-        ("C->"  . sp-forward-barf-sexp)
         ("C->"  . sp-forward-slurp-sexp)
+        ("C-<"  . sp-forward-barf-sexp)
         ("M-<"  . sp-backward-slurp-sexp)
         ("M->"  . sp-backward-barf-sexp)
-        ("C-<backspace>"   . sp-backward-unwrap-sexp))
+        ("M-<backspace>"   . sp-backward-unwrap-sexp)
+        ("C-<backspace>"   . sp-backward-kill-word))
 
   :config
   (show-smartparens-global-mode t)
