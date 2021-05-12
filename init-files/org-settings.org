@@ -76,6 +76,7 @@ Pure regexps
   (org-src-preserve-indentation t)
   (org-adapt-indentation 'headline-data)
 
+  (org-hide-emphasis-markers t)
   (org-cycle-emulate-tab 'exc-hl-bol)
   (org-support-shift-select  'always)
   (org-hide-block-startup          t)

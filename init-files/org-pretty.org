@@ -287,7 +287,9 @@ reapply fontification to region and unset region"
 ;; use fontify rules
 (font-lock-add-keywords
  'org-mode
- '((k/fontify-symbols))
+ '((k/fontify-symbols)
+   ("^ *\\([-]\\) "
+    (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•")))))
  t)
 
 ;; use hook to unfontify and refontify symbols
