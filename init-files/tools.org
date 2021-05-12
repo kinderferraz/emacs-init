@@ -22,6 +22,10 @@
   :bind ("M-c" . 'carbon-now-sh))
 
 #+end_src
+#+begin_src emacs-lisp
+(use-package yaml-mode
+  :ensure t)
+#+end_src
 
 * DOC-VIEW
 #+begin_src emacs-lisp
