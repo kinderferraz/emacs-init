@@ -390,8 +390,8 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
 ;; (load-theme 'doom-laserwave        t)
 ;; (load-theme 'doom-acario-dark      t)
 ;; (load-theme 'doom-challenger-deep  t)
-(load-theme 'doom-horizon          t)
-;; (load-theme 'doom-gruvbox          t)
+;; (load-theme 'doom-horizon          t)
+(load-theme 'doom-gruvbox          t)
 
 (set-face-attribute 'font-lock-keyword-face nil
                     :slant 'italic
@@ -426,7 +426,7 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
 (use-package org-bullets
   :after (org)
   :custom (org-bullets-bullet-list
-           '("◉" "☯" "○" "✸" "✿" "✜" "◆" "▶"))
+           '("◉" "○" "✸" "✿" "✜" "◆" "▶"))
   :hook (org-mode . org-bullets-mode))
 #+end_src
 

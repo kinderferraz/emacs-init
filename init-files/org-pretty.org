@@ -59,7 +59,7 @@ These are for a prototype version, and I should rewrite the alist
         ("sql"       . "")
         ("tex"       . "")
         ("name"      . "")
-        ("property"  . "")
+        ("property"  . "")
         ("email"     . "")
         ("startup"   . "")
         ("setupfile" . "")

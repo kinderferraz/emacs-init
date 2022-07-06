@@ -86,12 +86,14 @@ Pure regexps
                        (sequence "waiting" "|"
                                  "forgotten")))
   :custom-face
-  (org-block-begin-line ((t (:background nil))))
+  (org-block-begin-line ((t (:background nil :inherit nil))))
+  (org-block-end-line   ((t (:background nil :inherit nil))))
   :bind
   (:map org-mode-map
         ("M-n"         . org-narrow-to-subtree)
         ("M-S-<down>"  . org-babel-next-src-block)
-        ("M-S-<up>"    . org-babel-previous-src-block)))
+        ("M-S-<up>"    . org-babel-previous-src-block)
+        ("M-r"         . org-babel-execute-src-block)))
 
 (use-package ox
   :ensure nil

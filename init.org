@@ -83,32 +83,30 @@ First things first, this is Brasil <3
 This first function will tangle all the org files in the emacs
 directory on save. All the files I regularly visit are init files :)
 #+begin_src emacs-lisp
-(defun k/tangle-inits ()
-  "this function is a recurring sntippet online, this is my spin on it
-if the current buffer is '.org', and in '~/.emacs.d the code-blocks are
-tangled. (someday the tangled file will be compiled, but not today)"
-  ;; avoid running hooks when tangling.
-  (-let* ((prog-mode-hook nil)
-          (this-file (buffer-file-name)))
-    ;; (target-file (s-replace ".org" ".el" this-file)))
-    (when (and (string-suffix-p ".org" this-file)
-               (string-prefix-p (expand-file-name user-emacs-directory)
-                                this-file))
-      (org-babel-tangle)
-      )))
+  (defun k/tangle-inits ()
+    "this function is a recurring sntippet online, this is my spin on it
+  if the current buffer is '.org', and in '~/.emacs.d the code-blocks are
+  tangled. (someday the tangled file will be compiled, but not today)"
+    ;; avoid running hooks when tangling.
+    (-let* ((prog-mode-hook nil)
+	    (this-file (buffer-file-name)))
+      ;; (target-file (s-replace ".org" ".el" this-file)))
+      (when (and (string-suffix-p ".org" this-file)
+		 (string-prefix-p (expand-file-name user-emacs-directory)
+				  this-file))
+	(org-babel-tangle)
+	)))
 
-(defun k/tangle-all-inits ()
-  (interactive)
-  (async-start
-   `(lambda ()
-      (require 'org)
-      (dolist (file (--filter (string-suffix-p ".org" it)
-                              (directory-files "~/.emacs.d/init-files/" t)))
-        (find-file file)
-        (org-babel-tangle)))))
+  (defun k/tangle-all-inits ()
+    (interactive)
+    (require 'org)
+    (dolist (file (--filter (string-suffix-p ".org" it)
+			    (directory-files "~/.emacs.d/init-files/" t)))
+      (find-file file)
+      (org-babel-tangle)))
 
-(add-hook 'after-save-hook 'k/tangle-inits)
-(add-hook 'kill-emacs-hook 'k/tangle-all-inits)
+  (add-hook 'after-save-hook 'k/tangle-inits)
+  (add-hook 'kill-emacs-hook 'k/tangle-all-inits)
 #+end_src
 
 A nice little function that will prompt for an org init file.
