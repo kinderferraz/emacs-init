@@ -90,10 +90,12 @@ Pure regexps
   (org-block-end-line   ((t (:background nil :inherit nil))))
   :bind
   (:map org-mode-map
+        ("C-<enter>"   . org-insert-item)
         ("M-n"         . org-narrow-to-subtree)
         ("M-S-<down>"  . org-babel-next-src-block)
         ("M-S-<up>"    . org-babel-previous-src-block)
-        ("M-r"         . org-babel-execute-src-block)))
+        ("M-r"         . org-babel-execute-src-block)
+        ("M-t"         . nil)))
 
 (use-package ox
   :ensure nil

@@ -32,7 +32,7 @@
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
 
-(setq-default default-input-method 'portuguese-prefix)
+;(setq-default default-input-method 'portuguese-prefix)
 
 (global-hl-line-mode)
 (global-subword-mode 1)
@@ -84,10 +84,10 @@
   (sp-local-pair '(org-mode latex-mode) "``"  "''"  :actions '(insert wrap))
   (sp-local-pair '(org-mode latex-mode) "\""  "\""  :actions '(insert wrap))
 
-  (sp-local-pair '(lisp-mode emacs-lisp-mode scheme-mode)
+  (sp-local-pair '(lisp-mode emacs-lisp-mode)
                  "`" nil
                  :actions nil)
-  (sp-local-pair '(lisp-mode emacs-lisp-mode scheme-mode)
+  (sp-local-pair '(lisp-mode emacs-lisp-mode)
                  "'" nil
                  :actions nil)
 
@@ -108,6 +108,9 @@
    ("C-t" . hs-hide-level)
    ("C-a" . hs-show-all))
   :config
+  (defun set-text-regexp ()
+    (setq hs-block-start-regexp "[ \[\{\(\'\" ]")
+    (setq hs-block-end-regexp "[ \}\)\]\'\" ]"))
   (defun set-c-regexp ()
     (setq hs-block-start-regexp "\\s(")
     (setq hs-block-end-regexp   "\\s)")))
@@ -117,8 +120,8 @@
 
 ;; but not in buffer-menu
 (add-hook 'buffer-menu-mode-hook
-          (lambda ()
-            (setq show-trailing-whitespace nil)))
+          #'(lambda ()
+              (setq show-trailing-whitespace nil)))
 
 (set-display-table-slot standard-display-table 'truncation
                         (make-glyph-code ?…))
@@ -200,7 +203,7 @@
 ** Views
 #+begin_src emacs-lisp
 (setq view-read-only t)
-(global-set-key (kbd "M-v") 'read-only-mode)
+(global-set-key (kbd "C-c r o") 'read-only-mode)
 
 ;; view HEX colors
 (use-package rainbow-mode
@@ -213,28 +216,26 @@
   (rainbow-x-colors nil)
 
   :config
-  (--each '(web-mode rjsx-mode)
+  (--each '(prog-mode conf-mode)
     (add-to-list 'rainbow-html-colors-major-mode-list it)))
 #+end_src
 
 * Frame Management
 #+begin_src emacs-lisp
-(setq prefered-fonts '("JetBrains Mono-11" "Victor Mono-11" "Fira Code-11" "Courier New-11"))
+(setq prefered-fonts '("JetBrains Mono-11" "Victor Mono-11"
+                       "Fira Code-11" "Courier New-11"))
 (setq k/font-to-use
       (-first #'(lambda (font-name)
                   (find-font (font-spec :name font-name)))
               prefered-fonts))
 
-(when (display-graphic-p)
-  (setq default-frame-alist
-        `((tool-bar-lines .  0)
-          (cursor-type    . bar)
-          (fullscreen     . maximized)
-          (font           . ,k/font-to-use)
-          (vertical-scroll-bars    . nil))))
-
-(unless (display-graphic-p)
-  (menu-bar-mode -1))
+(setq default-frame-alist
+      `((tool-bar-lines .  0)
+        (cursor-type    . bar)
+        (fullscreen     . maximized)
+        (font           . ,k/font-to-use)
+        (vertical-scroll-bars    . nil)))
+(menu-bar-mode -1)
 
 (setq-default frame-title-format
               (concat  "%b -- emacs@" (system-name)))
@@ -278,7 +279,7 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
 
 (setq split-window-preferred-function #'my-split-window-sensibly)
 
-(add-hook 'text-mode-hook 'visual-line-mode)
+; (add-hook 'text-mode-hook 'visual-line-mode)
 (add-hook 'prog-mode-hook 'visual-line-mode)
 
 (global-set-key (kbd "C-c <right>") 'other-window)
@@ -292,6 +293,12 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
 (use-package all-the-icons
   :pin melpa
   :config
+  (set-fontset-font t 'unicode (font-spec :family "all-the-icons") nil 'append)
+  (set-fontset-font t 'unicode (font-spec :family "file-icons") nil 'append)
+  (set-fontset-font t 'unicode (font-spec :family "Material Icons") nil 'append)
+  (set-fontset-font t 'unicode (font-spec :family "github-octicons") nil 'append)
+  (set-fontset-font t 'unicode (font-spec :family "FontAwesome") nil 'append)
+  (set-fontset-font t 'unicode (font-spec :family "Weather Icons") nil 'append)
   (nconc all-the-icons-icon-alist
          '(("\\.jsp$" all-the-icons-fileicon "ejs"
             :height 1.0
@@ -434,3 +441,4 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
 #+begin_src emacs-lisp
 (provide 'visuals)
 #+end_src
+

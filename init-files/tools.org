@@ -4,29 +4,6 @@
 #+property: header-args :comments yes :results silent :tangle "../init-files-c/tools.el"
 #+reveal_theme: night
 
-* Markup
-#+begin_src emacs-lisp
-(use-package htmlize
-  :disabled t)
-
-(use-package plantuml-mode
-  :disabled
-  :custom
-  (plantuml-jar-path "~/.plantuml/plantuml.jar")
-  (plantuml-default-exec-mode 'jar)
-  (plantuml-indent-level 2))
-
-;; print code
-(use-package carbon-now-sh
-  :disabled t
-  :bind ("M-c" . 'carbon-now-sh))
-
-#+end_src
-#+begin_src emacs-lisp
-(use-package yaml-mode
-  :ensure t)
-#+end_src
-
 * DOC-VIEW
 #+begin_src emacs-lisp
 (add-hook 'doc-view-mode-hook #'auto-revert-mode )
@@ -45,18 +22,45 @@
 * GIT
 #+begin_src emacs-lisp
 (use-package magit
-  :bind (:map global-map ("C-x g" . 'magit-status))
+  :bind (:map global-map
+              ("C-x g" . 'magit-status)
+              ("C-c g" . 'k/call-dot-repo))
   :init
   (require 'magit-process nil t)
   :custom
   (magit-commit-show-diff nil)
-  (magit-git-executable "/usr/local/bin/git")
-  (magit-auto-revert-mode t)
+  (magit-git-executable "/usr/bin/git")
+  (Magit-auto-revert-mode t)
   :custom-face
   (magit-diff-removed           ((t (:background "#352830"))))
   (magit-diff-removed-highlight ((t (:background "#562745"))))
+  :init
+  (defun k/call-dot-repo ()
+    (interactive)
+    (with-dotfiles-repo (magit-status)))
+
   :config
-  (remove-hook 'server-switch-hook 'magit-commit-diff))
+  (remove-hook 'server-switch-hook 'magit-commit-diff)
+
+  (defun k/stage-to-dotfiles ()
+    (interactive)
+    (with-dotfiles-repo
+     (magit-stage-file (buffer-file-name)))))
+
+#+end_src
+
+  - DONE :: integrate with use-package
+  - DONE :: stage / track new files
+#+begin_src emacs-lisp
+(defmacro with-dotfiles-repo (&rest body)
+  `(-let* ((git-dir  (concat "--git-dir="
+                             (expand-file-name "~/.config/.vcs")))
+           (worktree (concat "--work-tree="
+                             (expand-file-name "~")))
+           (magit-git-global-arguments (append magit-git-global-arguments
+                                               (list git-dir worktree))))
+     ,@body))
+
 #+end_src
 
 * Prog tools
@@ -154,6 +158,11 @@ Usado apenas para app java console -- disabled
   (:map comint-mode-map
 	      ("C-l" . comint-clear-buffer)))
 #+end_src
+** Async
+#+begin_src emacs-lisp
+(use-package async
+  :ensure t)
+#+end_src
 
 * Profile and testing
 Ferramentas para conferir o tempo de inicialização!
@@ -184,4 +193,3 @@ redução de 10s para 1.84
 #+begin_src emacs-lisp
 (provide 'tools)
 #+end_src
-

@@ -9,8 +9,8 @@
 #+begin_src emacs-lisp
 (use-package lsp-mode
   :hook ((haskell-mode   . lsp-mode)
-
          ;; (python-mode . lsp-mode)
+         (yaml-mode      . lsp-mode)
          (c++-mode       . lsp-mode))
   :config
   (use-package lsp-ui
@@ -407,6 +407,29 @@
         ("C-c C-z" . slime-call-defun)
         ("C-c C-f" . slime-compile-and-load-file)))
 
+#+end_src
+
+* Markup
+#+begin_src emacs-lisp
+(use-package htmlize
+  :disabled t)
+
+(use-package plantuml-mode
+  :disabled
+  :custom
+  (plantuml-jar-path "~/.plantuml/plantuml.jar")
+  (plantuml-default-exec-mode 'jar)
+  (plantuml-indent-level 2))
+
+;; print code
+(use-package carbon-now-sh
+  :disabled t
+  :bind ("M-c" . 'carbon-now-sh))
+
+#+end_src
+#+begin_src emacs-lisp
+(use-package yaml-mode
+  :ensure t)
 #+end_src
 
 * Package Info

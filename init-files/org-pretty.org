@@ -293,8 +293,8 @@ reapply fontification to region and unset region"
  t)
 
 ;; use hook to unfontify and refontify symbols
-(add-hook 'org-mode-hook
-          '(lambda ()
+(add-hook  'org-mode-hook
+          #'(lambda ()
              (add-hook 'post-command-hook #'k/unfontify-current-symbol nil t)
              (add-hook 'post-command-hook #'k/refontify-current-symbol nil t)))
 
