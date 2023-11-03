@@ -12,6 +12,8 @@
 
 * Shell Ops
 #+begin_src emacs-lisp
+(setq shell-file-name "/bin/zsh")
+
 (defun colorize-compilation-buffer ()
   (let ((inhibit-read-only t))
     (ansi-color-apply-on-region (point-min) (point-max))))
@@ -21,6 +23,25 @@
 
 * GIT
 #+begin_src emacs-lisp
+(defvar *k/magit-bare-mode* nil)
+
+(defun k/magit-actiavate-bare-mode ()
+  (add-to-list 'magit-git-global-arguments "--work-tree=/home/alkrodrigues")
+  (add-to-list 'magit-git-global-arguments "--git-dir=/home/alkrodrigues/.config/.vcs"))
+
+(defun k/magit-deactivate-bare-mode ()
+  (cl-remove-if (lambda (arg)
+                  (or (string-prefix-p "--work-tree=" arg)
+                      (string-prefix-p "--git-dir=" arg)))
+                magit-git-global-arguments))
+
+(defun k/magit-bare-mode ()
+  (interactive)
+  (cond ((not *k/magit-bare-mode*) (k/magit-actiavate-bare-mode))
+        (*k/magit-bare-mode* (k/magit-deactivate-bare-mode)))
+  (setq *k/magit-bare-mode* (not *k/magit-bare-mode*))
+  (message "magit repo bare mode %s" (if *k/magit-bare-mode* "activated" "deactivated")))
+
 (use-package magit
   :bind (:map global-map
               ("C-x g" . 'magit-status)
@@ -46,7 +67,6 @@
     (interactive)
     (with-dotfiles-repo
      (magit-stage-file (buffer-file-name)))))
-
 #+end_src
 
   - DONE :: integrate with use-package
