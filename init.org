@@ -38,6 +38,7 @@ First things first, this is Brasil <3
   (package-refresh-contents)
   (package-install 'use-package))
 
+(require 'dash)
 (require 'use-package)
 (setq use-package-always-ensure t
       use-package-always-defer t)
@@ -83,32 +84,47 @@ First things first, this is Brasil <3
 This first function will tangle all the org files in the emacs
 directory on save. All the files I regularly visit are init files :)
 #+begin_src emacs-lisp
-  (defun k/tangle-inits ()
-    "this function is a recurring sntippet online, this is my spin on it
+(defun k/tangle-inits ()
+  "this function is a recurring sntippet online, this is my spin on it
   if the current buffer is '.org', and in '~/.emacs.d the code-blocks are
   tangled. (someday the tangled file will be compiled, but not today)"
-    ;; avoid running hooks when tangling.
-    (-let* ((prog-mode-hook nil)
-	    (this-file (buffer-file-name)))
-      ;; (target-file (s-replace ".org" ".el" this-file)))
-      (when (and (string-suffix-p ".org" this-file)
-		 (string-prefix-p (expand-file-name user-emacs-directory)
-				  this-file))
-	(org-babel-tangle)
-	)))
+  ;; avoid running hooks when tangling.
+  (-let* ((prog-mode-hook nil)
+	        (this-file (buffer-file-name)))
+    ;; (target-file (s-replace ".org" ".el" this-file)))
+    (when (and (string-suffix-p ".org" this-file)
+		           (or (string-prefix-p (expand-file-name user-emacs-directory)
+				                            this-file)
+                   (string-prefix-p (expand-file-name "~/.stumpwm.d")
+                                    this-file)))
+	    (org-babel-tangle)
+	    )))
 
-  (defun k/tangle-all-inits ()
-    (interactive)
-    (require 'org)
-    (async-start
-     `(lambda ()
-        (dolist (file (--filter (string-suffix-p ".org" it)
-			    (directory-files "~/.emacs.d/init-files/" t)))
-      (find-file file)
-      (org-babel-tangle)))))
+(defun k/tangle-stumpwm-inits ()
+  (interactive)
+  (require 'org)
+  (async-start
+   (lambda ()
+     (dolist (file (--filter (string-suffix-p ".org" it)
+			                       (directory-files "~/.stumpwm.d/" t)))
+	     (find-file file)
+	     (org-babel-tangle)))))
 
-  (add-hook 'after-save-hook 'k/tangle-inits)
-  (add-hook 'kill-emacs-hook 'k/tangle-all-inits)
+(defun k/tangle-all-inits ()
+  (interactive)
+  (require 'org)
+  (async-start
+   (lambda ()
+     (dolist (file (--filter (string-suffix-p ".org" it)
+			                       (directory-files "~/.emacs.d/init-files/" t)))
+	     (find-file file)
+	     (org-babel-tangle)))))
+
+(add-hook 'after-save-hook 'k/tangle-stumpwm-inits)
+(add-hook 'kill-emacs-hook 'k/tangle-stumpwm-inits)
+
+(add-hook 'after-save-hook 'k/tangle-inits)
+(add-hook 'kill-emacs-hook 'k/tangle-all-inits)
 #+end_src
 
 A nice little function that will prompt for an org init file.
@@ -143,15 +159,15 @@ with this file and a scratch buffer side by side
 #+begin_src emacs-lisp
 (defun k/prepare-init (&rest _)
   "Just how i like my emacs startup screen."
-  (find-file (expand-file-name "~/.emacs.d/init.org")))
+  (find-file (expand-file-name "~/Documents/workspace/notas/todo.org")))
 
 (add-hook 'emacs-startup-hook
-          (lambda ()
-            (message "Emacs ready in %s with %d garbage collections."
-                     (format "%.2f seconds"
-                             (float-time
-                              (time-subtract after-init-time before-init-time)))
-                     gcs-done)))
+  (lambda ()
+    (message "Emacs ready in %s with %d garbage collections."
+             (format "%.2f seconds"
+                     (float-time
+                      (time-subtract after-init-time before-init-time)))
+             gcs-done)))
 
 (add-hook 'after-init-hook 'k/prepare-init)
 #+end_src
@@ -175,3 +191,4 @@ with this file and a scratch buffer side by side
 (global-set-key (kbd "C-x f")  'find-file)
 (global-set-key (kbd "M-<backspace>")  'backward-kill-word)
 #+end_src
+

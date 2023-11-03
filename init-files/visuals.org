@@ -230,12 +230,14 @@
               prefered-fonts))
 
 (setq default-frame-alist
-      `((tool-bar-lines .  0)
+      `((undecorated    . t)
+        (tool-bar-lines . 0)
         (cursor-type    . bar)
         (fullscreen     . maximized)
-        (font           . ,k/font-to-use)
+        ;; (font           . ,k/font-to-use)
         (vertical-scroll-bars    . nil)))
 (menu-bar-mode -1)
+(tool-bar-mode -1)
 
 (setq-default frame-title-format
               (concat  "%b -- emacs@" (system-name)))
@@ -385,7 +387,7 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
   :pin melpa
   :custom
   (doom-themes-enable-bold   t)
-  (doom-themes-enable-italic t)
+  (doom-themes-enable-italic nil)
   (doom-themes-treemacs-theme "doom-colors")
 
   :config
@@ -404,8 +406,8 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
                     :slant 'italic
                     :height 110
                     :weight 'bold
-                    :family "Victor Mono")
-
+                    :family "Iosevka")
+;;(font-family-list)
 #+end_src
 ** Modeline
 #+begin_src emacs-lisp
@@ -433,7 +435,7 @@ Define a sensible split policy -- taken from [[https://emacs.stackexchange.com/q
 (use-package org-bullets
   :after (org)
   :custom (org-bullets-bullet-list
-           '("◉" "○" "✸" "✿" "✜" "◆" "▶"))
+           '("◉" "○" "✸" "◆" "▶"))
   :hook (org-mode . org-bullets-mode))
 #+end_src
 

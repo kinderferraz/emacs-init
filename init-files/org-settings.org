@@ -45,7 +45,8 @@ Pure regexps
 
   (org-babel-do-load-languages
    'org-babel-load-languages
-   '((latex     . t)
+   '((lisp      . t)
+     (latex     . t)
      (python    . t)
      (R         . t)
      (shell     . t)
@@ -69,26 +70,34 @@ Pure regexps
 
   :custom
   ;; (org-latex-compiler "lualatex")
+  (org-ellipsis "⬎")
   (org-cycle-separator-lines   -1)
   (org-src-tab-acts-natively    t)
   (org-confirm-babel-evaluate nil)
 
   (org-src-preserve-indentation t)
-  (org-adapt-indentation 'headline-data)
+  (org-adapt-indentation 'nil)
 
   (org-hide-emphasis-markers t)
   (org-cycle-emulate-tab 'exc-hl-bol)
   (org-support-shift-select  'always)
   (org-hide-block-startup          t)
 
+  (org-agenda-files        '("~/Documents/workspace/notas/todo.org"))
+  (org-agenda-window-setup 'current-window)
+  (org-src-window-setup    'other-window)
+  (org-log-done 'time)
   (org-todo-keywords '((sequence "todo" "coding"
-                                 "|" "done")
+                                 "|" "done" "cancelled")
                        (sequence "waiting" "|"
                                  "forgotten")))
   :custom-face
   (org-block-begin-line ((t (:background nil :inherit nil))))
   (org-block-end-line   ((t (:background nil :inherit nil))))
   :bind
+  (:map global-map
+        ("C-c a" . 'org-agenda)
+        ("C-c l" . 'org-store-link))
   (:map org-mode-map
         ("C-<enter>"   . org-insert-item)
         ("M-n"         . org-narrow-to-subtree)
@@ -107,7 +116,6 @@ Pure regexps
            "init-files-c/org-async.el"))
   (org-export-dispatch-use-expert-ui t)
   (org-plantuml-jar-path "~/.plantuml/plantuml.jar"))
-
 #+end_src
 
 * Org babels

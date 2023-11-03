@@ -379,17 +379,27 @@
 #+end_src
 #+begin_src emacs-lisp :noweb yes
 (use-package slime
+  :custom
+  (inferior-lisp-program "/usr/local/bin/sbcl")
+  (slime-contribs
+   '(slime-repl
+     slime-autodoc
+     slime-banner
+     ;;slime-repl-ansi-color
+     ))
+  :init
+  (setq inferior-lisp-program "/usr/local/bin/sbcl")
+
   :config
   (load (expand-file-name "~/quicklisp/slime-helper.el"))
-  (setq slime-contribs
-        '(slime-repl slime-autodoc slime-banner slime-repl-ansi-color))
+
   (require 'slime-autoloads)
   (unbind-key "M-n" 'slime-mode-indirect-map)
 
   (use-package slime-repl
     :ensure nil
     :bind (:map slime-repl-mode-map
-                ("M-l"      . slime-repl-clear-buffer)
+                ("C-l"      . slime-repl-clear-buffer)
                 ("M-k"      . slime-interrupt)
                 ("M-r"      . slime-restart-inferior-lisp)
                 ("s-<left>" . slime-repl-bol))
